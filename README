@@ -2,3 +2,135 @@ ec
 ==
 
 Engineering Calculator
+
+This calculator is noteworthy in that it employs a stack model of computation 
+(Reverse Polish Notation), it supports numbers with SI scale factors and units, 
+and uses a text-only user interface.
+
+To run the regression tests:
+> ./test
+
+To install into ~/local (modify the script to change the install directory):
+> ./install
+
+To read the EC manual:
+> man ec
+
+To run EC:
+> ec
+0:
+
+What follows is a brief tour of EC:
+
+To add two numbers:
+0: 4 5 +
+9:
+
+The prompt displays the value of the x-register.
+
+You can string together an arbitrarily long calculation on a single line
+0: 4 5 + 6 7 + *
+
+Or, you can string a long calculation over multiple lines (this calculates the 
+value of two parallel 100 ohm resistors.
+0: 100
+100: 100
+100: ||
+50:
+
+Select operators can be entered without preceding them with a space if they 
+follow a number or a constant. So the second example could be entered on one 
+line with
+0: 4 8* 3 5* +
+47:
+
+To store a value into a variable, type an equal sign followed by a name. To
+recall it, simply use the name.
+0: 100MHz =freq
+100M: 2pi* =omega
+628.32M: freq 100/
+1M:
+
+Display memories using:
+628.32M: vars
+  R = 50 Ohms
+  freq = 100MHz
+  omega = 628.32M
+628.32M: 
+R is a special variable that is set by default to 50 Ohms, but you can change
+its value. It is used in dBm calculations.
+
+EC supports units, but in a relatively conservative way. You can enter them
+and it will remember them, but they do not survive any operation other than a
+copy. In this way it should never display incorrect or misleading units, however
+it will display units when it can. For example,
+0: 100MHz =freq
+100 MHz: 2pi* 'rads/s' =omega
+628.32 Mrads/s: vars
+  R = 50 Ohms
+  freq = 100 MHz
+  omega = 628.32 Mrads/s
+628.32 Mrads/s: 2pi /
+100M:
+Notice that it captured units on 100MHz and stored them into the memory freq.
+Also notice that the units of 'rads/s' were explicitly specified, and they were
+also captured. Finally, notice that dividing by 2pi cleared the units.
+
+Normally units are given after the number, however a dollar sign would be given
+immediately before.
+0: $100M
+$100M:
+
+You can enter numbers as verilog integers:
+0: 'hFF
+255:
+
+You can also display numbers as verilog integers:
+0: 255
+255: vhex4
+'h00FF:
+
+You can convert voltages into dBm using:
+0: 10 vdbm
+30:
+
+You can dBm into voltage using:
+0: -10 dbmv
+100m: 
+
+Both of these assume a load resistance that is contained in memory R, which by 
+default is 50 Ohms.
+
+At start up EC reads and executes commands from files. It first tries '~/.ecrc'
+and runs any commands it contains if it exists. It then tries './.ecrc' if it
+exists. Finally it runs any files given on the command line. It is common to put
+your generic preferences in '~/.exrc'. For example, if your are a physicist with
+a desire for high precision results, you might use:
+    eng6
+    h 2pi / 'J-s' =hbar
+    clstack
+This tells EC to use 6 digits of resolution and predefines hbar as a constant.
+Lastly clstack clears the stack so the user gets a clean stack. The local start
+up file ('./.ecrc') or the file given as a command line argument is generally
+used to give more project specific initializations. For example, in a directory
+where you are working on a PLL design you might have an './.ecrc' file with the
+following contents:
+    88.3uSiemens =kdet
+    9.1G 'Hz/V' =kvco
+    2 =m
+    8 =n
+    1.4pF =cs
+    59.7pF =cp
+    2.2kOhms =rz
+    clstack
+
+You can get a list of actions available with:
+0: help
+There is much more available that what is described here.
+
+You can quit the program using
+0: quit
+(or :q or ^C).
+
+Enjoy,
+-Ken

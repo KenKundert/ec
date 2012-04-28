@@ -19,9 +19,11 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
+.test*.yaml
 
 #Translations
 *.mo
 
 #Mr Developer
 .mr.developer.cfg
+

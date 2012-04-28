@@ -3,4 +3,4 @@
 
 from runtests import runTests
 
-runTests(['ec', 'engfmt', 'textcolors'])
+runTests(['ec', 'engfmt', 'textcolors', 'cmdline'])
