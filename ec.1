@@ -1,0 +1,592 @@
+.\"
+.\" ec.1 - the *roff document processor source for the ec manual
+.\"
+.\" Author:
+.\" Ken Kundert
+.\" ec@shalmirane.com .
+.\"
+.\" You can view a formatted version of this man page using:
+.\"    tbl ec.1 | nroff -man | less
+.\" or
+.\"    pdfroff -t -man ec.1 > ec.pdf
+.\"    evince ec.pdf
+.TH ec 1 "2012-04-25"
+.SH NAME
+ec - An engineering calculator
+.SH SYNTAX
+\fBec\fR [ \fI file \fR ]
+.SH DESCRIPTION
+\fBec\fR is a stack-based (RPN) engineering calculator with a text-based user 
+interface that is intended to be used interactively.
+.SS STACK
+As you enter numbers they are pushed onto a stack. The most recent member of the 
+stack is referred to as the \fIx\fP register and the second most recent is the 
+\fIy\fP register.  All other members of the stack are unnamed.  Operators 
+consume numbers off the stack to use as operands and then they push the results 
+back on the stack.  For example,
+.nf
+.RS
+4
+6
++
+.RE
+.fi
+In this case 4 gets pushed on to the stack first to become \fIx\fP. Then 6 gets 
+pushed on to the stack to become \fIx\fP, which makes 4 \fIy\fP. Finally, 
++ pulls both off the stack, sums them, and then pushes the result of 10 back 
+onto the stack. The stack is left with only one number on it, 10.
+.PP
+After each line \fBec\fP responds by printing the value of the \fIx\fP register.  
+Thus the above example would actually look like this:
+.nf
+.RS
+\fB0\fP: 4
+\fB4\fP: 6
+\fB6\fP: +
+\fB10\fP:
+.RE
+.fi
+The benefit of the stack is that it allows you to easily store temporary results 
+while you perform your calculation. For example, to evaluate (34 - 61)*(23 - 56) 
+you would use:
+.nf
+.RS
+\fB0\fP: 34
+\fB34\fP: 61
+\fB61\fP: -
+\fB-27\fP: 23
+\fB23\fP: 56
+\fB56\fP: -
+\fB-33\fP: *
+\fB891\fP:
+.RE
+.fi
+.PP
+Notice that you entered the numbers as you saw them in the formula you were 
+evaluating, and there was no need to enter parentheses, however the operators 
+were rearranged in order to express the precedence of the operations.
+.PP
+It is not necessary to type enter after each number or operator. You can combine 
+them onto one line and just type enter when you would like to see the result:
+.nf
+.RS
+\fB0\fP: 34 61 - 23 56 - *
+\fB891\fP:
+.RE
+.fi
+Furthermore, it is not necessary to type a space between a number and most 
+operators. For example, the above could be entered as:
+.nf
+.RS
+\fB0\fP: 34 61- 23 56- *
+\fB891\fP:
+.RE
+.fi
+.PP
+You can print the entire stack using \fIstack\fP, and clear it using 
+\fIclstack\fP. For example,
+.nf
+.RS
+\fB0\fP: 1 2 3 stack
+\fIx\fP: 1
+\fIy\fP: 2
+   3
+\fB3\fP: clstack
+\fB0\fP: stack
+\fB0\fP:
+.RE
+.fi
+.SS REAL NUMBERS
+Numbers can be entered using normal integer, floating point, and scientific 
+notations. For example,
+.nf
+.RS
+42
+3.141592
+2.998e8
+13.80651e-24
+.RE
+.fi
+In addition, you can also use the normal SI scale factors to represent either 
+large or small numbers without using scientific notation.
+.TS
+tab(;);
+rlcrl.
+\&_;1
+k, K;1e3;;m;1e-3
+M;1e6;;u;1e-6
+G;1e9;;n;1e-9
+T;1e12;;p;1e-12
+;;;f;1e-15
+;;;a;1e-18
+.TE
+.PP
+Optionally, the scale factor can be combined with simple units. For example,
+.nf
+.RS
+10K
+3.16pF
+.RE
+.fi
+.PP
+In this case the units must be simple identifiers (must not contain special 
+characters). For complex units, such as 'rads/s', or for numbers that do not 
+have scale factors, it is possible to attach units to a number in the \fIx\fP 
+register by entering a quoted string.
+.nf
+.RS
+\fB0\fP: 6.626e-34
+\fB662.6e-36\fP: 'J-s'
+\fB662.6e-36 J-s\fP:
+.RE
+.fi
+.PP
+The dollar sign ($) is a special unit that is given before the number.
+.nf
+.RS
+$100K
+.RE
+.fi
+.PP
+\fBec\fP takes a conservative approach to units. You can enter them and it will 
+remember them, but they do not survive any operation other than a simple copy.  
+In this way it will display units when it can, but should never display 
+incorrect or misleading units. For example:
+.nf
+.RS
+\fB0\fP: 100MHz
+\fB100MHz\fP: 2pi*
+\fB628.32M\fP:
+.RE
+.fi
+.PP
+You can display real numbers using one of three available formats, \fIfix\fP, 
+\fIsci\fP, or \fIeng\fP. These display numbers using fixed point notation (a 
+fixed number of digits to the right of the decimal point), scientific notation 
+(a mantissa and an exponent), and engineering notation (a mantissa and an SI 
+scale factor).  You can optionally give an integer immediately after the display 
+mode to indicate the desired precision.  For example,
+.nf
+.RS
+\fB0\fP: 1000
+\fB1K\fP: fix2
+\fB1000.00\fP: sci3
+\fB1.000e+03\fP: eng4
+\fB1K\fP: 2pi*
+\fB6.2832K\fP:
+.RE
+.fi
+.PP
+Notice that scientific notation always displays the specified number of digits 
+whereas engineering notation suppresses zeros at the end of the number.
+.SS INTEGERS
+You can enter integers in either hexadecimal (base 16), decimal (base 10), octal 
+(base 8) or binary (base 2), and you can do so using standard programming 
+formats (leading 0) or using Verilog formats (leading '), as shown in the 
+examples below:
+.TS
+tab(;);
+ccl.
+0xFF;'hFF;hexadecimal
+99;'d99;decimal
+077;'o77;octal
+;'b11;binary
+.TE
+.PP
+Internally, \fBec\fP represents all numbers as double-precision real numbers.  
+To display them as decimal integers, use \fIfix0\fP. However, you can display 
+the numbers in either base 16 (hexadecimal) or base 8 (octal) by setting the 
+display mode.  Integers can be displayed in either programming or Verilog 
+notation. To see programming notation, use either \fIhex\fP or \fIoct\fP.  To 
+see Verilog notation, use either \fIvhex\fP or \fIvoct\fP.  Add an integer after 
+the display mode to control the number of digits. For example:
+.nf
+.RS
+\fB0\fP: 1000
+\fB1K\fP: hex
+\fB0x3b8\fP: hex8
+\fB0x000003b8\fP: hex0
+\fB0x3b8\fP: oct
+\fB01750\fP: vhex4
+\fB'h03e8\fP: voct
+\fB'o1750\fP:
+.RE
+.fi
+.SS COMPLEX NUMBERS
+\fBec\fP provides limited support for complex numbers. Two imaginary constants 
+are available that can be used to construct complex numbers, \fIj\fP and 
+\fIj2pi\fP. In addition, two functions are available for converting complex 
+numbers to real, \fImag\fP returns the magnitude and \fIph\fP returns the phase.  
+They are unusual in that they do not replace the value in the \fIx\fP register 
+with the result, instead they simply push either the magnitude of phase into the 
+\fIx\fP register, which pushes the original complex number into the \fIy\fP 
+register. For example,
+.nf
+.RS
+\fB0\fP: 1 j +
+\fB1 + j1\fP: mag
+\fB1.4142\fP: pop
+\fB1 + j1\fP: ph
+\fB45 degs\fP: stack
+   \fIx\fP: 1 + j1
+   \fIy\fP: 45 degs
+\fB45 degs\fP:
+.RE
+.fi
+Only a small number of functions actually support complex numbers; currently 
+only \fIexp\fP and \fIsqrt\fP. However, most of the basic arithmetic operators 
+support complex numbers.
+.SS CONSTANTS
+\fBec\fP provides several useful mathematical and physical constants that are 
+accessed by specifying them by name. The physical constants are given in MKS 
+units. The available constants include:
+.TS
+tab(;);
+rl.
+pi;3.141592...
+2pi;6.283185...
+rt2;square root of two: 1.4142...
+j;the imaginary unit, sqrt(-1)
+j2pi;j6.283185...
+h;Plank's contant: 6.6260693e-34 J-s
+k;Boltzmann's contant: 1.3806505e-23 J/K
+q;charge of an electron: 1.60217653e-19 Coul
+c;speed of light in a vacuum: 2.99792458e8 m/s
+0C;0 Celsius in Kelvin: 273.15 K
+eps0;permittivity of free space: 8.854187817e-12 F/m
+mu0;permeability of free space: 4e-7*pi N/A^2
+.TE
+.PP
+As an example of using the predefined constants, consider computing the thermal 
+voltage, kT/q
+.nf
+.RS
+\fB0\fP: k 27 0C + * q/
+\fB25.865m\fP:
+.RE
+.fi
+.SS VARIABLES
+You can store the contents of the \fIx\fP register to a variable by using an 
+equal sign followed immediately by the name of the variable. To recall it, 
+simply use the name. For example,
+.nf
+.RS
+\fB0\fP: 100MHz =freq
+\fB100 MHz\fP: 2pi* 'rads/s' =omega
+\fB628.32 Mrads/s\fP: 1pF =cin
+\fB1 pF\fP: 1 omega cin* /
+\fB1.5915K\fP:
+.RE
+.fi
+.PP
+You can display all known variables using \fIvars\fP. If you did so immediately 
+after entering the lines above, you would see:
+.nf
+.RS
+\fB1.5915K\fP: vars
+  \fIR\fP: 50 Ohms
+  \fIcin\fP: 1 pF
+  \fIfreq\fP: 100 MHz
+  \fIomega\fP: 628.32 Mrads/s
+.RE
+.fi
+Choosing a variable name that is the same as a one of a built-in command or 
+constant causes the built-in name to be overridden. Be careful when doing this 
+as once a built-in name is overridden it can no longer be accessed. 
+.PP
+Notice that a variable \fIR\fP exists that you did not create. This is 
+a predefined variable that is used in dBm calculations. You are free to change 
+its value if you like.
+.SS OPERATORS and FUNCTIONS
+\fBec\fP supports the following operators:
+.IP "+; addition"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+the sum is placed back on the stack into the \fIx\fP register: 
+\fIx\fP=\fIx\fP+\fIy\fP.
+.IP "-; subtraction"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+the difference is placed back on the stack into the \fIx\fP register: 
+\fIx\fP=\fIx\fP-\fIy\fP.
+.IP "*; multiplication"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+the product is placed back on the stack into the \fIx\fP register: 
+\fIx\fP=\fIx\fP*\fIy\fP.
+.IP "/; true division"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+the quotient is placed back on the stack into the \fIx\fP register: 
+\fIx\fP=\fIx\fP/\fIy\fP.  Both values are treated as real numbers and the 
+results in a real number. So
+.nf
+.RS
+    \fB0\fP: 1 2/
+    \fB500m\fP:
+.RE
+.fi
+.IP "//; floor division"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack, the 
+quotient is computed and then converted to an integer using the floor operation 
+(it is replaced by the largest integer that is smaller than the quotient), and 
+that is placed back on the stack into the \fIx\fP register: 
+\fIx\fP=\fIx\fP//\fIy\fP.  So
+.nf
+.RS
+    \fB0\fP: 1 2//
+    \fB0\fP:
+.RE
+.fi
+.IP "%: modulus"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack, the 
+quotient is computed and the remainder is placed back on the stack into the 
+\fIx\fP register: \fIx\fP=\fIx\fP%\fIy\fP.  So
+.nf
+.RS
+    \fB0\fP: 14 3%
+    \fB2\fP:
+.RE
+.fi
+.RS
+In this case 2 is the remainder because 3 goes evenly into 14 three times, which 
+leaves a remainder of 2.
+.RE
+.IP "%chg: percent change"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+the percent difference between \fIx\fP and \fIy\fP relative to \fIy\fP is pushed 
+back into the \fIx\fP register: \fIx\fP=(100*(\fIx\fP-\fIy\fP)/\fIy\fP).
+.IP "**: power"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+replaced with the the value of \fIy\fP raised to the power of \fIx\fP: 
+\fIx\fP=\fIy\fP**\fIx\fP.
+.IP "chs: change sign"
+The value in the \fIx\fP register is replaced with its negative: 
+\fIx\fP=-\fIx\fP.
+.IP "recip: reciprocal"
+The value in the \fIx\fP register is replaced with its reciprocal: 
+\fIx\fP=1/\fIx\fP.
+.IP "ceil: ceiling"
+The value in the \fIx\fP register is replaced with its value rounded towards 
+infinity (replaced with the smallest integer greater than its value).
+.IP "floor"
+The value in the \fIx\fP register is replaced with its value rounded towards 
+negative infinity (replaced with the largest integer smaller than its value).
+.IP "!: factorial"
+The value in the \fIx\fP register is replaced with its factorial: 
+\fIx\fP=\fIx\fP!.
+.IP "exp: natural exponential"
+The value in the \fIx\fP register is replaced with its exponential: 
+\fIx\fP=\fIe\fP**\fIx\fP.  Supports a complex argument.
+.IP "ln: natural logarithm"
+The value in the \fIx\fP register is replaced with its natural logarithm: 
+\fIx\fP=log_\fIe\fP(\fIx\fP).  Supports a complex argument.
+.IP "pow10: raise 10 to the power of \fIx\fP"
+The value in the \fIx\fP register is replaced with 10 raised to the \fIx\fP 
+power: \fIx\fP=10**\fIx\fP.
+.IP "log: common logarithm"
+The value in the \fIx\fP register is replaced with its common logarithm: 
+\fIx\fP=log_10(\fIx\fP).
+.IP "log2: base 2 logarithm"
+The value in the \fIx\fP register is replaced with its base 2 logarithm: 
+\fIx\fP=log_2(\fIx\fP).
+.IP "sqr: square"
+The value in the \fIx\fP register is replaced with its square: 
+\fIx\fP=\fIx\fP**2.
+.IP "sqrt: square root"
+The value in the \fIx\fP register is replaced with its square 
+root:\fIx\fP=\fIx\fP**0.5.  Supports a complex argument.
+.IP "mag: magnitude"
+The value in the \fIx\fP register is replaced with its magnitude if it is 
+complex and with its absolute value if it is real.
+.IP "ph: phase"
+The value in the \fIx\fP register is replaced with its phase if it is complex 
+and with 0 if it is real.
+.IP "||: parallel combination"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+replaced with the reciprocal of the sum of their reciprocals: 
+\fIx\fP=1/(1/\fIx\fP+1/\fIy\fP).  If the values in the \fIx\fP and \fIy\fP 
+registers are both resistances, both elastances, or both inductances, then the 
+result is the resistance, elastance or inductance of the two in parallel. If the 
+values are conductances, capacitances or susceptances, then the result is the 
+conductance, capacitance or susceptance of the two in series.
+.IP "sin: trigonometric sine"
+The value in the \fIx\fP register is replaced with its sine: 
+\fIx\fP=sin(\fIx\fP).
+.IP "cos: trigonometric cosine"
+The value in the \fIx\fP register is replaced with its 
+cosine:\fIx\fP=cos(\fIx\fP).
+.IP "tan: trigonometric tangent"
+The value in the \fIx\fP register is replaced with its 
+tangent:\fIx\fP=tan(\fIx\fP).
+.IP "asin: trigonometric arc sine"
+The value in the \fIx\fP register is replaced with its arc 
+sine:\fIx\fP=asin(\fIx\fP).
+.IP "acos: trigonometric arc cosine"
+The value in the \fIx\fP register is replaced with its arc 
+cosine:\fIx\fP=acos(\fIx\fP).
+.IP "atan: trigonometric arc tangent"
+The value in the \fIx\fP register is replaced with its arc 
+tangent:\fIx\fP=atan(\fIx\fP).
+.IP "atan2: two-argument arc tangent"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+replaced with the angle of the vector from the origin to the point 
+(\fIx\fP,\fIy\fP): \fIx\fP=atan2(\fIy\fP,\fIx\fP).
+.IP "hypot: hypotenuse"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+replaced with the length of the vector from the origin to the point 
+(\fIx\fP,\fIy\fP): \fIx\fP=sqrt(\fIx\fP**2+\fIy\fP**2).
+.IP "rtop: rectangular to polar coordinate conversion"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+replaced with the length of the vector from the origin to the point 
+(\fIx\fP,\fIy\fP) and with the angle of the vector from the origin to the point 
+(\fIx\fP,\fIy\fP): \fIx\fP=sqrt(\fIx\fP**2+\fIy\fP**2),
+\fIy\fP=atan2(\fIy\fP,\fIx\fP).
+.IP "ptor: polar to rectangular coordinate conversion"
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
+interpreted as the length and angle of a vector and are replaced with the 
+coordinates of the end-point of that vector: \fIx\fP=\fIx\fP*cos(\fIy\fP), 
+\fIy\fP=\fIx\fP*sin(\fIy\fP).
+.IP "sinh: hyperbolic sine"
+The value in the \fIx\fP register is replaced with its hyperbolic sine: 
+\fIx\fP=sinh(\fIx\fP).
+.IP "cosh: hyperbolic cosine"
+The value in the \fIx\fP register is replaced with its hyperbolic 
+cosine:\fIx\fP=cosh(\fIx\fP).
+.IP "tanh: hyperbolic tangent"
+The value in the \fIx\fP register is replaced with its hyperbolic 
+tangent:\fIx\fP=tanh(\fIx\fP).
+.IP "asinh: hyperbolic arc sine"
+The value in the \fIx\fP register is replaced with its hyperbolic arc 
+sine:\fIx\fP=asinh(\fIx\fP).
+.IP "acosh: hyperbolic arc cosine"
+The value in the \fIx\fP register is replaced with its hyperbolic arc 
+cosine:\fIx\fP=acosh(\fIx\fP).
+.IP "atanh: hyperbolic arc tangent"
+The value in the \fIx\fP register is replaced with its hyperbolic arc 
+tangent:\fIx\fP=atanh(\fIx\fP).
+.IP "db: convert to decibels"
+The value in the \fIx\fP register is replaced with its value in 
+decibels:\fIx\fP=20*log(\fIx\fP). It is appropriate to apply this form when 
+converting voltage or current to decibels.
+.IP "adb: convert from decibels"
+The value in the \fIx\fP register is converted from decibels and that value is 
+placed back into the \fIx\fP register: \fIx\fP=10**(\fIx\fP/20).  It is 
+appropriate to apply this form when converting decibels to voltage or current.
+.IP "db10: convert to decibels"
+The value in the \fIx\fP register is replaced with its value in 
+decibels:\fIx\fP=10*log(\fIx\fP). It is appropriate to apply this form when 
+converting power to decibels.
+.IP "adb10: convert from decibels"
+The value in the \fIx\fP register is converted from decibels and that value is 
+placed back into the \fIx\fP register: \fIx\fP=10**(\fIx\fP/10).  It is 
+appropriate to apply this form when converting decibels to power.
+.IP "vdbm: convert peak sinusoidal voltage to dBm"
+The value in the \fIx\fP register is expected to be the peak voltage of 
+a sinusoid that is driving a load resistor equal to \fIR\fP (a predefined 
+variable).  It is replaced with the power delivered to the resistor in decibels 
+relative to 1 milliwatt: \fIx\fP= 30+10*log10((\fIx\fP**2)/(2*\fIR\fP)).
+.IP "dbmv: convert dBm to peak sinusoidal voltage"
+The value in the \fIx\fP register is expected to be a power in decibels relative 
+to one milliwatt. It is replaced with the peak voltage of a sinusoid that would 
+be needed to deliver the same power to a load resistor equal to \fIR\fP (a 
+predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)*\fIR\fP)
+.IP "idbm: convert peak sinusoidal voltage to dBm"
+The value in the \fIx\fP register is expected to be the peak current of 
+a sinusoid that is driving a load resistor equal to \fIR\fP (a predefined 
+variable).  It is replaced with the power delivered to the resistor in decibels 
+relative to 1 milliwatt: \fIx\fP= 30+10*log10(((\fIx\fP**2)*\fIR\fP/2).
+.IP "dbmi: convert dBm to peak sinusoidal current"
+The value in the \fIx\fP register is expected to be a power in decibels relative 
+to one milliwatt. It is replaced with the peak current of a sinusoid that would 
+be needed to deliver the same power to a load resistor equal to \fIR\fP (a 
+predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)/\fIR\fP)
+.IP "rand: random number"
+The value a random variable with uniform distribution between 0 and 1 is pushed 
+into the \fIx\fP register: \fIx\fP=rand(0,1).
+.SS COMMANDS
+.IP swap
+Swap the values in the \fIx\fP and \fIy\fP registers.
+.IP dup
+Push the value in the \fIx\fP register onto the stack again.
+.IP pop
+Discard the value in the \fIx\fP register.
+.IP stack
+Print the stack.
+.IP clstack
+Completely clear the stack.
+.IP vars
+Print the variables.
+.IP rads
+Switch the trigonometric mode to radians (functions such as sin, cos, tan, and 
+ptor expect angles to be given in radians; functions such as asin, acos, atan, 
+and rtop should produce angles in radians).
+.IP degs
+Switch the trigonometric mode to degrees (functions such as sin, cos, tan, and 
+ptor expect angles to be given in degrees; functions such as asin, acos, atan, 
+and rtop should produce angles in degrees).
+.IP help
+Print a list of features available from \fBec\fP.
+.IP quit
+Terminate the program (:q and ctrl-D also work).
+.SS INITIALIZATION
+At start up \fBec\fP reads and executes commands from files.
+It first tries '~/.ecrc' and runs any commands it contains if it exists.
+It then tries './.ecrc' if it exists.
+Finally it runs any files given on the command line.
+It is common to put your generic preferences in '~/.exrc'.
+For example, if your are a physicist with a desire for high precision results, 
+you might use:
+.nf
+.RS
+eng6
+h 2pi / 'J-s' =hbar
+clstack
+.RE
+.fi
+This tells \fBec\fP to use 6 digits of resolution and predefines \fIhbar\fP as 
+a constant.
+Lastly \fIclstack\fP clears the stack so the user gets a clean stack.
+The local start up file ('./.ecrc') or the file given as a command line argument 
+is generally used to give more project specific initializations.
+For example, in a directory where you are working on a PLL design you might have 
+an './.ecrc' file with the following contents:
+.nf
+.RS
+88.3uSiemens =kdet
+9.1G 'Hz/V' =kvco
+2 =m
+8 =n
+1.4pF =cs
+59.7pF =cp
+2.2kOhms =rz
+clstack
+.RE
+.fi
+This gives the default values for the parameters used in the design.
+.SS DIAGNOSTICS
+If an error occurs on a line, an error message will be printed and the stack 
+will be restored to the values it had before the line was entered. So it is 
+almost as if you never typed the line in at all.  The exception being that any 
+variables or modes that are set on the line before the error occurred are 
+retained.  For example,
+.nf
+.RS
+\fB0\fP: 1KOhms =r
+\fB1 KOhms\fP: 100MHz =freq 1pF =c
+c: reserved, cannot be used as variable name.
+\fB1 KOhms\fP: stack
+  \fIx\fP: 1 KOhms
+\fB1 KOhms\fP: vars
+  \fIR\fP: 50 Ohms
+  \fIfreq\fP: 100MHz
+  \fIr\fP: 1 KOhms
+.RE
+.fi
+.PP
+The error occurred when trying to assign a value to \fIc\fP, which is 
+a predefined constant (the speed of light). Notice that 100MHz was saved to the 
+variable \fIfreq\fP, but the stack was restored to the state it had before the 
+offending line was entered.
+.SH AUTHOR
+.nf
+Ken Kundert
+.PP
+Send bug reports and enhancement requests to
+.BR ec@shalmirane.com .

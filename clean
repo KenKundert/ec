@@ -1,0 +1,15 @@
+#!/bin/csh -f
+
+set nonomatch
+rm -rf *.pyc *.pyo .*.yaml
+rm -rf build .coverage .coverage-html 
+foreach i (*/clean)
+    if ($i == "*/clean") break
+    #echo $i
+    (cd $i:h; ./clean)
+end
+foreach i (*/Makefile)
+    if ($i == "*/Makefile") break
+    #echo $i
+    (cd $i:h; make clean)
+end

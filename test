@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+# Run module self tests
+
+from runtests import runTests
+
+runTests(['ec', 'engfmt', 'textcolors'])

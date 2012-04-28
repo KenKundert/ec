@@ -1,0 +1,7 @@
+#!/bin/csh -f
+
+# need to remove build directory from a previous install to assure a clean
+# install
+rm -rf build
+
+python setup.py install --home=~/local
