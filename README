@@ -46,7 +46,7 @@ value of two parallel 100 ohm resistors.
 50:
 
 Select operators can be entered without preceding them with a space if they 
-follow a number or a constant. So the second example could be entered on one 
+follow a number or a name. So the second example could be entered on one 
 line with
 0: 4 8* 3 5* +
 47:
@@ -55,11 +55,13 @@ To store a value into a variable, type an equal sign followed by a name. To
 recall it, simply use the name.
 0: 100MHz =freq
 100M: 2pi* =omega
-628.32M: freq 100/
-1M:
+628.32M: 1pF =Cin
+1pF: 1 omega/ Cin/
+1.5915K:
 
 Display memories using:
 628.32M: vars
+  Cin = 1pF
   R = 50 Ohms
   freq = 100MHz
   omega = 628.32M
@@ -79,7 +81,7 @@ it will display units when it can. For example,
   omega = 628.32 Mrads/s
 628.32 Mrads/s: 2pi /
 100M:
-Notice that it captured units on 100MHz and stored them into the memory freq.
+Notice that EC captured units on 100MHz and stored them into the memory freq.
 Also notice that the units of 'rads/s' were explicitly specified, and they were
 also captured. Finally, notice that dividing by 2pi cleared the units.
 
@@ -88,11 +90,14 @@ immediately before.
 0: $100M
 $100M:
 
-You can enter numbers as verilog integers:
+You can enter hexadecimal or octal numbers as using standard programming or
+verilog notation:
 0: 'hFF
-255:
+255: 0xFF -
+0:
 
-You can also display numbers as verilog integers:
+You can also display numbers in hexadecimal or octal using either standard
+programming or verilog notation. To do so, use hex, oct, vhex, or voct:
 0: 255
 255: vhex4
 'h00FF:
