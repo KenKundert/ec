@@ -153,7 +153,7 @@ def toEngFmt(num, units="", prec=-1):
 
 def toNumber(str):
     """Converts strings in engineering format into a real number and units.
-    
+
        The real number and units are returned as a tuple.  If the argument is
        not recognized as a number, None is returned.
     """
