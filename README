@@ -13,6 +13,8 @@ To run the regression tests:
 To install into ~/local (modify the script to change the install directory):
 > ./install
 
+Be sure to add ~/local/lib/python to your PYTHONPATH.
+
 To read the EC manual:
 > man ec
 
