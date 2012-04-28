@@ -12,7 +12,7 @@ setup(
   , author="Ken Kundert"
   , author_email='ken@theKunderts.net'
   , scripts=['ec']
-  , py_modules=['ec']
+  , py_modules=['ec', 'engfmt', 'textcolors']
   , data_files=[
         ('man/man1', ['ec.1'])
     ]
