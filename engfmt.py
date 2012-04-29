@@ -165,11 +165,15 @@ def toNumber(str):
             number = float(number)*_ScaleFactors[scaleFactor][0]
         else:
             number = float(number)
+        if units == None:
+            units = ''
         return number, units
     # with exponent and trailing units
     match = _NumWithExpAndTrailingUnits.match(str)
     if match:
         number, units = match.groups()
+        if units == None:
+            units = ''
         return float(number), units
     # with scale factor and leading units ($)
     match = _NumWithScaleFactorAndLeadingUnits.match(str)
@@ -179,19 +183,27 @@ def toNumber(str):
             number = float(number)*_ScaleFactors[scaleFactor][0]
         else:
             number = float(number)
+        if units == None:
+            units = ''
         return number, units
     # with exponent and leading units ($)
     match = _NumWithExpAndLeadingUnits.match(str)
     if match:
         units, number = match.groups()
+        if units == None:
+            units = ''
         return float(number), units
     match = _NanWithTrailingUnits.match(str)
     if match:
         number, ignore, units = match.groups()
+        if units == None:
+            units = ''
         return float(number), units
     match = _NanWithLeadingUnits.match(str)
     if match:
         units, number, ignore = match.groups()
+        if units == None:
+            units = ''
         return float(number), units
     return None
 
