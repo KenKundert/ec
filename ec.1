@@ -180,26 +180,21 @@ mode to indicate the desired precision.  For example,
 Notice that scientific notation always displays the specified number of digits 
 whereas engineering notation suppresses zeros at the end of the number.
 .SS INTEGERS
-You can enter integers in either hexadecimal (base 16), decimal (base 10), octal 
-(base 8) or binary (base 2), and you can do so using standard programming 
-formats (leading 0) or using Verilog formats (leading '), as shown in the 
-examples below:
+You can enter integers in either hexadecimal (base 16), decimal (base 10) or 
+octal (base 8), as shown in the examples below:
 .TS
 tab(;);
-ccl.
-0xFF;'hFF;hexadecimal
-99;'d99;decimal
-077;'o77;octal
-;'b11;binary
+cl.
+0xFF;hexadecimal
+99;decimal
+077;octal
 .TE
 .PP
 Internally, \fBec\fP represents all numbers as double-precision real numbers.  
 To display them as decimal integers, use \fIfix0\fP. However, you can display 
 the numbers in either base 16 (hexadecimal) or base 8 (octal) by setting the 
-display mode.  Integers can be displayed in either programming or Verilog 
-notation. To see programming notation, use either \fIhex\fP or \fIoct\fP.  To 
-see Verilog notation, use either \fIvhex\fP or \fIvoct\fP.  Add an integer after 
-the display mode to control the number of digits. For example:
+display mode.  Use either \fIhex\fP or \fIoct\fP.  Add an integer after the 
+display mode to control the number of digits. For example:
 .nf
 .RS
 \fB0\fP: 1000
@@ -207,9 +202,7 @@ the display mode to control the number of digits. For example:
 \fB0x3b8\fP: hex8
 \fB0x000003b8\fP: hex0
 \fB0x3b8\fP: oct
-\fB01750\fP: vhex4
-\fB'h03e8\fP: voct
-\fB'o1750\fP:
+\fB01750\fP:
 .RE
 .fi
 .SS COMPLEX NUMBERS

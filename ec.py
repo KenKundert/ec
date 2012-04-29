@@ -24,23 +24,24 @@ class CalculatorError(Exception):
 
 # Stack {{{2
 class Stack:
-    def __init__(self, stack = None):
+    def __init__(self, parent, stack = None):
+        self.parent = parent
         if stack == None:
             stack = []
         self.stack = stack
 
     def push(self, item):
-        self.stack.append(item)
+        self.stack.insert(0, item)
 
     def pop(self):
         try:
-            return self.stack.pop()
+            return self.stack.pop(0)
         except IndexError:
             return (0, '')
 
     def peek(self):
         try:
-            return self.stack[-1]
+            return self.stack[0]
         except IndexError:
             return (0, '')
 
@@ -57,18 +58,22 @@ class Stack:
         length = len(self.stack)
         labels = ['x:', 'y:'] + (length-2)*['  ']
         for label, value in zip(labels, self.stack):
-            print '  %s %s' % (label, calc.format(value))
+            self.parent.printMessage('  %s %s' % (label, calc.format(value)))
 
 # Heap {{{2
 class Heap:
     def __init__(
-        self, initialState=None, reserved=None, removeAction=None, warnings=True
+        self
+      , parent = None
+      , initialState = None
+      , reserved = None
+      , removeAction = None
     ):
+        self.parent = parent
         self.initialState = initialState if initialState != None else {}
         self.reserved = reserved
         self.heap = copy(self.initialState)
         self.removeAction = removeAction
-        self.warnings = warnings
 
     def clear(self):
         self.heap = copy(self.initialState)
@@ -78,7 +83,9 @@ class Heap:
 
     def display(self):
         for key in sorted(self.heap.keys()):
-            print '  %s: %s' % (key, calc.format(self.heap[key]))
+            self.parent.printMessage(
+                '  %s: %s' % (key, calc.format(self.heap[key]))
+            )
 
     def __getitem__(self, key):
         return self.heap[key]
@@ -86,8 +93,9 @@ class Heap:
     def __setitem__(self, key, value):
         if key in self.reserved:
             if self.removeAction:
-                if self.warnings:
-                    print "%s: variable overrides built-in." % key
+                self.parent.printWarning(
+                    "%s: variable overrides built-in." % key
+                )
                 del self.reserved[self.reserved.index(key)]
                 self.removeAction(key)
             else:
@@ -356,13 +364,51 @@ class Recall:
 class SetUnits:
     def __init__(self, description = None):
         self.description = description
-        self.regex = re.compile(r'''("(.*)")|('(.*)')''')
+        self.regex = re.compile(r"'(.*)'")
 
     def execute(self, matchGroups, stack, calc):
-        ignore, one, ignore, theOther = matchGroups
+        units, = matchGroups
         x, xUnits = stack.pop()
-        units = one if one else theOther
         stack.push((x, units))
+
+# Print (pop 0, push 0, match regex) {{{2
+class Print:
+    def __init__(self, description = None):
+        self.description = description
+        self.regex = re.compile(r'"(.*)"')
+        self.argsRegex = re.compile(r'\${?(\w+|\$)}?')
+
+    def execute(self, matchGroups, stack, calc):
+        # Prints a message after expanding any $codes it contains
+        # $N or ${N} are replaced by the contents of a stack register (0=x, ...)
+        # $name or ${name} are replaced by the contents of a variable
+        # $$ is replaced by $
+        text, = matchGroups
+        if not text:
+            message = calc.display.format(stack.stack[0])
+        else:
+            components = self.argsRegex.split(text)
+            textFrags = components[0::2]
+            args = components[1::2]
+            formattedArgs = []
+            for arg in args:
+                if arg[0] == '{' and arg[-1] == '}':
+                    arg = arg[1:-1]
+                try:
+                    try:
+                        arg = stack.stack[int(arg)]
+                    except ValueError:
+                        arg = calc.heap[arg]
+                    arg = calc.format(arg)
+                except (KeyError, IndexError):
+                    if arg != '$':
+                        if calc.warningPrinter:
+                            calc.warningPrinter("$%s: unknown." % arg)
+                        arg = '$?%s?' % arg
+                formattedArgs += [arg]
+            components[1::2] = formattedArgs
+            message = ''.join(components)
+        calc.messagePrinter(message)
 
 # Swap (pop 2, push 2, match name) {{{2
 class Swap:
@@ -649,22 +695,25 @@ Actions = [
         'sci'
       , "1e7 (ex): a real number in scientific notation, perhaps with units"
     )
-  , Number(
-        'vhex'
-      , "'hFF (ex): a number in Verilog hexadecimal"
-    )
-  , Number(
-        'vdec'
-      , "'d99 (ex): a number in Verilog decimal"
-    )
-  , Number(
-        'voct'
-      , "'o77 (ex): a number in Verilog octal"
-    )
-  , Number(
-        'vbin'
-      , "'b11 (ex): a number in Verilog binary"
-    )
+# Support for Verilog constants was removed when units were added because the
+# single quote in the Verilog constant conflicts with the single quotes that
+# surround units.
+#  , Number(
+#        'vhex'
+#      , "'hFF (ex): a number in Verilog hexadecimal"
+#    )
+#  , Number(
+#        'vdec'
+#      , "'d99 (ex): a number in Verilog decimal"
+#    )
+#  , Number(
+#        'voct'
+#      , "'o77 (ex): a number in Verilog octal"
+#    )
+#  , Number(
+#        'vbin'
+#      , "'b11 (ex): a number in Verilog binary"
+#    )
   , SetFormat(
         'eng'
       , "%(kind)s[N]: use engineering notation, optionally set precision to N digits"
@@ -699,7 +748,8 @@ Actions = [
     )
   , Store('=name: store value into a variable')
   , Recall('name: recall value of a variable')
-  , SetUnits('"units": set the units of the x register')
+  , Print('"text": print text (replacing $N and $Var with the values of register N and variable Var)')
+  , SetUnits("'units': set the units of the x register")
   , Swap('%(key)s: swap x and y')
   , Dup('dup', None, '%(key)s: push x onto the stack again')
   , Pop('%(key)s: discard x')
@@ -725,12 +775,20 @@ Actions = [
 class Calculator:
     # before splitting the input, the following regex will be replaced by a
     # space. This allows certain operators to be given abutted to numbers
-    splitRegex = re.compile('''
+    operatorSplitRegex = re.compile('''
         (?<=[a-zA-Z0-9])    # alphanum before the split
         (?=[-+*/%!](\s|\Z)) # selected operators followed by white space or EOL
     ''', re.X)
+    stringSplitRegex = re.compile(r'''((?:"[^"]*"|'[^']*')+)''')
 
-    def __init__(self, actions, formatter, backUpStack=False, warnings=True):
+    def __init__(
+        self
+      , actions
+      , formatter
+      , backUpStack=False
+      , messagePrinter=None
+      , warningPrinter=None
+    ):
         # process the actions, partitioning them into two collections, one with
         # simple names, one with regular expressions
         self.actions = actions
@@ -745,23 +803,46 @@ class Calculator:
         # Initialize the calculator
         self.formatter = formatter
         self.backUpStack = backUpStack
-        self.stack = Stack()
+        self.messagePrinter = messagePrinter
+        self.warningPrinter = warningPrinter
+        self.stack = Stack(parent=self)
         self.heap = Heap(
             initialState = {'R': (50, 'Ohms')}
           , reserved = self.smplActions.keys()
           , removeAction = self.removeAction
-          , warnings = warnings
+          , parent = self
         )
         self.clear()
 
 
     def split(self, given):
         '''
-        Split a command string.
-        Alternative to simply using the string split() method. This one allows
-        some operators to immediately follow numbers without a space.
+        Split a command string into tokens.
+        There are a couple of things that complicate this.
+        First, strings must be kept intact.
+        Second, operators can follow immediately after numbers of words without
+            a space, such as in '2 3*'. We want to split those.
+        Third, parens, brackets, and braces may but up against the things they
+            are grouping, as in '(1.6*)toKm'. In this case the parens should be
+            split from their contents, so this should be split into ['(', '1.6',
+            '*', ')toKm'].
         '''
-        return Calculator.splitRegex.sub(' ', given).split()
+        # first add spaces after leading parens and after trailing ones
+        processed = given.replace('(', '( ').replace(')', ' )')
+
+        # second, split into strings and non-strings
+        components = Calculator.stringSplitRegex.split(processed)
+        tokens = []
+        for i, component in enumerate(components):
+            if i % 2:
+                # token is a string
+                tokens += [component]
+            else:
+                # token is not a string
+                # add spaces between numbers/identifiers and operators, then
+                # split again
+                tokens += Calculator.operatorSplitRegex.sub(' ', component).split()
+        return tokens
 
     def evaluate(self, given):
         '''
@@ -769,18 +850,29 @@ class Calculator:
         '''
         if self.backUpStack:
             self.prevStack = self.stack.clone()
-        for cmd in given:
-            if cmd in self.smplActions:
-                self.smplActions[cmd].execute(self.stack, self)
-            else:
-                for action in self.regexActions:
-                    match = action.regex.match(cmd)
-                    if match:
-                        action.execute(match.groups(), self.stack, self)
-                        break
+        try:
+            for cmd in given:
+                if cmd in self.smplActions:
+                    self.smplActions[cmd].execute(self.stack, self)
                 else:
-                    raise CalculatorError("%s: unrecognized" % cmd)
-        return self.stack.peek()
+                    for action in self.regexActions:
+                        match = action.regex.match(cmd)
+                        if match:
+                            action.execute(match.groups(), self.stack, self)
+                            break
+                    else:
+                        raise CalculatorError("%s: unrecognized" % cmd)
+            return self.stack.peek()
+        except (ValueError, OverflowError, ZeroDivisionError, TypeError), err:
+            if (
+                isinstance(err, TypeError) and
+                err.message == "can't convert complex to float"
+            ):
+                raise CalculatorError(
+                    "Function does not support a complex argument."
+                )
+            else:
+                raise CalculatorError(err.message)
 
     def clear(self):
         '''
@@ -826,6 +918,18 @@ class Calculator:
     def _angleUnits(self):
         return self.trigMode
 
+    def printMessage(self, message):
+        if self.messagePrinter:
+            self.messagePrinter(message)
+        else:
+            print message
+
+    def printWarning(self, warning):
+        if self.warningPrinter:
+            self.warningPrinter(warning)
+        else:
+            print "Warning: %s" % (warning)
+
 # Main {{{1
 if __name__ == '__main__':
     import sys
@@ -835,6 +939,9 @@ if __name__ == '__main__':
     colors = textcolors.Colors()
     error = colors.colorizer('red')
     highlight = colors.colorizer('magenta')
+    warning = colors.colorizer('yellow')
+    def printWarning(message):
+        print "%s: %s" % (warning('Warning'), message)
 
     def evaluateLine(calc, line, prompt):
         try:
@@ -842,19 +949,18 @@ if __name__ == '__main__':
                 calc.split(line)
             )
             prompt = calc.format(result)
-        except (CalculatorError, ValueError, OverflowError, ZeroDivisionError, TypeError), err:
-            if (
-                isinstance(err, TypeError) and
-                err.message == "can't convert complex to float"
-            ):
-                print error("Function does not support a complex argument.")
-            else:
-                print error(err.message)
+        except CalculatorError, err:
+            print error(err.message)
             calc.restoreStack()
         return prompt
 
     # create calculator
-    calc = Calculator(Actions, Display('eng', 4), backUpStack=True)
+    calc = Calculator(
+        Actions
+      , Display('eng', 4)
+      , backUpStack=True
+      , warningPrinter=printWarning
+    )
     prompt = '0'
 
     # read start up files
