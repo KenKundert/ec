@@ -54,11 +54,13 @@ class Stack:
     def __str__(self):
         return str(self.stack)
 
-    def display(self, calc):
+    def display(self):
         length = len(self.stack)
         labels = ['x:', 'y:'] + (length-2)*['  ']
         for label, value in zip(labels, self.stack):
-            self.parent.printMessage('  %s %s' % (label, calc.format(value)))
+            self.parent.printMessage(
+                '  %s %s' % (label, self.parent.format(value))
+            )
 
 # Heap {{{2
 class Heap:
@@ -385,8 +387,11 @@ class Print:
         # $$ is replaced by $
         text, = matchGroups
         if not text:
-            message = calc.display.format(stack.stack[0])
+            message = calc.format(stack.stack[0])
         else:
+            # process newlines and tabs
+            text = text.replace(r'\n', '\n')
+            text = text.replace(r'\t', '\t')
             components = self.argsRegex.split(text)
             textFrags = components[0::2]
             args = components[1::2]
@@ -408,7 +413,7 @@ class Print:
                 formattedArgs += [arg]
             components[1::2] = formattedArgs
             message = ''.join(components)
-        calc.messagePrinter(message)
+        calc.printMessage(message)
 
 # Swap (pop 2, push 2, match name) {{{2
 class Swap:
@@ -762,7 +767,7 @@ Actions = [
     )
   , Command(
         'stack'
-      , lambda stack, calc: stack.display(calc)
+      , lambda stack, calc: stack.display()
       , "%(key)s: print stack"
     )
   , Command('clstack', lambda stack, calc: stack.clear(), "%(key)s: clear stack")
@@ -781,6 +786,7 @@ class Calculator:
     ''', re.X)
     stringSplitRegex = re.compile(r'''((?:"[^"]*"|'[^']*')+)''')
 
+    # constructor {{{2
     def __init__(
         self
       , actions
@@ -814,7 +820,7 @@ class Calculator:
         )
         self.clear()
 
-
+    # split input into commands {{{2
     def split(self, given):
         '''
         Split a command string into tokens.
@@ -844,6 +850,7 @@ class Calculator:
                 tokens += Calculator.operatorSplitRegex.sub(' ', component).split()
         return tokens
 
+    # evaluate commands {{{2
     def evaluate(self, given):
         '''
         Evaluate a list of commands.
@@ -874,6 +881,7 @@ class Calculator:
             else:
                 raise CalculatorError(err.message)
 
+    # utility methods {{{2
     def clear(self):
         '''
         Clear the state of the calculator.
@@ -932,14 +940,71 @@ class Calculator:
 
 # Main {{{1
 if __name__ == '__main__':
-    import sys
+    import sys, os
 
-    # Import and configure the text colorizer
-    import textcolors
-    colors = textcolors.Colors()
-    error = colors.colorizer('red')
-    highlight = colors.colorizer('magenta')
-    warning = colors.colorizer('yellow')
+
+    # Configure the command line processor {{{2
+    from cmdline import commandLineProcessor
+
+    clp = commandLineProcessor()
+    clp.setDescription('Engineering Calculator', '\n'.join([
+        'A stack-based (RPN) engineering calculator with a text-based user '
+      , 'interface that is intended to be used interactively.'
+      , ''
+      , 'If run with no arguments, an interactive session is started. '
+      , 'If arguments are present, they are tested to see if they are '
+      , 'filenames, and if so, the files are opened and the contents are '
+      , 'executed as a script.  If they are not file names, then the arguments '
+      , 'themselves are treated as scripts and executed directly. The scripts '
+      , 'are run in the order they are specified.  In this case an interactive '
+      , 'session would not normally be started, but if the interactive option '
+      , 'is specified, it would be started after all scripts have been run.'
+      , ''
+      , 'The contents of ~/.ecrc, ./.ecrc, and the start up file will be run '
+      , 'upon start up if they exist, and then the stack is cleared.'
+    ]))
+    clp.setNumArgs((0,), '[scripts ...]')
+    clp.setHelpParams(key='--help', colWidth=17)
+    opt = clp.addOption(key='interactive', shortName='i', longName='interactive')
+    opt.setSummary('open an interactive session')
+    opt.setNumArgs(1)
+    opt = clp.addOption(key='startup', shortName='s', longName='startup')
+    opt.setSummary('start up file (stack is cleared afterwards)')
+    opt.setNumArgs(1)
+    opt = clp.addOption(key='nocolor', shortName='c', longName='nocolor')
+    opt.setSummary('Do not color the output.')
+    opt = clp.addOption(
+        key='help', shortName='h', longName='help', action=clp.printHelp
+    )
+    opt.setSummary('Print usage information.')
+
+    # Process the command line {{{2
+    clp.process()
+
+    # get the command line options and arguments
+    opts = clp.getOptions()
+    args = clp.getArguments()
+    progName = clp.progName()
+    colorize = 'nocolor' not in opts
+    startUpFile = opts.get('startup', [])
+    interactiveSession = True if 'interactive' in opts else not args
+
+    # Import and configure the text colorizer {{{2
+    if colorize:
+        try:
+            import textcolors
+        except ImportError:
+            colorize = False
+
+    if colorize:
+        colors = textcolors.Colors()
+        error = colors.colorizer('red')
+        highlight = colors.colorizer('magenta')
+        warning = colors.colorizer('yellow')
+    else:
+        error = highlight = warning = lambda x: x
+
+    # Define utility functions {{{2
     def printWarning(message):
         print "%s: %s" % (warning('Warning'), message)
 
@@ -954,7 +1019,7 @@ if __name__ == '__main__':
             calc.restoreStack()
         return prompt
 
-    # create calculator
+    # Create calculator {{{2
     calc = Calculator(
         Actions
       , Display('eng', 4)
@@ -963,20 +1028,40 @@ if __name__ == '__main__':
     )
     prompt = '0'
 
-    # read start up files
-    startUpFiles = ['%s/.ecrc' % each for each in ['~', '.']]
-    for each in startUpFiles + sys.argv[1:]:
-        cmdFile = expanduser(each)
+    # Run start up files {{{2
+    rcFiles = ['%s/.ecrc' % each for each in ['~', '.']]
+    for each in rcFiles + startUpFile:
         try:
+            cmdFile = expanduser(each)
             with open(cmdFile) as pFile:
-                for line in pFile:
+                for lineno, line in enumerate(pFile):
                     prompt = evaluateLine(calc, line, prompt)
         except IOError, err:
-            if err.errno != 2 or each not in startUpFiles:
+            if err.errno != 2 or each not in rcFiles:
+                exit('%s.$s: %s: %s' % (
+                    each, lineno+1, err.filename, err.strerror
+                ))
+    calc.stack.clear()
+    prompt = '0'
+
+    # Run scripts {{{2
+    for arg in args:
+        try:
+            cmdFile = expanduser(arg)
+            if os.path.exists(cmdFile):
+                with open(cmdFile) as pFile:
+                    for lineno, line in enumerate(pFile):
+                        loc = '%s.%s: ' % (cmdFile, lineno+1)
+                        prompt = evaluateLine(calc, line, prompt)
+            else:
+                loc = ''
+                prompt = evaluateLine(calc, arg, prompt)
+        except IOError, err:
+            if err.errno != 2:
                 exit('%s: %s' % (err.filename, err.strerror))
 
-    # interact with user
-    while(1):
+    # Interact with user {{{2
+    while(interactiveSession):
         try:
             entered = raw_input('%s: ' % highlight(prompt))
         except (EOFError, KeyboardInterrupt):
