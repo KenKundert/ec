@@ -39,9 +39,9 @@ class Stack:
         except IndexError:
             return (0, '')
 
-    def peek(self):
+    def peek(self, reg = 0):
         try:
-            return self.stack[0]
+            return self.stack[reg]
         except IndexError:
             return (0, '')
 
@@ -220,10 +220,10 @@ class UnaryOp:
         else:
             x = self.action(x)
         if callable(self.units):
-            xUnits = self.units(calc)
+            units = self.units(calc, [xUnits])
         else:
-            xUnits = self.units
-        stack.push((x, xUnits))
+            units = self.units
+        stack.push((x, units))
 
 # BinaryOp (pop 2, push 1, match name) {{{2
 class BinaryOp:
@@ -245,10 +245,10 @@ class BinaryOp:
         else:
             result = self.action(y, x)
         if callable(self.units):
-            xUnits = self.units(calc)
+            units = self.units(calc, [xUnits, yUnits])
         else:
-            xUnits = self.units
-        stack.push((result, xUnits))
+            units = self.units
+        stack.push((result, units))
 
 # BinaryIoOp (pop 2, push 2, match name) {{{2
 class BinaryIoOp:
@@ -448,7 +448,7 @@ class Dup:
                 x = self.action(x)
             if self.units:
                 if callable(self.units):
-                    xUnits = self.units(calc)
+                    xUnits = self.units(calc, [xUnits])
                 else:
                     xUnits = self.units
         stack.push((x, xUnits))
@@ -467,8 +467,20 @@ class Pop:
 
 # Actions {{{1
 Actions = [
-    BinaryOp('+', operator.add, "%(key)s: addition")
-  , BinaryOp('-', operator.sub, "%(key)s: subtraction")
+    BinaryOp(
+        '+'
+      , operator.add
+      , "%(key)s: addition"
+      # keep units of x if they are the same as units of y
+      , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+    )
+  , BinaryOp(
+        '-'
+      , operator.sub
+      , "%(key)s: subtraction"
+      # keep units of x if they are the same as units of y
+      , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+    )
   , BinaryOp('*', operator.mul, "%(key)s: multiplication")
   , BinaryOp('/', operator.truediv, "%(key)s: true division")
   , BinaryOp('//', operator.floordiv, "%(key)s: floor division")
@@ -510,7 +522,7 @@ Actions = [
         'mag'
       , lambda x: abs(x)
       , "%(key)s: magnitude"
-      , units=lambda calc: calc.stack.peek()[1]
+      , units=lambda calc, units: units[0]
     )
   , Dup(
         'ph'
@@ -521,7 +533,7 @@ Actions = [
         )
       , "%(key)s: phase"
       , True
-      , units=lambda calc: calc._angleUnits()
+      , units=lambda calc, units: calc._angleUnits()
     )
   , BinaryOp('||', lambda y, x: (x/(x+y))*y, "%(key)s: parallel combination")
   , UnaryOp(
@@ -547,28 +559,28 @@ Actions = [
       , lambda x, calc: calc._fromRadians(math.asin(x))
       , "%(key)s: arc sine"
       , True
-      , units=lambda calc: calc._angleUnits()
+      , units=lambda calc, units: calc._angleUnits()
     )
   , UnaryOp(
         'acos'
       , lambda x, calc: calc._fromRadians(math.acos(x))
       , "%(key)s: arc cosine"
       , True
-      , units=lambda calc: calc._angleUnits()
+      , units=lambda calc, units: calc._angleUnits()
     )
   , UnaryOp(
         'atan'
       , lambda x, calc: calc._fromRadians(math.atan(x))
       , "%(key)s: arc tangent"
       , True
-      , units=lambda calc: calc._angleUnits()
+      , units=lambda calc, units: calc._angleUnits()
     )
   , BinaryOp(
         'atan2'
       , lambda y, x, calc: calc._fromRadians(math.atan2(y, x))
       , "%(key)s: two-argument arc tangent"
       , True
-      , units=lambda calc: calc._angleUnits()
+      , units=lambda calc, units: calc._angleUnits()
     )
   , BinaryOp('hypot', math.hypot, "%(key)s: hypotenuse")
   , BinaryIoOp(

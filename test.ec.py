@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-# Test PyCalc
+# Test EC
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from pycalc import Calculator, Actions, Display, CalculatorError
+from ec import Calculator, Actions, Display, CalculatorError
 import math
 
 # Initialization {{{1
@@ -101,6 +101,11 @@ testCases = [
       , 'value': 2.0
       , 'units': ''
       , 'text': '2'
+    }
+  , {   'stimulus': '$1000 $843-'
+      , 'value': 157
+      , 'units': '$'
+      , 'text': '$157'
     }
   , {   'stimulus': "0x1f 0x01 +"
       , 'value': 32
