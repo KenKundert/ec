@@ -12,6 +12,9 @@ Requires Python version 2.6.
 To get the source code:
 > git clone git@github.com:KenKundert/ec.git
 
+Once cloned, you can get the latest updates using:
+> git pull
+
 To run the regression tests:
 > ./test
 

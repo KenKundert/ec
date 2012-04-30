@@ -102,11 +102,6 @@ testCases = [
       , 'units': ''
       , 'text': '2'
     }
-  , {   'stimulus': '$1000 $843-'
-      , 'value': 157
-      , 'units': '$'
-      , 'text': '$157'
-    }
   , {   'stimulus': "0x1f 0x01 +"
       , 'value': 32
       , 'units': ''
@@ -412,10 +407,20 @@ testCases = [
       , 'units': ''
       , 'text': "10"
     }
-  , {   'stimulus': "2.437GHz"
-      , 'value': 2.437e9
+  , {   'stimulus': "2.437GHz 100MHz+"
+      , 'value': 2.537e9
       , 'units': 'Hz'
-      , 'text': "2.437 GHz"
+      , 'text': "2.537 GHz"
+    }
+  , {   'stimulus': '$1000 $843-'
+      , 'value': 157
+      , 'units': '$'
+      , 'text': '$157'
+    }
+  , {   'stimulus': "1.52e-11F"
+      , 'value': 1.52e-11
+      , 'units': 'F'
+      , 'text': "15.2 pF"
     }
   , {   'stimulus': "1e+6 =freq 10e-6 =time 2pi * * time freq *"
       , 'value': 10

@@ -27,14 +27,16 @@ scripts are run in the order they are specified.  In this case an interactive
 session would not normally be started, but if the interactive option is 
 specified, it would be started after all scripts have been run.
 .PP
-The contents of ~/.ecrc, ./.ecrc, and the start up file will be run '
-upon start up if they exist, and then the stack is cleared.'
+The contents of \fI~/.ecrc\fP, \fI./.ecrc\fP, and the start up file will be run 
+upon start up if they exist, and then the stack is cleared.
 .SS OPTIONS
-.IP "-s, --startup"
-Run the commands in this file as an initialization script (stack is cleared 
-afterwards).
 .IP "-i, --interactive"
-Force interactive mode.
+Open and interactive session.
+.IP "-x, --printx"
+Print value of x register upon termination, ignored with interactive sessions.
+.IP "-s, --startup file"
+Run commands from file to initialize calculator before any script or interactive 
+session is run, stack is cleared after it is run.
 .IP "-c, --nocolor"
 Do not use colors in the output.
 .IP "-h, --help"
@@ -142,11 +144,13 @@ T;1e12;;p;1e-12
 ;;;a;1e-18
 .TE
 .PP
-Optionally, the scale factor can be combined with simple units. For example,
+Optionally, numbers can be combined with simple units. For example,
 .nf
 .RS
-10K
+10KHz
 3.16pF
+2.5_V
+4.7e-10F
 .RE
 .fi
 .PP
@@ -624,6 +628,19 @@ The first argument does not correspond to a file, so it is executed as a script.
 It simply pushes 1KHz onto the stack. The second argument does correspond to 
 a file, so its contents are executed. The script ends with a print command, so 
 the results are printed to standard output as the script terminates.
+.PP
+Generally if you do not issue a print command in a script, there will be no 
+output. However, if you specify the \fB-x\fP or \fB--printx\fP command line 
+option the value of the \fIx\fP register will be printed upon termination. An 
+example of how this could be useful is:
+.nf
+.RS
+> ec -x 1.52e-11F
+15.2 pF
+.RE
+.fi
+In this example, \fBec\fP is used simply to convert a number into the more 
+readable engineering notation.
 .SS DIAGNOSTICS
 If an error occurs on a line, an error message will be printed and the stack 
 will be restored to the values it had before the line was entered. So it is 

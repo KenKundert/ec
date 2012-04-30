@@ -313,7 +313,7 @@ class Number:
     def execute(self, matchGroups, stack, calc):
         units = ''
         if self.kind == 'sci':
-            num = float(matchGroups[0])
+            num, units = float(matchGroups[0]), matchGroups[1]
         elif self.kind == 'eng':
             numWithUnits = engfmt.toNumber(matchGroups[0])
             num, units = numWithUnits
@@ -954,7 +954,6 @@ class Calculator:
 if __name__ == '__main__':
     import sys, os
 
-
     # Configure the command line processor {{{2
     from cmdline import commandLineProcessor
 
@@ -976,13 +975,20 @@ if __name__ == '__main__':
       , 'upon start up if they exist, and then the stack is cleared.'
     ]))
     clp.setNumArgs((0,), '[scripts ...]')
-    clp.setHelpParams(key='--help', colWidth=17)
+    clp.setHelpParams(key='--help', colWidth=18)
     opt = clp.addOption(key='interactive', shortName='i', longName='interactive')
-    opt.setSummary('open an interactive session')
-    opt.setNumArgs(1)
+    opt.setSummary('Open an interactive session.')
+    opt = clp.addOption(key='printx', shortName='x', longName='printx')
+    opt.setSummary(' '.join([
+        'Print value of x register upon termination,'
+      , 'ignored with interactive sessions.'
+    ]))
     opt = clp.addOption(key='startup', shortName='s', longName='startup')
-    opt.setSummary('start up file (stack is cleared afterwards)')
-    opt.setNumArgs(1)
+    opt.setSummary(' '.join([
+        'Run commands from file to initialize calculator before any script or'
+      , 'interactive session is run, stack is cleared after it is run.'
+    ]))
+    opt.setNumArgs(1, 'file')
     opt = clp.addOption(key='nocolor', shortName='c', longName='nocolor')
     opt.setSummary('Do not color the output.')
     opt = clp.addOption(
@@ -1000,6 +1006,7 @@ if __name__ == '__main__':
     colorize = 'nocolor' not in opts
     startUpFile = opts.get('startup', [])
     interactiveSession = True if 'interactive' in opts else not args
+    printXuponTermination = 'printx' in opts
 
     # Import and configure the text colorizer {{{2
     if colorize:
@@ -1073,10 +1080,13 @@ if __name__ == '__main__':
                 exit('%s: %s' % (err.filename, err.strerror))
 
     # Interact with user {{{2
-    while(interactiveSession):
-        try:
-            entered = raw_input('%s: ' % highlight(prompt))
-        except (EOFError, KeyboardInterrupt):
-            print
-            exit()
-        prompt = evaluateLine(calc, entered, prompt)
+    if (interactiveSession):
+        while(True):
+            try:
+                entered = raw_input('%s: ' % highlight(prompt))
+            except (EOFError, KeyboardInterrupt):
+                print
+                exit()
+            prompt = evaluateLine(calc, entered, prompt)
+    elif printXuponTermination:
+        print prompt
