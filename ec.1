@@ -14,10 +14,31 @@
 .SH NAME
 ec - An engineering calculator
 .SH SYNTAX
-\fBec\fR [ \fI file \fR ]
+\fBec\fR [ \fI options \fR ] [\fI scripts ... \fP ]
 .SH DESCRIPTION
 \fBec\fR is a stack-based (RPN) engineering calculator with a text-based user 
 interface that is intended to be used interactively.
+.PP
+If run with no arguments, an interactive session is started.  If arguments are 
+present, they are tested to see if they are filenames, and if so, the files are 
+opened and the contents are executed as a script.  If they are not file names, 
+then the arguments themselves are treated as scripts and executed directly. The 
+scripts are run in the order they are specified.  In this case an interactive 
+session would not normally be started, but if the interactive option is 
+specified, it would be started after all scripts have been run.
+.PP
+The contents of ~/.ecrc, ./.ecrc, and the start up file will be run '
+upon start up if they exist, and then the stack is cleared.'
+.SS OPTIONS
+.IP "-s, --startup"
+Run the commands in this file as an initialization script (stack is cleared 
+afterwards).
+.IP "-i, --interactive"
+Force interactive mode.
+.IP "-c, --nocolor"
+Do not use colors in the output.
+.IP "-h, --help"
+Print the usage and exit.
 .SS STACK
 As you enter numbers they are pushed onto a stack. The most recent member of the 
 stack is referred to as the \fIx\fP register and the second most recent is the 
@@ -522,7 +543,8 @@ Terminate the program (:q and ctrl-D also work).
 At start up \fBec\fP reads and executes commands from files.
 It first tries '~/.ecrc' and runs any commands it contains if it exists.
 It then tries './.ecrc' if it exists.
-Finally it runs any files given on the command line.
+Finally it runs the startup file specified on the command line (with the 
+\fB-s\fP or \fB--startup\fP option).
 It is common to put your generic preferences in '~/.exrc'.
 For example, if your are a physicist with a desire for high precision results, 
 you might use:
@@ -530,29 +552,78 @@ you might use:
 .RS
 eng6
 h 2pi / 'J-s' =hbar
-clstack
 .RE
 .fi
 This tells \fBec\fP to use 6 digits of resolution and predefines \fIhbar\fP as 
 a constant.
-Lastly \fIclstack\fP clears the stack so the user gets a clean stack.
-The local start up file ('./.ecrc') or the file given as a command line argument 
-is generally used to give more project specific initializations.
-For example, in a directory where you are working on a PLL design you might have 
-an './.ecrc' file with the following contents:
+After all of the startup files have been processed, the stack is cleared.
+.SS SCRIPTING
+Command line arguments are used as scripts. If the argument corresponds to an 
+existing file, the file is opened its contents are executed. Otherwise, the 
+argument itself is executed (generally it will need to be quoted to protect its 
+contents from being interpreted by the shell). The arguments are executed in the 
+order given. When arguments are given the calculator by default does not start 
+an interactive session and does not produce output. If you wish to use an 
+interactive session after scripts have been evaluated, use the \fB-i\fP or 
+\fI--interactive\fP command line options. If you wish to produce output, which 
+you certainly will if you are not using the interactive session, you must add 
+print commands to your script, which is a double-quoted string. For example,
 .nf
 .RS
-88.3uSiemens =kdet
-9.1G 'Hz/V' =kvco
-2 =m
-8 =n
-1.4pF =cs
-59.7pF =cp
-2.2kOhms =rz
-clstack
+\fB0\fP: "Hello world!"
+Hello world!
+\fB0\fP:
 .RE
 .fi
-This gives the default values for the parameters used in the design.
+.PP
+You can add the values of registers and variables to your print statements.  
+\fI$N\fP will print out the value of register \fIN\fP, where 0 is the \fIx\fP 
+register,  1 is the \fIy\fP register, etc. \fI$name\fP will print the value of 
+a variable with the given name. Alternatively, you can use \fI${N}\fP and 
+\fI${name}\fP to disambiguate the name or number. To print a dollar sign, use 
+\fI$$\fP.  To print a newline or a tab, use \fI\en\fP and \fI\et\fP. For 
+example,
+.nf
+.RS
+\fB0\fP: 100MHz =freq
+\fB100 MHz\fP: 2pi* 'rads/s'
+\fB628.32 Mrads/s\fP: "$freq corresponds to $0."
+100 MHz corresponds to 628.32 Mrads/s.
+\fB628.32 Mrads/s\fP:
+.RE
+.fi
+.PP
+To illustrate the use of a script, assume that a file named \fIlg\fP exists and 
+contains a calculation for the loop gain of a PLL,
+.nf
+.RS
+=freq
+88.3u =Kdet
+9.07G =Kvco
+2 =M
+8 =N
+2 =F
+2pi* 'rads/s' =omega
+Kdet Kvco freq/ M/ =a
+N F * =f
+a f* =T
+"Open loop gain = $a\enFeedback factor = $f\enLoop gain = $T"
+.RE
+.fi
+Notice that it starts by saving the value in the \fIx\fP register to the 
+variable \fIfreq\fP. This script would be run as:
+.nf
+.RS
+> ec 1KHz lg
+Open loop gain = 4.535M
+Feedback factor = 16
+Loop gain = 72.56M
+.RE
+.fi
+The first argument does not correspond to a file, so it is executed as a script.  
+It simply pushes 1KHz onto the stack. The second argument does correspond to 
+a file, so its contents are executed. The script ends with a print command, so 
+the results are printed to standard output as the script terminates.
 .SS DIAGNOSTICS
 If an error occurs on a line, an error message will be printed and the stack 
 will be restored to the values it had before the line was entered. So it is 
@@ -562,8 +633,8 @@ retained.  For example,
 .nf
 .RS
 \fB0\fP: 1KOhms =r
-\fB1 KOhms\fP: 100MHz =freq 1pF =c
-c: reserved, cannot be used as variable name.
+\fB1 KOhms\fP: 100MHz =freq 1pF = c
+=: unrecognized
 \fB1 KOhms\fP: stack
   \fIx\fP: 1 KOhms
 \fB1 KOhms\fP: vars
@@ -573,10 +644,10 @@ c: reserved, cannot be used as variable name.
 .RE
 .fi
 .PP
-The error occurred when trying to assign a value to \fIc\fP, which is 
-a predefined constant (the speed of light). Notice that 100MHz was saved to the 
-variable \fIfreq\fP, but the stack was restored to the state it had before the 
-offending line was entered.
+The error occurred when trying to assign a value to \fIc\fP because a space was 
+accidentally left between the equal sign and the variable name.  Notice that 
+100MHz was saved to the variable \fIfreq\fP, but the stack was restored to the 
+state it had before the offending line was entered.
 .SH AUTHOR
 .nf
 Ken Kundert
