@@ -30,6 +30,27 @@ feedback factor = 16
 loopgain = 72.56M
 '''
     }
+  , {   'stimulus': "'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz' lg.ec"
+      , 'output': '''\
+openloop gain = 4.535M
+feedback factor = 16
+loopgain = 72.56M
+'''
+    }
+  , {   'stimulus': "'88.3u =Kdet' '9.07G =Kvco' '2 =M' '8 =N' '2 =F' '1KHz' lg.ec"
+      , 'output': '''\
+openloop gain = 4.535M
+feedback factor = 16
+loopgain = 72.56M
+'''
+    }
+  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi*' "'rads/s' =omega Kdet Kvco freq/ M/ =a N F * =f a f*" '=T "openloop gain = $a\nfeedback factor = $f\nloopgain = $T"'"""
+      , 'output': '''\
+openloop gain = 4.535M
+feedback factor = 16
+loopgain = 72.56M
+'''
+    }
 ]
 
 # Run tests {{{1
@@ -64,8 +85,8 @@ for index, case in enumerate(testCases):
         failures += 1
         print fail('Failure detected (%s):' % failures)
         print info('    Given:'), stimulus
-        print info('    Result  :'), result, calc.format((result, units)), units
-        print info('    Expected:'), expectedResult, expectedFormattedResult, expectedUnits
+        print info('    Result  :'), '\n' + result
+        print info('    Expected:'), '\n' + expectedResult
 
     elif printResults:
         print succeed('    Result:'), result
