@@ -133,15 +133,18 @@ notations. For example,
 In addition, you can also use the normal SI scale factors to represent either 
 large or small numbers without using scientific notation.
 .TS
-tab(;);
-rlcrl.
-\&_;1
-k, K;1e3;;m;1e-3
-M;1e6;;u;1e-6
-G;1e9;;n;1e-9
-T;1e12;;p;1e-12
-;;;f;1e-15
-;;;a;1e-18
+|rcl|cc|rcl|.
+_	_	_			_	_	_
+\&_	unity	1
+k, K	1e3	kilo			m	1e-3	milli
+M	1e6	mega			u	1e-6	micro
+G	1e9	giga			n	1e-9	nano
+T	1e12	terra			p	1e-12	pico
+P	1e15	peta			f	1e-15	fempto
+E	1e18	exa			a	1e-18	atto
+Z	1e21	zetta			z	1e-21	zepto
+Y	1e24	yotta			y	1e-24	yocto
+_	_	_			_	_	_
 .TE
 .PP
 Optionally, numbers can be combined with simple units. For example,
@@ -204,6 +207,12 @@ mode to indicate the desired precision.  For example,
 .PP
 Notice that scientific notation always displays the specified number of digits 
 whereas engineering notation suppresses zeros at the end of the number.
+.PP
+When displaying number using engineering notation, \fBec\fP does not use the 
+full range of available scale factors under the assumption that the largest and 
+smallest would be unfamiliar to most people. For this reason, \fBec\fP only uses 
+the most common scale factors when outputting numbers (T, G, M, K, m, u, n, p, 
+f, a).
 .SS INTEGERS
 You can enter integers in either hexadecimal (base 16), decimal (base 10) or 
 octal (base 8), as shown in the examples below:
