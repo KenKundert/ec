@@ -1,4 +1,4 @@
-EC: An Engineering Calculator
+ec: An Engineering Calculator
 =============================
 
 This calculator is noteworthy in that it employs a stack model of computation 
@@ -38,6 +38,7 @@ The prompt displays the value of the x-register.
 
 You can string together an arbitrarily long calculation on a single line
 0: 4 5 + 6 7 + *
+117:
 
 Or, you can string a long calculation over multiple lines (this calculates the 
 value of two parallel 100 ohm resistors.
@@ -47,10 +48,9 @@ value of two parallel 100 ohm resistors.
 50:
 
 Select operators can be entered without preceding them with a space if they 
-follow a number or a name. So the second example could be entered on one 
-line with
-0: 4 8* 3 5* +
-47:
+follow a number or a name. For example,
+0: 4 5* 6 5+ *
+220:
 
 To store a value into a variable, type an equal sign followed by a name. To
 recall it, simply use the name.
