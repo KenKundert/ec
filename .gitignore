@@ -19,7 +19,7 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
-.test*.yaml
+.test*.sum
 
 #Translations
 *.mo
