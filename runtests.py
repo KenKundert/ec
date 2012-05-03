@@ -25,18 +25,22 @@ The tests will be run and a summary produced. The tests can either be files,
 which are expected to be python files (without the .py suffix) or directories,
 which are expected to contain another such file named 'test'.
 
-Each test is expected to produce a yaml file that will be read to determine the
-number of tests and failures that occurred during that test. The yaml file for a
-python script should be named './.test.name.yaml'. The yaml file for a directory
-should be named './dir/.test.yaml'. The invocation of runTests will create a
-file in the current working directory named './.test.yaml'. These yaml files
-should contain a dictionary with keys: 'tests', 'failures'.
+Each test is expected to produce a summary file that will be read to determine
+the number of tests and failures that occurred during that test. The summary
+file for a python script should be named './.test.name.sum'. The summary file
+for a directory should be named './dir/.test.sum'. The invocation of runTests
+will create a file in the current working directory named './.test.sum'. These
+summary files should contain a dictionary with keys: 'tests', 'failures'.
 """
 
 # preliminaries {{{1
 # imports {{{2
 import os, sys
-import yaml
+# use yaml if available, otherwise use pickle
+try:
+    from yaml import load as loadSummary, dump as dumpSummary
+except ImportError:
+    from pickle import load as loadSummary, dump as dumpSummary
 from textcolors import Colors
 from cmdline import commandLineProcessor
 
@@ -100,7 +104,7 @@ def cmdLineOpts():
 # writeSummary {{{1
 def writeSummary(tests, testFailures, suites = 1, suiteFailures = None):
     """
-    write yaml summary file
+    write summary file
     """
     # name becomes program names as invoked with .py stripped off
     name = progName if progName[-3:] != '.py' else progName[0:-3]
@@ -108,13 +112,13 @@ def writeSummary(tests, testFailures, suites = 1, suiteFailures = None):
         suiteFailures = 1 if testFailures else 0
     assert tests >= testFailures
     assert suites >= suiteFailures
-    with open('.%s.yaml' % name, 'w') as f:
-        f.write(yaml.dump({
+    with open('.%s.sum' % name, 'w') as f:
+        dumpSummary({
             'tests': tests
           , 'testFailures': testFailures
           , 'suites': suites
           , 'suiteFailures': suiteFailures
-        }))
+        }, f)
 
 # runTests {{{1
 def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
@@ -155,13 +159,13 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
     for test in args:
         name = '%s/%s' % (parent, test) if parent else test
         if os.path.isdir(test):
-            yamlFileName = './%s/.%s.yaml' % (test, testKey)
-            _deleteYamlFile(yamlFileName)
+            summaryFileName = './%s/.%s.sum' % (test, testKey)
+            _deleteYamlFile(summaryFileName)
             cmd = 'cd %s; ./%s %s' % (test, testKey, _childOpts(test))
             error = _invoke(cmd)
         elif os.path.isfile('%s.%s.py' % (testKey, test)):
-            yamlFileName = './.%s.%s.yaml' % (testKey, test)
-            _deleteYamlFile(yamlFileName)
+            summaryFileName = './.%s.%s.sum' % (testKey, test)
+            _deleteYamlFile(summaryFileName)
             if printSummary:
                 sys.stdout.write(status('%s: ' % name))
                 sys.stdout.flush()
@@ -184,8 +188,8 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
                 print fail('Failures detected in %s tests.' % name)
                 failures = True
         try:
-            with open(yamlFileName) as f:
-                results = yaml.load(f.read())
+            with open(summaryFileName) as f:
+                results = loadSummary(f)
                 numTests += results['tests']
                 numTestFailures += results['testFailures']
                 numSuites += results['suites']
@@ -193,8 +197,8 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
         except KeyError:
             sys.exit(
                     exception(
-                    '%s: invalid yaml summary file: %s' % (
-                        progName, yamlFileName
+                    '%s: invalid summary file: %s' % (
+                        progName, summaryFileName
                     )
                 )
             )
@@ -205,8 +209,8 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
             else:
                 sys.exit(
                     exception(
-                        "%s: yaml summary file '%s': %s." % (
-                            progName, yamlFileName, err.strerror
+                        "%s: summary file '%s': %s." % (
+                            progName, summaryFileName, err.strerror
                         )
                     )
                 )
@@ -226,8 +230,8 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
     except IOError, err:
         sys.exit(
             exception(
-                "%s: yaml summary file '%s': %s." % (
-                    progName, yamlFileName, err.strerror
+                "%s: summary file '%s': %s." % (
+                    progName, summaryFileName, err.strerror
                 )
             )
         )
@@ -269,7 +273,7 @@ def _invoke(cmd):
         )
 
 # _deleteYamlFile {{{2
-# delete a yaml summary file (need to do this to assure we don't pick up a
+# delete a summary file (need to do this to assure we don't pick up a
 # stale one if the test program fails to generate a new one). 
 def _deleteYamlFile(filename):
     if os.path.isfile(filename):
@@ -278,7 +282,7 @@ def _deleteYamlFile(filename):
         except IOError, err:
             sys.exit(
                 exception(
-                    "%s: yaml summary file '%s': %s." % (
+                    "%s: summary file '%s': %s." % (
                         sys.argv[0], filename, err.strerror
                     )
                 )
