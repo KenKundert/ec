@@ -507,6 +507,9 @@ Actions = [
       , "%(key)s: natural logarithm")
   , UnaryOp('pow10', lambda x: 10**x, "%(key)s: raise 10 to the power of x")
   , UnaryOp('log', math.log10, "%(key)s: base 10 logarithm")
+  # I recently discovered that according to NIST, the following are acceptable
+  # abbreviations for logarithms of various bases:
+  #    lb x (meaning log2 x), ln x (meaning loge x), or lg x (meaning log10 x).
   , UnaryOp(
         'log2'
       , lambda x: math.log(x)/math.log(2)
