@@ -73,7 +73,7 @@ for index, case in enumerate(testCases):
     messages = []
     warnings = []
     testsRun += 1
-    stimulus = './ec ' + case['stimulus']
+    stimulus = 'python ec.py ' + case['stimulus']
     expectedResult = case['output']
     if printTests:
         print status('Trying %d:' % index), stimulus
