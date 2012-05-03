@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 set nonomatch
-rm -rf *.pyc *.pyo .*.yaml
+rm -rf *.pyc *.pyo .*.sum
 rm -rf build .coverage .coverage-html 
 foreach i (*/clean)
     if ($i == "*/clean") break
