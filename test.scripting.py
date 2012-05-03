@@ -4,7 +4,7 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from pycalc import Calculator, Actions, Display, CalculatorError
+from ec import Calculator, Actions, Display, CalculatorError
 import math
 from subprocess import Popen, PIPE
 
@@ -73,7 +73,7 @@ for index, case in enumerate(testCases):
     messages = []
     warnings = []
     testsRun += 1
-    stimulus = 'pycalc ' + case['stimulus']
+    stimulus = './ec ' + case['stimulus']
     expectedResult = case['output']
     if printTests:
         print status('Trying %d:' % index), stimulus
