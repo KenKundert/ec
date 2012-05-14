@@ -4,7 +4,9 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from ec import Calculator, actions, Display, CalculatorError
+from ec import (
+    Calculator, actions, Display, CalculatorError, predefinedVariables
+)
 import math
 
 # Initialization {{{1
@@ -571,7 +573,7 @@ testCases = [
       , 'messages': ["x is 0, y is 1, z = 2, t is $?3?"]
       , 'warnings': ["$3: unknown."]
     }
-  , {   'stimulus': '"I have $R, you have $$50"'
+  , {   'stimulus': '"I have $Zo, you have $$50"'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
@@ -599,6 +601,7 @@ def grabWarnings(warning):
 calc = Calculator(
     actions
   , Display('eng', 4)
+  , predefinedVariables=predefinedVariables
   , messagePrinter=grabMessages
   , warningPrinter=grabWarnings
 )

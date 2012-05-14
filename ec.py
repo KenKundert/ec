@@ -789,27 +789,27 @@ antiDecibels10 = UnaryOp(
 antiDecibels10.addAliases(['db2p'])
 voltageToDbm = UnaryOp(
     'vdbm'
-  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['R'][0]/2)
-  , "%(key)s: peak voltage to dBm"
+  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Zo'][0]/2)
+  , "%(key)s: peak voltage to dBm (assumes reference resistance of Zo)"
   , True
 )
 dbmToVoltage = UnaryOp(
     'dbmv'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['R'][0])
-  , "%(key)s: dBm to peak voltage"
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Zo'][0])
+  , "%(key)s: dBm to peak voltage (assumes reference resistance of Zo)"
   , True
   , 'V'
 )
 currentToDbm = UnaryOp(
     'idbm'
-  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['R'][0]/2)
-  , "%(key)s: peak current to dBm"
+  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Zo'][0]/2)
+  , "%(key)s: peak current to dBm (assumes reference resistance of Zo)"
   , True
 )
 dbmToCurrent = UnaryOp(
     'dbmi'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['R'][0])
-  , "%(key)s: dBm to peak current"
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Zo'][0])
+  , "%(key)s: dBm to peak current (assumes reference resistance of Zo)"
   , True
   , 'A'
 )
@@ -1314,10 +1314,16 @@ chemistryActions = (
 )
 
 # Choose action list {{{2
-# Eliminate any redundancies in the list
+# To modify the personality of the calculator, chose the set of actions to use
+# and any predefined variables needed here. You can also adjust the list of
+# actions by commenting out undesired ones in the lists above.
+actionsToUse = engineeringActions
+predefinedVariables = {'Zo': (50, 'Ohms')}
+
+# Eliminate any redundancies in the actions list {{{2
 alreadySeen = set()
 actions = []
-for action in engineeringActions:
+for action in actionsToUse:
     try:
         if action.key not in alreadySeen:
             actions += [action]
@@ -1347,6 +1353,7 @@ class Calculator:
         self
       , actions
       , formatter
+      , predefinedVariables={}
       , backUpStack=False
       , messagePrinter=None
       , warningPrinter=None
@@ -1374,7 +1381,7 @@ class Calculator:
         self.warningPrinter = warningPrinter
         self.stack = Stack(parent=self)
         self.heap = Heap(
-            initialState = {'R': (50, 'Ohms')}
+            initialState = predefinedVariables
           , reserved = self.smplActions.keys()
           , removeAction = self.removeAction
           , parent = self
@@ -1591,6 +1598,7 @@ if __name__ == '__main__':
     calc = Calculator(
         actions
       , Display('eng', 4)
+      , predefinedVariables
       , backUpStack=True
       , warningPrinter=printWarning
     )
