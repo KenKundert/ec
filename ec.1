@@ -382,7 +382,7 @@ back into the \fIx\fP register: \fIx\fP=(100*(\fIx\fP-\fIy\fP)/\fIy\fP).
 .IP "**: power"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
 replaced with the the value of \fIy\fP raised to the power of \fIx\fP: 
-\fIx\fP=\fIy\fP**\fIx\fP.
+\fIx\fP=\fIy\fP**\fIx\fP. Aliases: \fIpow\fP, \fIytox\fP.
 .IP "chs: change sign"
 The value in the \fIx\fP register is replaced with its negative: 
 \fIx\fP=-\fIx\fP.
@@ -400,31 +400,34 @@ The value in the \fIx\fP register is replaced with its factorial:
 \fIx\fP=\fIx\fP!.
 .IP "exp: natural exponential"
 The value in the \fIx\fP register is replaced with its exponential: 
-\fIx\fP=\fIe\fP**\fIx\fP.  Supports a complex argument.
+\fIx\fP=\fIe\fP**\fIx\fP.  Supports a complex argument. Alias: \fIpowe\fP. 
 .IP "ln: natural logarithm"
 The value in the \fIx\fP register is replaced with its natural logarithm: 
-\fIx\fP=log_\fIe\fP(\fIx\fP).  Supports a complex argument.
+\fIx\fP=log_\fIe\fP(\fIx\fP).  Supports a complex argument. Alias: \fIloge\fP. 
 .IP "pow10: raise 10 to the power of \fIx\fP"
 The value in the \fIx\fP register is replaced with 10 raised to the \fIx\fP 
-power: \fIx\fP=10**\fIx\fP.
-.IP "log: common logarithm"
+power: \fIx\fP=10**\fIx\fP. Alias: \fI10tox\fP.
+.IP "lg: common logarithm"
 The value in the \fIx\fP register is replaced with its common logarithm: 
-\fIx\fP=log_10(\fIx\fP).
-.IP "log2: base 2 logarithm"
+\fIx\fP=log_10(\fIx\fP). Aliases: \fIlog\fP, \fIlog10\fP.
+.IP "lb: base 2 logarithm"
 The value in the \fIx\fP register is replaced with its base 2 logarithm: 
-\fIx\fP=log_2(\fIx\fP).
+\fIx\fP=log_2(\fIx\fP). Alias: \fIlog2\fP.
 .IP "sqr: square"
 The value in the \fIx\fP register is replaced with its square: 
 \fIx\fP=\fIx\fP**2.
 .IP "sqrt: square root"
 The value in the \fIx\fP register is replaced with its square 
 root:\fIx\fP=\fIx\fP**0.5.  Supports a complex argument.
-.IP "mag: magnitude"
-The value in the \fIx\fP register is replaced with its magnitude if it is 
-complex and with its absolute value if it is real.
-.IP "ph: phase"
-The value in the \fIx\fP register is replaced with its phase if it is complex 
-and with 0 if it is real.
+.IP "cbrt: cube root"
+The value in the \fIx\fP register is replaced with its cube 
+root:\fIx\fP=\fIx\fP**0.5.  Supports a complex argument.
+.IP "abs: absolute value"
+The value in the \fIx\fP register is replaced with its absolute value if it is 
+real and with its magnitude if it is complex.  Alias: \fImag\fP.
+.IP "arg: argument"
+The value in the \fIx\fP register is replaced with its argument (phase) if it is 
+complex and with 0 if it is real. Alias: \fIph\fP.
 .IP "||: parallel combination"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
 replaced with the reciprocal of the sum of their reciprocals: 
@@ -454,11 +457,11 @@ tangent:\fIx\fP=atan(\fIx\fP).
 .IP "atan2: two-argument arc tangent"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
 replaced with the angle of the vector from the origin to the point 
-(\fIx\fP,\fIy\fP): \fIx\fP=atan2(\fIy\fP,\fIx\fP).
+(\fIx\fP,\fIy\fP): \fIx\fP=atan2(\fIy\fP,\fIx\fP). Alias: \fIangle\fP. 
 .IP "hypot: hypotenuse"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
 replaced with the length of the vector from the origin to the point 
-(\fIx\fP,\fIy\fP): \fIx\fP=sqrt(\fIx\fP**2+\fIy\fP**2).
+(\fIx\fP,\fIy\fP): \fIx\fP=sqrt(\fIx\fP**2+\fIy\fP**2). Alias: \fIlen\fP.
 .IP "rtop: rectangular to polar coordinate conversion"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
 replaced with the length of the vector from the origin to the point 
@@ -491,19 +494,22 @@ tangent:\fIx\fP=atanh(\fIx\fP).
 .IP "db: convert to decibels"
 The value in the \fIx\fP register is replaced with its value in 
 decibels:\fIx\fP=20*log(\fIx\fP). It is appropriate to apply this form when 
-converting voltage or current to decibels.
+converting voltage or current to decibels. Aliases: \fIv2db\fP, \fIi2db\fP, 
+\fIdb20\fP.
 .IP "adb: convert from decibels"
 The value in the \fIx\fP register is converted from decibels and that value is 
 placed back into the \fIx\fP register: \fIx\fP=10**(\fIx\fP/20).  It is 
-appropriate to apply this form when converting decibels to voltage or current.
+appropriate to apply this form when converting decibels to voltage or current.  
+Aliases: \fIdb2v\fP, \fIdb2i\fP.
 .IP "db10: convert to decibels"
 The value in the \fIx\fP register is replaced with its value in 
 decibels:\fIx\fP=10*log(\fIx\fP). It is appropriate to apply this form when 
-converting power to decibels.
+converting power to decibels. Alias: \fIp2db\fP.
 .IP "adb10: convert from decibels"
 The value in the \fIx\fP register is converted from decibels and that value is 
 placed back into the \fIx\fP register: \fIx\fP=10**(\fIx\fP/10).  It is 
-appropriate to apply this form when converting decibels to power.
+appropriate to apply this form when converting decibels to power. Alias: 
+\fIdb2p\fP.
 .IP "vdbm: convert peak sinusoidal voltage to dBm"
 The value in the \fIx\fP register is expected to be the peak voltage of 
 a sinusoid that is driving a load resistor equal to \fIR\fP (a predefined 

@@ -4,17 +4,18 @@
 #
 # An RPN calculator that supports numbers with SI scale factors and units.
 
+# Imports {{{1
 from __future__ import division
 import operator
 import math
 import cmath
 import random
 import engfmt
+engfmt.setSpacer(' ')
 import re
 from os.path import expanduser
 from copy import copy
 from pydoc import pager
-engfmt.setSpacer(' ')
 
 # Utility classes {{{1
 # CalculatorError {{{2
@@ -96,7 +97,7 @@ class Heap:
         if key in self.reserved:
             if self.removeAction:
                 self.parent.printWarning(
-                    "%s: variable overrides built-in." % key
+                    "%s: variable has overridden built-in." % key
                 )
                 del self.reserved[self.reserved.index(key)]
                 self.removeAction(key)
@@ -160,7 +161,18 @@ def displayHelp(stack, calc):
     lines = []
     for each in calc.actions:
         if each.description:
-            lines += ['    ' + each.description % each.__dict__]
+            if hasattr(each, 'category'):
+                lines += ['\n' + each.description % (each.__dict__)]
+            else:
+                aliases = each.getAliases()
+                if aliases:
+                    if len(aliases) > 1:
+                        aliases = ' (aliases: %s)' % ','.join(aliases)
+                    else:
+                        aliases = ' (alias: %s)' % ','.join(aliases)
+                else:
+                    aliases = ''
+                lines += ['    ' + each.description % (each.__dict__) + aliases]
     pager('\n'.join(lines) + '\n')
 
 def useRadians(stack, calc):
@@ -173,8 +185,29 @@ def quit(stack, calc):
     exit()
 
 # Action classes {{{1
+availableActions = {}
+class Action:
+    def __init__(self):
+        raise NotImplementedError
+
+    def register(self, name):
+        assert name not in availableActions, "%s: already defined." % name
+        availableActions.update({name: self})
+
+    def addAliases(self, aliases):
+        try:
+            self.aliases |= set(aliases)
+        except AttributeError:
+            self.aliases = set(aliases)
+
+    def getAliases(self):
+        try:
+            return self.aliases
+        except AttributeError:
+            return set()
+
 # Command (pop 0, push 0, match name) {{{2
-class Command:
+class Command(Action):
     """
     Operation that does not affect the stack.
     """
@@ -182,12 +215,13 @@ class Command:
         self.key = key
         self.action = action
         self.description = description
+        self.register(self.key)
 
     def execute(self, stack, calc):
         self.action(stack, calc)
 
 # Constant (pop 0, push 1, match name) {{{2
-class Constant:
+class Constant(Action):
     """
     Operation that pushes one value onto the stack without removing any values.
     """
@@ -196,13 +230,14 @@ class Constant:
         self.action = action
         self.description = description
         self.units = units
+        self.register(self.key)
 
     def execute(self, stack, calc):
         result = self.action()
         stack.push((result, self.units))
 
 # UnaryOp (pop 1, push 1, match name) {{{2
-class UnaryOp:
+class UnaryOp(Action):
     """
     Operation that removes one value from the stack, replacing it with another.
     """
@@ -212,6 +247,7 @@ class UnaryOp:
         self.description = description
         self.needCalc = needCalc
         self.units = units
+        self.register(self.key)
 
     def execute(self, stack, calc):
         x, xUnits = stack.pop()
@@ -226,7 +262,7 @@ class UnaryOp:
         stack.push((x, units))
 
 # BinaryOp (pop 2, push 1, match name) {{{2
-class BinaryOp:
+class BinaryOp(Action):
     """
     Operation that removes two values from the stack and returns one value.
     """
@@ -236,6 +272,7 @@ class BinaryOp:
         self.description = description
         self.needCalc = needCalc
         self.units = units
+        self.register(self.key)
 
     def execute(self, stack, calc):
         x, xUnits = stack.pop()
@@ -251,7 +288,7 @@ class BinaryOp:
         stack.push((result, units))
 
 # BinaryIoOp (pop 2, push 2, match name) {{{2
-class BinaryIoOp:
+class BinaryIoOp(Action):
     """
     Operation that removes two values from the stack and returns two values.
     """
@@ -262,6 +299,7 @@ class BinaryIoOp:
         self.needCalc = needCalc
         self.xUnits = xUnits
         self.yUnits = yUnits
+        self.register(self.key)
 
     def execute(self, stack, calc):
         x, xUnits = stack.pop()
@@ -282,39 +320,42 @@ class BinaryIoOp:
         stack.push((result[0], xUnits))
 
 # Number (pop 0, push 1, match regex) {{{2
-class Number:
+class Number(Action):
     def __init__(self, kind, description = None):
         self.kind = kind
         self.description = description
-        if kind == 'hex':
+        if kind == 'hexnum':
             pattern = r"0[xX]([0-9a-fA-F]+)"
             self.base = 16
-        elif kind == 'oct':
+        elif kind == 'octnum':
             pattern = r"0([0-7]+)"
             self.base = 8
-        elif kind == 'vhex':
+        elif kind == 'vhexnum':
             pattern = r"'[hH]([0-9a-fA-F_]*[0-9a-fA-F])"
             self.base = 16
-        elif kind == 'vdec':
+        elif kind == 'vdecnum':
             pattern = r"'[dD]([0-9_]*[0-9])"
             self.base = 10
-        elif kind == 'voct':
+        elif kind == 'voctnum':
             pattern = r"'[oO]([0-7_]*[0-7])"
             self.base = 8
-        elif kind == 'vbin':
+        elif kind == 'vbinnum':
             pattern = r"'[bB]([01_]*[01])"
             self.base = 2
-        elif kind == 'eng':
+        elif kind == 'engnum':
             pattern = r'\A(\$?([-+]?[0-9]*\.?[0-9]+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
-        elif kind == 'sci':
+        elif kind == 'scinum':
             pattern = r'\A(\$?[-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
+        else:
+            raise NotImplementedError
         self.regex = re.compile(pattern)
+        self.register(self.kind)
 
     def execute(self, matchGroups, stack, calc):
         units = ''
-        if self.kind == 'sci':
+        if self.kind == 'scinum':
             num, units = float(matchGroups[0]), matchGroups[1]
-        elif self.kind == 'eng':
+        elif self.kind == 'engnum':
             numWithUnits = engfmt.toNumber(matchGroups[0])
             num, units = numWithUnits
             num = float(num)
@@ -324,11 +365,12 @@ class Number:
         stack.push((num, units))
 
 # SetFormat (pop 0, push 0, match regex) {{{2
-class SetFormat:
+class SetFormat(Action):
     def __init__(self, kind, description = None):
         self.kind = kind
         self.description = description
         self.regex = re.compile('(%s)(\d{1,2})?' % kind)
+        self.register(self.kind)
 
     def execute(self, matchGroups, stack, calc):
         num = matchGroups[0]
@@ -337,10 +379,11 @@ class SetFormat:
             calc.formatter.setDigits(int(matchGroups[1]))
 
 # Store (peek 1, push 0, match regex) {{{2
-class Store:
+class Store(Action):
     def __init__(self, description = None):
         self.description = description
         self.regex = re.compile(r'=([a-z]\w*)', re.I)
+        self.register('store')
 
     def execute(self, matchGroups, stack, calc):
         name = matchGroups[0]
@@ -350,10 +393,11 @@ class Store:
             raise CalculatorError("%s: reserved, cannot be used as variable name." % name)
 
 # Recall (pop 0, push 1, match regex) {{{2
-class Recall:
+class Recall(Action):
     def __init__(self, description = None):
         self.description = description
         self.regex = re.compile(r'([a-z]\w*)', re.I)
+        self.register('recall')
 
     def execute(self, matchGroups, stack, calc):
         name = matchGroups[0]
@@ -363,22 +407,24 @@ class Recall:
             raise CalculatorError("%s: variable does not exist" % name)
 
 # SetUnits (pop 1, push 1, match regex) {{{2
-class SetUnits:
+class SetUnits(Action):
     def __init__(self, description = None):
         self.description = description
         self.regex = re.compile(r"'(.*)'")
+        self.register('units')
 
     def execute(self, matchGroups, stack, calc):
         units, = matchGroups
         x, xUnits = stack.pop()
         stack.push((x, units))
 
-# Print (pop 0, push 0, match regex) {{{2
-class Print:
+# Print (pop 0, push (Action)0, match regex) {{{2
+class Print(Action):
     def __init__(self, description = None):
         self.description = description
         self.regex = re.compile(r'"(.*)"')
         self.argsRegex = re.compile(r'\${?(\w+|\$)}?')
+        self.register('print')
 
     def execute(self, matchGroups, stack, calc):
         # Prints a message after expanding any $codes it contains
@@ -416,13 +462,14 @@ class Print:
         calc.printMessage(message)
 
 # Swap (pop 2, push 2, match name) {{{2
-class Swap:
+class Swap(Action):
     """
     Swap the top two entries on the stack.
     """
     def __init__(self, description = None):
         self.key = 'swap'
         self.description = description
+        self.register(self.key)
 
     def execute(self, stack, calc):
         x, xUnits = stack.pop()
@@ -430,14 +477,15 @@ class Swap:
         stack.push((x, yUnits))
         stack.push((y, yUnits))
 
-# Dup (peek 1, push 1, match name) {{{2
-class Dup:
+# Dup (peek 1, pu(Action)sh 1, match name) {{{2
+class Dup(Action):
     def __init__(self, key, action, description = None, needCalc=False, units=''):
         self.key = key
         self.action = action
         self.description = description
         self.needCalc = needCalc
         self.units = units
+        self.register(self.key)
 
     def execute(self, stack, calc):
         x, xUnits = stack.peek()
@@ -454,81 +502,183 @@ class Dup:
         stack.push((x, xUnits))
 
 # Pop (pop 1, push 0, match name) {{{2
-class Pop:
+class Pop(Action):
     """
     Pop the latest value off stack and discard it.
     """
     def __init__(self, description = None):
         self.key = 'pop'
         self.description = description
+        self.register(self.key)
 
     def execute(self, stack, calc):
         stack.pop()
 
+# Category (not an action, merely a header in the help summary) {{{2
+class Category(Action):
+    """
+    Print a category header in the help command.
+    """
+    def __init__(self, category, description):
+        self.category = category
+        self.description = description
+        self.register(category)
+
 # Actions {{{1
-Actions = [
-    BinaryOp(
-        '+'
-      , operator.add
-      , "%(key)s: addition"
-      # keep units of x if they are the same as units of y
-      , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+# Create actions here, they will be registered into availableActions
+# automatically. That will be used to build the list of actions to make
+# available to the user based on calculator personality later.
+
+# Arithmetic Operators {{{2
+arithmeticOperators = Category('arithmeticOperators', "Arithmetic Operators")
+addition = BinaryOp(
+    '+'
+  , operator.add
+  , "%(key)s: addition"
+  # keep units of x if they are the same as units of y
+  , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+)
+subtraction = BinaryOp(
+    '-'
+  , operator.sub
+  , "%(key)s: subtraction"
+  # keep units of x if they are the same as units of y
+  , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+)
+multiplication = BinaryOp('*', operator.mul, "%(key)s: multiplication")
+division = BinaryOp('/', operator.truediv, "%(key)s: true division")
+floorDivision = BinaryOp('//', operator.floordiv, "%(key)s: floor division")
+modulus = BinaryOp('%', operator.mod, "%(key)s: modulus")
+percentChange = BinaryOp(
+    '%chg'
+  , lambda y, x: 100*(x-y)/y
+  , "%(key)s: percent change (100*(x-y)/y)"
+)
+parallel = BinaryOp('||', lambda y, x: (x/(x+y))*y, "%(key)s: parallel combination")
+negation = UnaryOp('chs', operator.neg, "%(key)s: change sign")
+reciprocal = UnaryOp('recip', lambda x: 1/x, "%(key)s: reciprocal")
+ceiling = UnaryOp('ceil', math.ceil, "%(key)s: round towards positive infinity")
+floor = UnaryOp('floor', math.floor, "%(key)s: round towards negative infinity")
+factorial = UnaryOp('!', math.factorial, "%(key)s: factorial")
+
+# Logs, Powers, and Exponentials {{{2
+powersAndLogs = Category(
+    'powersAndLogs'
+  , "Powers, Roots, Exponentials and Logarithms"
+)
+power = BinaryOp(
+    '**'
+  , operator.pow
+  , "%(key)s: raise y to the power of x"
+)
+power.addAliases(['pow', 'ytox'])
+exponential = UnaryOp(
+    'exp'
+  , lambda x: cmath.exp(x) if type(x) == complex else math.exp(x)
+  , "%(key)s: natural exponential"
+)
+exponential.addAliases(['powe'])
+naturalLog = UnaryOp(
+    'ln'
+  , lambda x: cmath.log(x) if type(x) == complex else math.log(x)
+  , "%(key)s: natural logarithm"
+)
+naturalLog.addAliases(['loge'])
+tenPower = UnaryOp('pow10', lambda x: 10**x, "%(key)s: raise 10 to the power of x")
+tenPower.addAliases(['10tox'])
+tenLog = UnaryOp(
+    'lg'
+  , math.log10
+  , "%(key)s: base 10 logarithm"
+)
+tenLog.addAliases(['log', 'log10'])
+twoLog = UnaryOp(
+    'lb'
+  , lambda x: math.log(x)/math.log(2)
+  , "%(key)s: base 2 logarithm"
+)
+twoLog.addAliases(['log2'])
+square = UnaryOp('sqr', lambda x: x*x, "%(key)s: square")
+squareRoot = UnaryOp(
+    'sqrt'
+  , lambda x: cmath.sqrt(x) if type(x) == complex else math.sqrt(x)
+  , "%(key)s: square root"
+)
+
+from ctypes import c_double, cdll
+libm = cdll.LoadLibrary('libm.so.6')
+libm.cbrt.restype = c_double
+libm.cbrt.argtypes = [c_double]
+cubeRoot = UnaryOp(
+    'cbrt'
+  , lambda x: libm.cbrt(x)
+  , "%(key)s: cube root"
+)
+
+# Trig Functions {{{2
+trigFunctions = Category(
+    'trigFunctions'
+  , "Trigonometric Functions"
+)
+sine = UnaryOp(
+        'sin'
+      , lambda x, calc: math.sin(calc._toRadians(x))
+      , "%(key)s: sine"
+      , True
     )
-  , BinaryOp(
-        '-'
-      , operator.sub
-      , "%(key)s: subtraction"
-      # keep units of x if they are the same as units of y
-      , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+cosine = UnaryOp(
+        'cos'
+      , lambda x, calc: math.cos(calc._toRadians(x))
+      , "%(key)s: cosine"
+      , True
     )
-  , BinaryOp('*', operator.mul, "%(key)s: multiplication")
-  , BinaryOp('/', operator.truediv, "%(key)s: true division")
-  , BinaryOp('//', operator.floordiv, "%(key)s: floor division")
-  , BinaryOp('%', operator.mod, "%(key)s: modulus")
-  , BinaryOp(
-        '%chg'
-      , lambda y, x: 100*(x-y)/y
-      , "%(key)s: percent change (100*(x-y)/y)"
+tangent = UnaryOp(
+        'tan'
+      , lambda x, calc: math.tan(calc._toRadians(x))
+      , "%(key)s: tangent"
+      , True
     )
-  , BinaryOp('**', operator.pow, "%(key)s: raise y to the power of x")
-  , UnaryOp('chs', operator.neg, "%(key)s: change sign")
-  , UnaryOp('recip', lambda x: 1/x, "%(key)s: reciprocal")
-  , UnaryOp('ceil', math.ceil, "%(key)s: round towards positive infinity")
-  , UnaryOp('floor', math.floor, "%(key)s: round towards negative infinity")
-  , UnaryOp('!', math.factorial, "%(key)s: factorial")
-  , UnaryOp(
-        'exp'
-      , lambda x: cmath.exp(x) if type(x) == complex else math.exp(x)
-      , "%(key)s: natural exponential"
+arcSine = UnaryOp(
+        'asin'
+      , lambda x, calc: calc._fromRadians(math.asin(x))
+      , "%(key)s: arc sine"
+      , True
+      , units=lambda calc, units: calc._angleUnits()
     )
-  , UnaryOp(
-        'ln'
-      , lambda x: cmath.log(x) if type(x) == complex else math.log(x)
-      , "%(key)s: natural logarithm")
-  , UnaryOp('pow10', lambda x: 10**x, "%(key)s: raise 10 to the power of x")
-  , UnaryOp('log', math.log10, "%(key)s: base 10 logarithm")
-  # I recently discovered that according to NIST, the following are acceptable
-  # abbreviations for logarithms of various bases:
-  #    lb x (meaning log2 x), ln x (meaning loge x), or lg x (meaning log10 x).
-  , UnaryOp(
-        'log2'
-      , lambda x: math.log(x)/math.log(2)
-      , "%(key)s: base 2 logarithm"
+arcCosine = UnaryOp(
+        'acos'
+      , lambda x, calc: calc._fromRadians(math.acos(x))
+      , "%(key)s: arc cosine"
+      , True
+      , units=lambda calc, units: calc._angleUnits()
     )
-  , UnaryOp(
-        'sqrt'
-      , lambda x: cmath.sqrt(x) if type(x) == complex else math.sqrt(x)
-      , "%(key)s: square root"
+arcTangent = UnaryOp(
+        'atan'
+      , lambda x, calc: calc._fromRadians(math.atan(x))
+      , "%(key)s: arc tangent"
+      , True
+      , units=lambda calc, units: calc._angleUnits()
     )
-  , UnaryOp('sqr', lambda x: x*x, "%(key)s: square")
-  , Dup(
-        'mag'
+setRadiansMode = Command('rads', useRadians, "%(key)s: use radians")
+setDegreesMode = Command('degs', useDegees, "%(key)s: use degrees")
+
+# Complex and Vector Functions {{{2
+complexAndVectorFunctions = Category(
+    'complexAndVectorFunctions'
+  , "Complex and Vector Functions"
+)
+# Absolute Value of a complex number, also known as the magnitude, amplitude, or
+# modulus
+absoluteValue = Dup(
+        'abs'
       , lambda x: abs(x)
       , "%(key)s: magnitude"
       , units=lambda calc, units: units[0]
     )
-  , Dup(
-        'ph'
+absoluteValue.addAliases(['mag'])
+# Argument of a complex number, also known as the phase , or angle
+argument = Dup(
+        'arg'
       , lambda x, calc: (
             calc._fromRadians(math.atan2(x.imag,x.real))
             if type(x) == complex
@@ -538,258 +688,649 @@ Actions = [
       , True
       , units=lambda calc, units: calc._angleUnits()
     )
-  , BinaryOp('||', lambda y, x: (x/(x+y))*y, "%(key)s: parallel combination")
-  , UnaryOp(
-        'sin'
-      , lambda x, calc: math.sin(calc._toRadians(x))
-      , "%(key)s: sine"
-      , True
+argument.addAliases(['ph'])
+hypotenuse = BinaryOp(
+    'hypot'
+  , math.hypot
+  , "%(key)s: hypotenuse"
+)
+hypotenuse.addAliases(['len'])
+arcTangent2 = BinaryOp(
+    'atan2'
+  , lambda y, x, calc: calc._fromRadians(math.atan2(y, x))
+  , "%(key)s: two-argument arc tangent"
+  , True
+  , units=lambda calc, units: calc._angleUnits()
+)
+arcTangent2.addAliases(['angle'])
+rectangularToPolar = BinaryIoOp(
+    'rtop'
+  , lambda y, x, calc: (math.hypot(y, x), calc._fromRadians(math.atan2(y,x)))
+  , "%(key)s: convert rectangular to polar coordinates"
+  , True
+  , yUnits=lambda calc: calc._angleUnits()
+)
+polarToRectangular = BinaryIoOp(
+    'ptor'
+  , lambda ph, mag, calc: (
+        mag*math.cos(calc._toRadians(ph))
+      , mag*math.sin(calc._toRadians(ph))
     )
-  , UnaryOp(
-        'cos'
-      , lambda x, calc: math.cos(calc._toRadians(x))
-      , "%(key)s: cosine"
-      , True
-    )
-  , UnaryOp(
-        'tan'
-      , lambda x, calc: math.tan(calc._toRadians(x))
-      , "%(key)s: tangent"
-      , True
-    )
-  , UnaryOp(
-        'asin'
-      , lambda x, calc: calc._fromRadians(math.asin(x))
-      , "%(key)s: arc sine"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
-  , UnaryOp(
-        'acos'
-      , lambda x, calc: calc._fromRadians(math.acos(x))
-      , "%(key)s: arc cosine"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
-  , UnaryOp(
-        'atan'
-      , lambda x, calc: calc._fromRadians(math.atan(x))
-      , "%(key)s: arc tangent"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
-  , BinaryOp(
-        'atan2'
-      , lambda y, x, calc: calc._fromRadians(math.atan2(y, x))
-      , "%(key)s: two-argument arc tangent"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
-  , BinaryOp('hypot', math.hypot, "%(key)s: hypotenuse")
-  , BinaryIoOp(
-        'rtop'
-      , lambda y, x, calc: (math.hypot(y, x), calc._fromRadians(math.atan2(y,x)))
-      , "%(key)s: convert rectangular to polar coordinates"
-      , True
-      , yUnits=lambda calc: calc._angleUnits()
-    )
-  , BinaryIoOp(
-        'ptor'
-      , lambda ph, mag, calc: (
-            mag*math.cos(calc._toRadians(ph))
-          , mag*math.sin(calc._toRadians(ph))
-        )
-      , "%(key)s: convert polar to rectangular coordinates"
-      , True
-      , xUnits=lambda calc: calc.stack.peek()[1]
-      , yUnits=lambda calc: calc.stack.peek()[1]
-    )
-  , UnaryOp('sinh', math.sinh, "%(key)s: hyperbolic sine")
-  , UnaryOp('cosh', math.cosh, "%(key)s: hyperbolic cosine")
-  , UnaryOp('tanh', math.tanh, "%(key)s: hyperbolic tangent")
-  , UnaryOp('asinh', math.asinh, "%(key)s: hyperbolic arc sine")
-  , UnaryOp('acosh', math.acosh, "%(key)s: hyperbolic arc cosine")
-  , UnaryOp('atanh', math.atanh, "%(key)s: hyperbolic arc tangent")
-  , UnaryOp(
-        'db'
-      , lambda x: 20*math.log10(x)
-      , "%(key)s: convert voltage or current to dB"
-    )
-  , UnaryOp(
-        'adb'
-      , lambda x: 10**(x/20)
-      , "%(key)s: convert dB to voltage or current"
-    )
-  , UnaryOp('db10', lambda x: 10*math.log10(x), "%(key)s: convert power to dB")
-  , UnaryOp('adb10', lambda x: 10**(x/10), "%(key)s: convert dB to power")
-  , UnaryOp(
-        'vdbm'
-      , lambda x, calc: 30+10*math.log10(x*x/calc.heap['R'][0]/2)
-      , "%(key)s: peak voltage to dBm"
-      , True
-    )
-  , UnaryOp(
-        'dbmv'
-      , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['R'][0])
-      , "%(key)s: dBm to peak voltage"
-      , True
-      , 'V'
-    )
-  , UnaryOp(
-        'idbm'
-      , lambda x, calc: 30+10*math.log10(x*x*calc.heap['R'][0]/2)
-      , "%(key)s: peak current to dBm"
-      , True
-    )
-  , UnaryOp(
-        'dbmi'
-      , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['R'][0])
-      , "%(key)s: dBm to peak current"
-      , True
-      , 'A'
-    )
-  , Constant('rand', random.random, "%(key)s: random number between 0 and 1")
-  , Constant('pi', lambda: math.pi, "%(key)s: 3.141592...", 'rads')
-  , Constant('2pi', lambda: 2*math.pi, "%(key)s: 2*pi: 6.283185...", 'rads')
-  , Constant(
-        'rt2'
-      , lambda: math.sqrt(2)
-      , "%(key)s: square root of two: 1.4142..."
-    )
-  , Constant('j', lambda: 1j, "%(key)s: imaginary unit (square root of -1)")
-  , Constant('j2pi', lambda: 2j*math.pi, "%(key)s: j*2*pi", 'rads')
-  , Constant(
-        'h'
-      , lambda: 6.6260693e-34
-      , "%(key)s: Plank's constant: 6.6260693e-34 J-s"
-      , 'J-s'
-    )
-  , Constant(
-        'k'
-      , lambda: 1.3806505e-23
-      , "%(key)s: Boltzmann's constant: 1.3806505e-23 J/K"
-      , 'J/K'
-    )
-  , Constant(
-        'q'
-      , lambda: 1.60217653e-19
-      , "%(key)s: charge of an electron: 1.60217653e-19 Coul"
-      , 'Coul'
-    )
-  , Constant(
-        'c'
-      , lambda: 2.99792458e8
-      , "%(key)s: speed of light in a vacuum: 2.99792458e8 m/s"
-      , 'm/s'
-    )
-#  , Constant(
-#        'G'
-#      , lambda: 6.6746e-11
-#      , "%(key)s: universal gravitational constant: 6.6746e-11"
-#    )
-  , Constant(
-        '0C'
-      , lambda: 273.15
-      , "%(key)s: 0 Celsius in Kelvin: 273.15 K"
-      , 'K'
-    )
-  , Constant(
-        'eps0'
-      , lambda: 8.854187817e-12
-      , "%(key)s: 0 permittivity of free space: 8.854187817e-12 F/m"
-      , 'F/m'
-    )
-  , Constant(
-        'mu0'
-      , lambda: 4e-7*math.pi
-      , "%(key)s: 0 permeability of free space: 4e-7*pi N/A^2"
-      , 'N/A^2'
-    )
-  , Number('hex', "0xFF (ex): a number in hexadecimal")
-  , Number('oct', "077 (ex): a number in octal") # oct must be before eng
-  , Number(
-        'eng'
+  , "%(key)s: convert polar to rectangular coordinates"
+  , True
+  , xUnits=lambda calc: calc.stack.peek()[1]
+  , yUnits=lambda calc: calc.stack.peek()[1]
+)
+
+# Hyperbolic Functions {{{2
+hyperbolicFunctions = Category(
+    'hyperbolicFunctions'
+  , "Hyperbolic Functions"
+)
+hyperbolicSine = UnaryOp(
+    'sinh'
+  , math.sinh
+  , "%(key)s: hyperbolic sine"
+)
+hyperbolicCosine = UnaryOp(
+    'cosh'
+  , math.cosh
+  , "%(key)s: hyperbolic cosine"
+)
+hyperbolicTangent = UnaryOp(
+    'tanh'
+  , math.tanh
+  , "%(key)s: hyperbolic tangent"
+)
+hyperbolicArcSine = UnaryOp(
+    'asinh'
+  , math.asinh
+  , "%(key)s: hyperbolic arc sine"
+)
+hyperbolicArcCosine = UnaryOp(
+    'acosh'
+  , math.acosh
+  , "%(key)s: hyperbolic arc cosine"
+)
+hyperbolicArcTangent = UnaryOp(
+    'atanh'
+  , math.atanh
+  , "%(key)s: hyperbolic arc tangent"
+)
+
+# Decibel Functions {{{2
+decibelFunctions = Category(
+    'decibelFunctions'
+  , "Decibel Functions"
+)
+decibels20 = UnaryOp(
+    'db'
+  , lambda x: 20*math.log10(x)
+  , "%(key)s: convert voltage or current to dB"
+)
+decibels20.addAliases(['db20', 'v2db', 'i2db'])
+antiDecibels20 = UnaryOp(
+    'adb'
+  , lambda x: 10**(x/20)
+  , "%(key)s: convert dB to voltage or current"
+)
+antiDecibels20.addAliases(['db2v', 'db2i'])
+decibels10 = UnaryOp(
+    'db10'
+  , lambda x: 10*math.log10(x)
+  , "%(key)s: convert power to dB"
+)
+decibels10.addAliases(['p2db'])
+antiDecibels10 = UnaryOp(
+    'adb10'
+  , lambda x: 10**(x/10)
+  , "%(key)s: convert dB to power"
+)
+antiDecibels10.addAliases(['db2p'])
+voltageToDbm = UnaryOp(
+    'vdbm'
+  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['R'][0]/2)
+  , "%(key)s: peak voltage to dBm"
+  , True
+)
+dbmToVoltage = UnaryOp(
+    'dbmv'
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['R'][0])
+  , "%(key)s: dBm to peak voltage"
+  , True
+  , 'V'
+)
+currentToDbm = UnaryOp(
+    'idbm'
+  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['R'][0]/2)
+  , "%(key)s: peak current to dBm"
+  , True
+)
+dbmToCurrent = UnaryOp(
+    'dbmi'
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['R'][0])
+  , "%(key)s: dBm to peak current"
+  , True
+  , 'A'
+)
+
+# Constants {{{2
+constants = Category(
+    'constants'
+  , "Constants"
+)
+pi = Constant('pi', lambda: math.pi, "%(key)s: 3.141592...", 'rads')
+twoPi = Constant('2pi', lambda: 2*math.pi, "%(key)s: 2*pi: 6.283185...", 'rads')
+squareRoot2 = Constant(
+    'rt2'
+  , lambda: math.sqrt(2)
+  , "%(key)s: square root of two: 1.4142..."
+)
+imaginaryUnit = Constant(
+    'j'
+  , lambda: 1j
+  , "%(key)s: imaginary unit (square root of -1)"
+)
+imaginaryTwoPi = Constant('j2pi', lambda: 2j*math.pi, "%(key)s: j*2*pi", 'rads')
+planksConstantH = Constant(
+    'h'
+  , lambda: 6.62606957e-34
+  , "%(key)s: Plank's constant: 6.62606957e-34 J-s"
+  , 'J-s'
+)
+planksConstantHbar = Constant(
+    'hbar'
+  , lambda: 1.054571726e-34
+  , "%(key)s: Plank's constant: 1.054571726e-34 J-s"
+  , 'J-s'
+)
+planksLength = Constant(
+    'lP'
+  , lambda: 1.616199e-35
+  , "%(key)s: Plank's length: 1.616199e-35 m"
+  , 'm'
+)
+planksMass = Constant(
+    'mP'
+  , lambda: 2.17651e-5
+  , "%(key)s: Plank's mass: 2.17651e-5 g"
+  , 'g'
+)
+planksTemperature = Constant(
+    'TP'
+  , lambda: 1.416833e32
+  , "%(key)s: Plank's temperature: 1.416833e32 K"
+  , 'K'
+)
+planksTime = Constant(
+    'tP'
+  , lambda: 5.39106e-44
+  , "%(key)s: Plank's time: 5.39106e-44 s"
+  , 's'
+)
+boltzmann = Constant(
+    'k'
+  , lambda: 1.3806488e-23
+  , "%(key)s: Boltzmann's constant: 1.3806488e-23 J/K"
+  , 'J/K'
+)
+chargeOfElectron = Constant(
+    'q'
+  , lambda: 1.602176565e-19
+  , "%(key)s: charge of an electron (the elementary charge): 1.602176565e-19 C"
+  , 'C'
+)
+massOfElectron = Constant(
+    'me'
+  , lambda: 9.10938291e-28
+  , "%(key)s: mass of an electron: 9.10938291e-28 g"
+  , 'g'
+)
+massOfProton = Constant(
+    'mp'
+  , lambda: 1.672621777e-24
+  , "%(key)s: mass of a proton: 1.672621777e-24 g"
+  , 'g'
+)
+speedOfLight = Constant(
+    'c'
+  , lambda: 2.99792458e8
+  , "%(key)s: speed of light in a vacuum: 2.99792458e8 m/s"
+  , 'm/s'
+)
+gravitationalConstant = Constant(
+    'G'
+  , lambda: 6.6746e-11
+  , "%(key)s: universal gravitational constant: 6.6746e-11 m^3/(kg-s^2)"
+  , "m^3/(kg-s^2)"
+)
+standardAccelerationOfGravity = Constant(
+    'g'
+  , lambda: 9.80665
+  , "%(key)s: standard acceleration of gravity: 9.80665 m/s^2"
+  , 'm/s^2'
+)
+molarGasConstant = Constant(
+    'R'
+  , lambda: 8.3144621
+  , "%(key)s: molar gas constant: 8.3144621 J/(mol-K)"
+  , 'J/(mol-K)'
+)
+zeroCelsius = Constant(
+    '0C'
+  , lambda: 273.15
+  , "%(key)s: 0 Celsius in Kelvin: 273.15 K"
+  , 'K'
+)
+freeSpacePermittivity = Constant(
+    'eps0'
+  , lambda: 8.854187817e-12
+  , "%(key)s: 0 permittivity of free space: 8.854187817e-12 F/m"
+  , 'F/m'
+)
+freeSpacePermeability = Constant(
+    'mu0'
+  , lambda: 4e-7*math.pi
+  , "%(key)s: 0 permeability of free space: 4e-7*pi N/A^2"
+  , 'N/A^2'
+)
+freeSpaceCharacteristicImpedance = Constant(
+    'Z0'
+  , lambda: 376.730313461
+  , "%(key)s: Characteristic impedance of free space: 376.730313461 Ohms"
+  , 'Ohms'
+)
+avagadroNumber = Constant(
+    'NA'
+  , lambda: 6.02214129e23
+  , "%(key)s: Avagadro Number: 6.02214129e23"
+  , 'Ohms'
+)
+randomNumber = Constant(
+    'rand'
+  , random.random
+  , "%(key)s: random number between 0 and 1"
+)
+
+# Numbers {{{2
+numbers = Category(
+    'numbers'
+  , "Numbers"
+)
+hexadecimalNumber = Number('hexnum', "0xFF (ex): a number in hexadecimal")
+octalNumber = Number('octnum', "077 (ex): a number in octal")
+    # oct must be before eng
+engineeringNumber = Number(
+        'engnum'
       , "10MHz (ex): a real number, perhaps with a scale factor and units"
     )
-  , Number(
-        'sci'
+scientificNumber = Number(
+        'scinum'
       , "1e7 (ex): a real number in scientific notation, perhaps with units"
     )
-# Support for Verilog constants was removed when units were added because the
+# Verilog constants are incompatible with the print command because the
 # single quote in the Verilog constant conflicts with the single quotes that
 # surround units.
-#  , Number(
-#        'vhex'
-#      , "'hFF (ex): a number in Verilog hexadecimal"
-#    )
-#  , Number(
-#        'vdec'
-#      , "'d99 (ex): a number in Verilog decimal"
-#    )
-#  , Number(
-#        'voct'
-#      , "'o77 (ex): a number in Verilog octal"
-#    )
-#  , Number(
-#        'vbin'
-#      , "'b11 (ex): a number in Verilog binary"
-#    )
-  , SetFormat(
-        'eng'
-      , "%(kind)s[N]: use engineering notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'fix'
-      , "%(kind)s[N]: use fixed notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'sci'
-      , "%(kind)s[N]: use scientific notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'hex'
-      , "%(kind)s[N]: use hexadecimal notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'oct'
-      , "%(kind)s[N]: use octal notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'vhex'
-      , "%(kind)s[N]: use Verilog hexadecimal notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'vdec'
-      , "%(kind)s[N]: use Verilog decimal notation, optionally set precision to N digits"
-    )
-  , SetFormat(
-        'voct'
-      , "%(kind)s[N]: use Verilog octal notation, optionally set precision to N digits"
-    )
-  , Store('=name: store value into a variable')
-  , Recall('name: recall value of a variable')
-  , Print('"text": print text (replacing $N and $Var with the values of register N and variable Var)')
-  , SetUnits("'units': set the units of the x register")
-  , Swap('%(key)s: swap x and y')
-  , Dup('dup', None, '%(key)s: push x onto the stack again')
-  , Pop('%(key)s: discard x')
-  , Command('rads', useRadians, "%(key)s: use radians")
-  , Command('degs', useDegees, "%(key)s: use degrees")
-  , Command(
-        'vars'
-      , lambda stack, calc: calc.heap.display()
-      , "%(key)s: print variables"
-    )
-  , Command(
-        'stack'
-      , lambda stack, calc: stack.display()
-      , "%(key)s: print stack"
-    )
-  , Command('clstack', lambda stack, calc: stack.clear(), "%(key)s: clear stack")
-  , Command('quit', quit, "%(key)s: quit (:q or ^D also works)")
-  , Command(':q', quit)
-  , Command('help', displayHelp)
+verilogHexadecimalNumber = Number(
+    'vhexnum'
+  , "'hFF (ex): a number in Verilog hexadecimal"
+)
+verilogDecimalNumber = Number(
+    'vdecnum'
+  , "'d99 (ex): a number in Verilog decimal"
+)
+verilogOctalNumber = Number(
+    'voctnum'
+  , "'o77 (ex): a number in Verilog octal"
+)
+verilogBinaryNumber = Number(
+    'vbinnum'
+  , "'b11 (ex): a number in Verilog binary"
+)
+setEngineeringFormat = SetFormat(
+    'eng'
+  , "%(kind)s[N]: use engineering notation, optionally set precision to N digits"
+)
+
+# Number Formats {{{2
+numberFormats = Category(
+    'numberFormats'
+  , "Number Formats"
+)
+setFixedFormat = SetFormat(
+    'fix'
+  , "%(kind)s[N]: use fixed notation, optionally set precision to N digits"
+)
+setScientificFormat = SetFormat(
+    'sci'
+  , "%(kind)s[N]: use scientific notation, optionally set precision to N digits"
+)
+setHexadecimalFormat = SetFormat(
+    'hex'
+  , "%(kind)s[N]: use hexadecimal notation, optionally set precision to N digits"
+)
+setOctalFormat = SetFormat(
+    'oct'
+  , "%(kind)s[N]: use octal notation, optionally set precision to N digits"
+)
+setVerilogHexadecimalFormat = SetFormat(
+    'vhex'
+  , "%(kind)s[N]: use Verilog hexadecimal notation, optionally set precision to N digits"
+)
+setVerilogDecimalFormat = SetFormat(
+    'vdec'
+  , "%(kind)s[N]: use Verilog decimal notation, optionally set precision to N digits"
+)
+setVerilogOctalFormat = SetFormat(
+    'voct'
+  , "%(kind)s[N]: use Verilog octal notation, optionally set precision to N digits"
+)
+
+# Variables {{{2
+variableCommands = Category('variableCommands', "Variable Commands")
+storeToVariable = Store('=name: store value into a variable')
+recallFromVariable = Recall('name: recall value of a variable')
+listVariables = Command(
+    'vars'
+  , lambda stack, calc: calc.heap.display()
+  , "%(key)s: print variables"
+)
+
+# Stack {{{2
+stackCommands = Category('stackCommands', "Stack Commands")
+swapXandY = Swap('%(key)s: swap x and y')
+duplicateX = Dup('dup', None, '%(key)s: push x onto the stack again')
+popX = Pop('%(key)s: discard x')
+listStack = Command(
+    'stack'
+  , lambda stack, calc: stack.display()
+  , "%(key)s: print stack"
+)
+clearStack = Command('clstack', lambda stack, calc: stack.clear(), "%(key)s: clear stack")
+
+# Miscellaneous {{{2
+miscellaneousCommands = Category('miscellaneous', "Miscellaneous")
+printText = Print(' '.join([
+    '"text": print text'
+  , '(replacing $N and $Var with the values of register N and variable Var)'
+]))
+setUnits = SetUnits("'units': set the units of the x register")
+terminate = Command('quit', quit, "%(key)s: quit (:q or ^D also works)")
+terminate.addAliases([':q'])
+printHelp = Command('help', displayHelp)
+
+# Action Sublists {{{1
+# Arithmetic Operators {{{2
+arithmeticOperatorActions = [
+    arithmeticOperators,
+    addition,
+    subtraction,
+    multiplication,
+    division,
+    floorDivision,
+    modulus,
+    negation,
+    reciprocal,
+    ceiling,
+    floor,
+    factorial,
+    percentChange,
+    parallel,
 ]
+
+# Logs, Powers, and Exponentials {{{2
+logPowerExponentialActions = [
+    powersAndLogs,
+    power,
+    exponential,
+    naturalLog,
+    tenPower,
+    tenLog,
+    twoLog,
+    square,
+    squareRoot,
+    cubeRoot,
+]
+
+# Trig Functions {{{2
+trigFunctionActions = [
+    trigFunctions,
+    sine,
+    cosine,
+    tangent,
+    arcSine,
+    arcCosine,
+    arcTangent,
+    setRadiansMode,
+    setDegreesMode,
+]
+
+# Complex and Vector Functions {{{2
+complexVectorFunctionActions = [
+    complexAndVectorFunctions,
+    absoluteValue,
+    argument,
+    hypotenuse,
+    arcTangent2,
+    rectangularToPolar,
+    polarToRectangular,
+]
+
+# Hyperbolic Functions {{{2
+hyperbolicFunctionActions = [
+    hyperbolicFunctions,
+    hyperbolicSine,
+    hyperbolicCosine,
+    hyperbolicTangent,
+    hyperbolicArcSine,
+    hyperbolicArcCosine,
+    hyperbolicArcTangent,
+]
+
+# Decibel Functions {{{2
+decibelFunctionActions = [
+    decibelFunctions,
+    decibels20,
+    antiDecibels20,
+    decibels10,
+    antiDecibels10,
+    voltageToDbm,
+    dbmToVoltage,
+    currentToDbm,
+    dbmToCurrent,
+]
+
+# Constants {{{2
+commonConstantActions = [
+    constants,
+    pi,
+    twoPi,
+    squareRoot2,
+    zeroCelsius,
+]
+engineeringConstantActions = [
+    imaginaryUnit,
+    imaginaryTwoPi,
+    boltzmann,
+    planksConstantH,
+    chargeOfElectron,
+    speedOfLight,
+    freeSpacePermittivity,
+    freeSpacePermeability,
+    freeSpaceCharacteristicImpedance,
+]
+physicsConstantActions = [
+    planksConstantH,
+    planksConstantHbar,
+    planksLength,
+    planksMass,
+    planksTemperature,
+    planksTime,
+    chargeOfElectron,
+    massOfElectron,
+    massOfProton,
+    speedOfLight,
+    gravitationalConstant,
+    standardAccelerationOfGravity,
+    freeSpacePermittivity,
+    freeSpacePermeability,
+]
+chemistryConstantActions = [
+    planksConstantH,
+    planksConstantHbar,
+    chargeOfElectron,
+    massOfElectron,
+    massOfProton,
+    molarGasConstant,
+    avagadroNumber,
+]
+constantActions = (
+    commonConstantActions +
+    engineeringConstantActions +
+    physicsConstantActions +
+    chemistryConstantActions
+)
+
+# Numbers {{{2
+numberActions = [
+    numbers,
+    hexadecimalNumber,
+    octalNumber,
+    engineeringNumber,
+    scientificNumber,
+    #verilogHexadecimalNumber,
+    #verilogDecimalNumber,
+    #verilogOctalNumber,
+    #verilogBinaryNumber,
+]
+
+# Number Formats {{{2
+numberFormatActions = [
+    numberFormats,
+    setEngineeringFormat,
+    setFixedFormat,
+    setScientificFormat,
+    setHexadecimalFormat,
+    setOctalFormat,
+    setVerilogHexadecimalFormat,
+    setVerilogDecimalFormat,
+    setVerilogOctalFormat,
+]
+
+# Variables {{{2
+variableActions = [
+    variableCommands,
+    storeToVariable,
+    recallFromVariable,
+    listVariables,
+]
+
+# Stack {{{2
+stackActions = [
+    stackCommands,
+    swapXandY,
+    duplicateX,
+    popX,
+    listStack,
+    clearStack,
+]
+
+# Miscellaneous {{{2
+miscellaneousActions = [
+    miscellaneousCommands,
+    randomNumber,
+    printText,
+    setUnits,
+    terminate,
+    printHelp,
+]
+
+# Action Lists {{{1
+# All actions {{{2
+allActions = (
+    arithmeticOperatorActions +
+    logPowerExponentialActions +
+    trigFunctionActions +
+    complexVectorFunctionActions +
+    hyperbolicFunctionActions +
+    decibelFunctionActions +
+    constantActions +
+    numberActions +
+    numberFormatActions +
+    variableActions +
+    stackActions +
+    miscellaneousActions
+)
+
+# Engineering actions {{{2
+engineeringActions = (
+    arithmeticOperatorActions +
+    logPowerExponentialActions +
+    trigFunctionActions +
+    complexVectorFunctionActions +
+    hyperbolicFunctionActions +
+    decibelFunctionActions +
+    commonConstantActions +
+    engineeringConstantActions +
+    numberActions +
+    numberFormatActions +
+    variableActions +
+    stackActions +
+    miscellaneousActions
+)
+
+# Physics actions {{{2
+physicsActions = (
+    arithmeticOperatorActions +
+    logPowerExponentialActions +
+    trigFunctionActions +
+    complexVectorFunctionActions +
+    hyperbolicFunctionActions +
+    decibelFunctionActions +
+    commonConstantActions +
+    physicsConstantActions +
+    numberActions +
+    numberFormatActions +
+    variableActions +
+    stackActions +
+    miscellaneousActions
+)
+
+# Chemistry actions {{{2
+chemistryActions = (
+    arithmeticOperatorActions +
+    logPowerExponentialActions +
+    trigFunctionActions +
+    complexVectorFunctionActions +
+    hyperbolicFunctionActions +
+    decibelFunctionActions +
+    commonConstantActions +
+    chemistryConstantActions +
+    numberActions +
+    numberFormatActions +
+    variableActions +
+    stackActions +
+    miscellaneousActions
+)
+
+# Choose action list {{{2
+# Eliminate any redundancies in the list
+alreadySeen = set()
+actions = []
+for action in engineeringActions:
+    try:
+        if action.key not in alreadySeen:
+            actions += [action]
+            alreadySeen.add(action.key)
+    except AttributeError:
+        try:
+            if action.regex not in alreadySeen:
+                actions += [action]
+                alreadySeen.add(action.regex)
+        except AttributeError:
+            if action.category not in alreadySeen:
+                actions += [action]
+                alreadySeen.add(action.category)
 
 # Calculator {{{1
 class Calculator:
@@ -818,8 +1359,13 @@ class Calculator:
         for each in actions:
             try:
                 self.smplActions.update({each.key: each})
+                for alias in each.getAliases():
+                    self.smplActions.update({alias: each})
             except AttributeError:
-                self.regexActions += [each]
+                if hasattr(each, 'regex'):
+                    self.regexActions += [each]
+                else:
+                    assert hasattr(each, 'category')
 
         # Initialize the calculator
         self.formatter = formatter
@@ -1043,7 +1589,7 @@ if __name__ == '__main__':
 
     # Create calculator {{{2
     calc = Calculator(
-        Actions
+        actions
       , Display('eng', 4)
       , backUpStack=True
       , warningPrinter=printWarning

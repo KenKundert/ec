@@ -4,7 +4,7 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from ec import Calculator, Actions, Display, CalculatorError
+from ec import Calculator, actions, Display, CalculatorError
 import math
 
 # Initialization {{{1
@@ -348,13 +348,13 @@ testCases = [
       , 'text': "6.6261e-34"
     }
   , {   'stimulus': "k sci4"
-      , 'value': 1.3806505e-23
+      , 'value': 1.3806488e-23
       , 'units': 'J/K'
-      , 'text': "1.3807e-23"
+      , 'text': "1.3806e-23"
     }
   , {   'stimulus': "q sci4"
-      , 'value': 1.60217653e-19
-      , 'units': 'Coul'
+      , 'value': 1.602176565e-19
+      , 'units': 'C'
       , 'text': "1.6022e-19"
     }
   , {   'stimulus': "c sci4"
@@ -506,7 +506,7 @@ testCases = [
       , 'value': 1e-12
       , 'units': 'F'
       , 'text': "1 pF"
-      , 'warnings': ['c: variable overrides built-in.']
+      , 'warnings': ['c: variable has overridden built-in.']
     }
   , {   'stimulus': "1 j+ 'V' mag"
       , 'value': math.sqrt(2)
@@ -597,7 +597,7 @@ def grabWarnings(warning):
     warnings += [warning]
 
 calc = Calculator(
-    Actions
+    actions
   , Display('eng', 4)
   , messagePrinter=grabMessages
   , warningPrinter=grabWarnings

@@ -4,7 +4,7 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from ec import Calculator, Actions, Display, CalculatorError
+from ec import Calculator, actions, Display, CalculatorError
 import math
 from subprocess import Popen, PIPE
 
@@ -64,7 +64,7 @@ def grabWarnings(warning):
     warnings += [warning]
 
 calc = Calculator(
-    Actions
+    actions
   , Display('eng', 4)
   , messagePrinter=grabMessages
   , warningPrinter=grabWarnings
