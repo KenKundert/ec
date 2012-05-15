@@ -789,30 +789,34 @@ antiDecibels10 = UnaryOp(
 antiDecibels10.addAliases(['db2p'])
 voltageToDbm = UnaryOp(
     'vdbm'
-  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Zo'][0]/2)
-  , "%(key)s: peak voltage to dBm (assumes reference resistance of Zo)"
+  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Rref'][0]/2)
+  , "%(key)s: peak voltage to dBm (assumes reference resistance of Rref)"
   , True
 )
+voltageToDbm.addAliases(['v2dbm'])
 dbmToVoltage = UnaryOp(
     'dbmv'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Zo'][0])
-  , "%(key)s: dBm to peak voltage (assumes reference resistance of Zo)"
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Rref'][0])
+  , "%(key)s: dBm to peak voltage (assumes reference resistance of Rref)"
   , True
   , 'V'
 )
+dbmToVoltage.addAliases(['dbm2v'])
 currentToDbm = UnaryOp(
     'idbm'
-  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Zo'][0]/2)
-  , "%(key)s: peak current to dBm (assumes reference resistance of Zo)"
+  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][0]/2)
+  , "%(key)s: peak current to dBm (assumes reference resistance of Rref)"
   , True
 )
+currentToDbm.addAliases(['i2dbm'])
 dbmToCurrent = UnaryOp(
     'dbmi'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Zo'][0])
-  , "%(key)s: dBm to peak current (assumes reference resistance of Zo)"
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Rref'][0])
+  , "%(key)s: dBm to peak current (assumes reference resistance of Rref)"
   , True
   , 'A'
 )
+dbmToCurrent.addAliases(['dbm2i'])
 
 # Constants {{{2
 constants = Category(
@@ -1318,7 +1322,7 @@ chemistryActions = (
 # and any predefined variables needed here. You can also adjust the list of
 # actions by commenting out undesired ones in the lists above.
 actionsToUse = engineeringActions
-predefinedVariables = {'Zo': (50, 'Ohms')}
+predefinedVariables = {'Rref': (50, 'Ohms')}
 
 # Eliminate any redundancies in the actions list {{{2
 alreadySeen = set()

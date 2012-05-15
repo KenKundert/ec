@@ -311,7 +311,7 @@ after entering the lines above, you would see:
 .nf
 .RS
 \fB1.5915K\fP: vars
-  \fIZo\fP: 50 Ohms
+  \fIRref\fP: 50 Ohms
   \fIcin\fP: 1 pF
   \fIfreq\fP: 100 MHz
   \fIomega\fP: 628.32 Mrads/s
@@ -321,7 +321,7 @@ Choosing a variable name that is the same as a one of a built-in command or
 constant causes the built-in name to be overridden. Be careful when doing this 
 as once a built-in name is overridden it can no longer be accessed. 
 .PP
-Notice that a variable \fIZo\fP exists that you did not create. This is 
+Notice that a variable \fIRref\fP exists that you did not create. This is 
 a predefined variable that is used in dBm calculations. You are free to change 
 its value if you like.
 .SS OPERATORS and FUNCTIONS
@@ -512,24 +512,28 @@ appropriate to apply this form when converting decibels to power. Alias:
 \fIdb2p\fP.
 .IP "vdbm: convert peak sinusoidal voltage to dBm"
 The value in the \fIx\fP register is expected to be the peak voltage of 
-a sinusoid that is driving a load resistor equal to \fIZo\fP (a predefined 
+a sinusoid that is driving a load resistor equal to \fIRref\fP (a predefined 
 variable).  It is replaced with the power delivered to the resistor in decibels 
-relative to 1 milliwatt: \fIx\fP= 30+10*log10((\fIx\fP**2)/(2*\fIZo\fP)).
+relative to 1 milliwatt: \fIx\fP= 30+10*log10((\fIx\fP**2)/(2*\fIRref\fP)).  
+Alias: \fIv2dbm\fP.
 .IP "dbmv: convert dBm to peak sinusoidal voltage"
 The value in the \fIx\fP register is expected to be a power in decibels relative 
 to one milliwatt. It is replaced with the peak voltage of a sinusoid that would 
-be needed to deliver the same power to a load resistor equal to \fIZo\fP (a 
-predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)*\fIZo\fP)
+be needed to deliver the same power to a load resistor equal to \fIRref\fP (a 
+predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)*\fIRref\fP).
+Alias: \fIdbm2v\fP.
 .IP "idbm: convert peak sinusoidal voltage to dBm"
 The value in the \fIx\fP register is expected to be the peak current of 
-a sinusoid that is driving a load resistor equal to \fIZo\fP (a predefined 
+a sinusoid that is driving a load resistor equal to \fIRref\fP (a predefined 
 variable).  It is replaced with the power delivered to the resistor in decibels 
-relative to 1 milliwatt: \fIx\fP= 30+10*log10(((\fIx\fP**2)*\fIZo\fP/2).
+relative to 1 milliwatt: \fIx\fP= 30+10*log10(((\fIx\fP**2)*\fIRref\fP/2).
+Alias: \fIi2dbm\fP.
 .IP "dbmi: convert dBm to peak sinusoidal current"
 The value in the \fIx\fP register is expected to be a power in decibels relative 
 to one milliwatt. It is replaced with the peak current of a sinusoid that would 
-be needed to deliver the same power to a load resistor equal to \fIZo\fP (a 
-predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)/\fIZo\fP)
+be needed to deliver the same power to a load resistor equal to \fIRref\fP (a 
+predefined variable): \fIx\fP=sqrt(2*10**(\fIx\fP - 30)/10)/\fIRref\fP).
+Alias: \fIdbm2i\fP.
 .IP "rand: random number"
 The value a random variable with uniform distribution between 0 and 1 is pushed 
 into the \fIx\fP register: \fIx\fP=rand(0,1).
@@ -670,7 +674,7 @@ retained.  For example,
 \fB1 KOhms\fP: stack
   \fIx\fP: 1 KOhms
 \fB1 KOhms\fP: vars
-  \fIZo\fP: 50 Ohms
+  \fIRref\fP: 50 Ohms
   \fIfreq\fP: 100MHz
   \fIr\fP: 1 KOhms
 .RE

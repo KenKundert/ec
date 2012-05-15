@@ -573,7 +573,7 @@ testCases = [
       , 'messages': ["x is 0, y is 1, z = 2, t is $?3?"]
       , 'warnings': ["$3: unknown."]
     }
-  , {   'stimulus': '"I have $Zo, you have $$50"'
+  , {   'stimulus': '"I have $Rref, you have $$50"'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
