@@ -181,6 +181,11 @@ def useRadians(stack, calc):
 def useDegees(stack, calc):
     calc.setTrigMode('degs')
 
+def aboutMsg(stack, calc):
+    print "EC was written by Ken Kundert."
+    print "Email your comments and questions to ec@shalmirane.com."
+    print "To get the source, use 'git clone git@github.com:KenKundert/ec.git'."
+
 def quit(stack, calc):
     exit()
 
@@ -1059,6 +1064,7 @@ printText = Print(' '.join([
   , '(replacing $N and $Var with the values of register N and variable Var)'
 ]))
 setUnits = SetUnits("'units': set the units of the x register")
+printAbout = Command('about', aboutMsg, "%(key)s: print information about ec")
 terminate = Command('quit', quit, "%(key)s: quit (:q or ^D also works)")
 terminate.addAliases([':q'])
 printHelp = Command('help', displayHelp)
@@ -1245,6 +1251,7 @@ miscellaneousActions = [
     randomNumber,
     printText,
     setUnits,
+    printAbout,
     terminate,
     printHelp,
 ]
