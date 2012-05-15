@@ -50,7 +50,7 @@ class Stack:
         self.stack = []
 
     def clone(self):
-        return Stack(copy(self.stack))
+        return Stack(self.parent, copy(self.stack))
 
     def __str__(self):
         return str(self.stack)
@@ -58,7 +58,7 @@ class Stack:
     def display(self):
         length = len(self.stack)
         labels = ['x:', 'y:'] + (length-2)*['  ']
-        for label, value in zip(labels, self.stack):
+        for label, value in reversed(zip(labels, self.stack)):
             self.parent.printMessage(
                 '  %s %s' % (label, self.parent.format(value))
             )
@@ -1049,7 +1049,9 @@ listVariables = Command(
 stackCommands = Category('stackCommands', "Stack Commands")
 swapXandY = Swap('%(key)s: swap x and y')
 duplicateX = Dup('dup', None, '%(key)s: push x onto the stack again')
+duplicateX.addAliases(['enter'])
 popX = Pop('%(key)s: discard x')
+popX.addAliases(['clrx'])
 listStack = Command(
     'stack'
   , lambda stack, calc: stack.display()
@@ -1478,6 +1480,7 @@ class Calculator:
         '''
         assert self.backUpStack and self.prevStack
         self.stack = self.prevStack
+        return self.format(self.stack.peek())
 
     def format(self, value):
         '''
@@ -1602,7 +1605,7 @@ if __name__ == '__main__':
             prompt = calc.format(result)
         except CalculatorError, err:
             print error(err.message)
-            calc.restoreStack()
+            prompt = calc.restoreStack()
         return prompt
 
     # Create calculator {{{2
