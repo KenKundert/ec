@@ -605,8 +605,8 @@ squareRoot = UnaryOp(
   , "%(key)s: square root"
 )
 
-from ctypes import c_double, cdll
-libm = cdll.LoadLibrary('libm.so.6')
+from ctypes import util, cdll, c_double
+libm = cdll.LoadLibrary(util.find_library('m'))
 libm.cbrt.restype = c_double
 libm.cbrt.argtypes = [c_double]
 cubeRoot = UnaryOp(
