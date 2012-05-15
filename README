@@ -63,21 +63,21 @@ recall it, simply use the name.
 Display memories using:
 628.32M: vars
   Cin = 1pF
-  R = 50 Ohms
+  Rref = 50 Ohms
   freq = 100MHz
   omega = 628.32M
-628.32M: 
-R is a special variable that is set by default to 50 Ohms, but you can change
+628.32M:
+Rref is a special variable that is set by default to 50 Ohms, but you can change
 its value. It is used in dBm calculations.
 
 EC supports units, but in a relatively conservative way. You can enter them
-and it will remember them, but they do not survive any operation other than a
+and it remembers them, but they do not survive any operation other than a
 copy. In this way it should never display incorrect or misleading units, however
-it will display units when it can. For example,
+it displays units when it can. For example,
 0: 100MHz =freq
 100 MHz: 2pi* 'rads/s' =omega
 628.32 Mrads/s: vars
-  R = 50 Ohms
+  Rref = 50 Ohms
   freq = 100 MHz
   omega = 628.32 Mrads/s
 628.32 Mrads/s: 2pi /
@@ -92,9 +92,8 @@ immediately before.
 $100M:
 
 You can enter hexadecimal or octal numbers. For example:
-0: 'hFF
-255: 0xFF -
-0:
+0: 0xFF
+255:
 
 You can also display numbers in hexadecimal or octal. To do so, use hex, or oct:
 0: 255
@@ -107,10 +106,10 @@ You can convert voltages into dBm using:
 
 You can convert dBm into voltage using:
 0: -10 dbmv
-100m: 
+100 mV: 
 
-Both of these assume a load resistance that is contained in memory R, which by 
-default is 50 Ohms.
+Both of these assume a load resistance that is contained in memory Rref, which 
+by default is 50 Ohms.
 
 At start up EC reads and executes commands from files. It first tries '~/.ecrc'
 and runs any commands it contains if it exists. It then tries './.ecrc' if it
@@ -131,6 +130,15 @@ file with the following contents:
     1.4pF =cs
     59.7pF =cp
     2.2kOhms =rz
+
+EC also takes commands from the command line. For example:
+> ec -x "125mV 67uV / db"
+65.417
+
+EC prints quoted strings while interpolating the values of registers and 
+variables when requested. For example:
+> ec degs 500 1000 rtop "'V/V'" '"Gain = $0 @ $1."'
+Gain = 1.118 KV/V @ 26.565 degs.
 
 You can get a list of actions available with:
 0: help
