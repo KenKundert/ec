@@ -30,6 +30,13 @@ To run EC:
 
 What follows is a brief tour of EC:
 
+To perform operations in EC, you first enter the numbers, then the operators.  
+In particular, as you enter the numbers they are pushed onto the stack. The 
+operators then take numbers from the stack and replace them with the result.  
+The operations are performed immediately and there is no use of parentheses to 
+group calculations. Any intermediate results are stored on the stack until 
+needed.
+
 To add two numbers:
 0: 4 5 +
 9:
