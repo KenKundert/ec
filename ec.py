@@ -1802,7 +1802,7 @@ binaryNumber = Number(
   , synopsis='#{x}=num'
   , summary="""
         The number is pushed on the stack into the #{x} register.  N is an
-        integer in base 2 (it contain only the digits 0 or 1).  For example,
+        integer in base 2 (it may contain only the digits 0 or 1).  For example,
         0b1111 represents the octal number 1111 or the decimal number 15.
     """
 )
@@ -1876,7 +1876,7 @@ verilogBinaryNumber = Number(
   , synopsis='#{x}=num'
   , summary="""
         The number is pushed on the stack into the #{x} register.  N is an
-        integer in base 2 (it must contain the digits 0 or 1).  For example,
+        integer in base 2 (it may contain only the digits 0 or 1).  For example,
         'b1111 represents the binary number 1111 or the decimal number 15.
     """
 )
@@ -2052,7 +2052,14 @@ listStack = Command(
         Print all the values stored on the stack.
     """
 )
-clearStack = Command('clstack', lambda stack, calc: stack.clear(), description="%(key)s: clear stack")
+clearStack = Command(
+    'clstack'
+  , lambda stack, calc: stack.clear()
+  , description="%(key)s: clear stack"
+  , summary="""
+        Remove all values from the stack.
+    """
+)
 
 # Miscellaneous {{{2
 miscellaneousCommands = Category('miscellaneous', "Miscellaneous")
@@ -2085,7 +2092,7 @@ terminate = Command(
 printHelp = Command(
     'help'
   , displayHelp
-  , description="%(key)s: print the list of help topics"
+  , description="%(key)s: print a summary of the available features"
 )
 detailedHelp = Help(
     name='?'
