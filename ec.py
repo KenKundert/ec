@@ -1418,7 +1418,7 @@ voltageToDbm = UnaryOp(
 dbmToVoltage = UnaryOp(
     'dbmv'
   , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Rref'][0])
-  , description="%(key)s: dBm to peak voltage (assumes reference resistance of Rref)"
+  , description="%(key)s: dBm to peak voltage"
   , needCalc=True
   , units='V'
   , synopsis='#{x}=sqrt(2*10**(#{x} - 30)/10)*#{Rref})'
@@ -1434,7 +1434,7 @@ dbmToVoltage = UnaryOp(
 currentToDbm = UnaryOp(
     'idbm'
   , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][0]/2)
-  , description="%(key)s: peak current to dBm (assumes reference resistance of Rref)"
+  , description="%(key)s: peak current to dBm"
   , needCalc=True
   , synopsis='#{x}= 30+10*log10(((#{x}**2)*#{Rref}/2)'
   , summary="""
@@ -1449,7 +1449,7 @@ currentToDbm = UnaryOp(
 dbmToCurrent = UnaryOp(
     'dbmi'
   , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Rref'][0])
-  , description="%(key)s: dBm to peak current (assumes reference resistance of Rref)"
+  , description="%(key)s: dBm to peak current"
   , needCalc=True
   , units='A'
   , synopsis='#{x}=sqrt(2*10**(#{x} - 30)/10)/#{Rref})'

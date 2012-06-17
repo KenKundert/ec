@@ -10,7 +10,7 @@ setup(
   , description='engineering calculator'
   , long_description=longDescription
   , author="Ken Kundert"
-  , author_email='ken@theKunderts.net'
+  , author_email='ec@shalmirane.com'
   , scripts=['ec']
   , py_modules=['ec', 'engfmt', 'cmdline', 'textcolors']
   , data_files=[
