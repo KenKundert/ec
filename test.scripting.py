@@ -23,32 +23,32 @@ status = colors.colorizer('cyan')
 
 # Test cases {{{1
 testCases = [
-    {   'stimulus': "-s lg0.ec '1KHz' lg.ec"
+    {   'stimulus': '-s lg0.ec 1KHz lg.ec'
       , 'output': '''\
-openloop gain = 4.535M
+openloop gain = 63.732
 feedback factor = 16
-loopgain = 72.56M
+loopgain = 1.0197K
 '''
     }
   , {   'stimulus': "'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz' lg.ec"
       , 'output': '''\
-openloop gain = 4.535M
+openloop gain = 63.732
 feedback factor = 16
-loopgain = 72.56M
+loopgain = 1.0197K
 '''
     }
   , {   'stimulus': "'88.3u =Kdet' '9.07G =Kvco' '2 =M' '8 =N' '2 =F' '1KHz' lg.ec"
       , 'output': '''\
-openloop gain = 4.535M
+openloop gain = 63.732
 feedback factor = 16
-loopgain = 72.56M
+loopgain = 1.0197K
 '''
     }
-  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi*' "'rads/s' =omega Kdet Kvco freq/ M/ =a N F * =f a f*" '=T "openloop gain = $a\nfeedback factor = $f\nloopgain = $T"'"""
+  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `openloop gain = $a\nfeedback factor = $f\nloopgain = $T`'"""
       , 'output': '''\
-openloop gain = 4.535M
+openloop gain = 63.732
 feedback factor = 16
-loopgain = 72.56M
+loopgain = 1.0197K
 '''
     }
 ]

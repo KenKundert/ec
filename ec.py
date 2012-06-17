@@ -15,7 +15,7 @@ engfmt.setSpacer(' ')
 import re
 from os.path import expanduser
 from copy import copy
-from pydoc import pager
+from textwrap import wrap, fill, dedent
 
 # Utility classes {{{1
 # CalculatorError {{{2
@@ -136,19 +136,23 @@ class Display:
         if self.style == 'eng':
             return engfmt.toEngFmt(num, units, prec=self.digits)
         if self.style == 'fix':
-            return '%.*f' % (self.digits, num)
+            return '{0:.{precision}f}'.format(num, precision=self.digits)
         elif self.style == 'sci':
-            return '%.*e' % (self.digits, num)
+            return '{0:.{precision}e}'.format(num, precision=self.digits)
         elif self.style == 'hex':
-            return "%#.*x" % (self.digits, int(num))
+            return '{0:#x}'.format(int(num))
         elif self.style == 'oct':
-            return "%#.*o" % (self.digits, int(num))
+            return '{0:#o}'.format(int(num))
+        elif self.style == 'bin':
+            return '{0:#b}'.format(int(num))
         elif self.style == 'vhex':
-            return "'h%.*x" % (self.digits, int(num))
+            return "'h{0:x}".format(int(num))
         elif self.style == 'vdec':
-            return "'d%.*d" % (self.digits, int(num))
+            return "'d{0:d}".format(int(num))
         elif self.style == 'voct':
-            return "'o%.*o" % (self.digits, int(num))
+            return "'o{0:o}".format(int(num))
+        elif self.style == 'vbin':
+            return "'b{0:b}".format(int(num))
         else:
             raise AssertionError
 
@@ -157,6 +161,7 @@ class Display:
         self.digits = self.defaultDigits
 
 # Helper functions {{{2
+from pydoc import pager
 def displayHelp(stack, calc):
     lines = []
     for each in calc.actions:
@@ -172,7 +177,11 @@ def displayHelp(stack, calc):
                         aliases = ' (alias: %s)' % ','.join(aliases)
                 else:
                     aliases = ''
-                lines += ['    ' + each.description % (each.__dict__) + aliases]
+                lines += wrap(
+                    each.description % (each.__dict__) + aliases
+                  , initial_indent='    '
+                  , subsequent_indent='        '
+                )
     pager('\n'.join(lines) + '\n')
 
 def useRadians(stack, calc):
@@ -199,6 +208,40 @@ class Action:
         assert name not in availableActions, "%s: already defined." % name
         availableActions.update({name: self})
 
+    def getName(self, givenName = None):
+        if hasattr(self, 'name') and self.name:
+            primaryName = self.name
+        elif hasattr(self, 'key') and self.key:
+            primaryName = self.key
+        else:
+            primaryName = None
+
+        if givenName:
+            # An argument is given: assure that it corresponds to this action,
+            # if so return the primary name, otherwise return None
+            if hasattr(self, 'name') and givenName == self.name:
+                return primaryName
+            if hasattr(self, 'key') and givenName == self.key:
+                return primaryName
+            if hasattr(self, 'aliases') and givenName in self.aliases:
+                return primaryName
+            return None
+        else:
+            # No argument is given: the primary name is returned.
+            return primaryName
+
+    def getSynopsis(self):
+        try:
+            return self.synopsis if self.synopysis else ''
+        except AttributeError:
+            return ''
+
+    def getSummary(self):
+        try:
+            return self.summary if self.summary else ''
+        except AttributeError:
+            return ''
+
     def addAliases(self, aliases):
         try:
             self.aliases |= set(aliases)
@@ -216,10 +259,18 @@ class Command(Action):
     """
     Operation that does not affect the stack.
     """
-    def __init__(self, key, action, description = None):
+    def __init__(self, key, action
+      , description = None
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -230,11 +281,20 @@ class Constant(Action):
     """
     Operation that pushes one value onto the stack without removing any values.
     """
-    def __init__(self, key, action, description = None, units = ''):
+    def __init__(self, key, action
+      , description = None
+      , units = ''
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
         self.units = units
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -246,12 +306,22 @@ class UnaryOp(Action):
     """
     Operation that removes one value from the stack, replacing it with another.
     """
-    def __init__(self, key, action, description = None, needCalc=False, units=''):
+    def __init__(self, key, action
+      , description = None
+      , needCalc = False
+      , units = ''
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
         self.needCalc = needCalc
         self.units = units
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -271,12 +341,22 @@ class BinaryOp(Action):
     """
     Operation that removes two values from the stack and returns one value.
     """
-    def __init__(self, key, action, description = None, needCalc=False, units=''):
+    def __init__(self, key, action
+      , description = None
+      , needCalc = False
+      , units = ''
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
         self.needCalc = needCalc
         self.units = units
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -297,13 +377,24 @@ class BinaryIoOp(Action):
     """
     Operation that removes two values from the stack and returns two values.
     """
-    def __init__(self, key, action, description=None, needCalc=False, xUnits='', yUnits=''):
+    def __init__(self, key, action
+      , description=None
+      , needCalc=False
+      , xUnits=''
+      , yUnits=''
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
         self.needCalc = needCalc
         self.xUnits = xUnits
         self.yUnits = yUnits
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -326,41 +417,52 @@ class BinaryIoOp(Action):
 
 # Number (pop 0, push 1, match regex) {{{2
 class Number(Action):
-    def __init__(self, kind, description = None):
-        self.kind = kind
+    def __init__(self, name
+      , description = None
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
+        self.name = name
         self.description = description
-        if kind == 'hexnum':
-            pattern = r"0[xX]([0-9a-fA-F]+)"
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
+        if name == 'hexnum':
+            pattern = r"0[xX]([0-9a-fA-F]+)\Z"
             self.base = 16
-        elif kind == 'octnum':
-            pattern = r"0([0-7]+)"
+        elif name == 'octnum':
+            pattern = r"0[oO]([0-7]+)\Z"
             self.base = 8
-        elif kind == 'vhexnum':
-            pattern = r"'[hH]([0-9a-fA-F_]*[0-9a-fA-F])"
-            self.base = 16
-        elif kind == 'vdecnum':
-            pattern = r"'[dD]([0-9_]*[0-9])"
-            self.base = 10
-        elif kind == 'voctnum':
-            pattern = r"'[oO]([0-7_]*[0-7])"
-            self.base = 8
-        elif kind == 'vbinnum':
-            pattern = r"'[bB]([01_]*[01])"
+        elif name == 'binnum':
+            pattern = r"0[bB]([01]+)\Z"
             self.base = 2
-        elif kind == 'engnum':
+        elif name == 'vhexnum':
+            pattern = r"'[hH]([0-9a-fA-F_]*[0-9a-fA-F])\Z"
+            self.base = 16
+        elif name == 'vdecnum':
+            pattern = r"'[dD]([0-9_]*[0-9])\Z"
+            self.base = 10
+        elif name == 'voctnum':
+            pattern = r"'[oO]([0-7_]*[0-7])\Z"
+            self.base = 8
+        elif name == 'vbinnum':
+            pattern = r"'[bB]([01_]*[01])\Z"
+            self.base = 2
+        elif name == 'engnum':
             pattern = r'\A(\$?([-+]?[0-9]*\.?[0-9]+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
-        elif kind == 'scinum':
+        elif name == 'scinum':
             pattern = r'\A(\$?[-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
         else:
             raise NotImplementedError
         self.regex = re.compile(pattern)
-        self.register(self.kind)
+        self.register(self.name)
 
     def execute(self, matchGroups, stack, calc):
         units = ''
-        if self.kind == 'scinum':
+        if self.name == 'scinum':
             num, units = float(matchGroups[0]), matchGroups[1]
-        elif self.kind == 'engnum':
+        elif self.name == 'engnum':
             numWithUnits = engfmt.toNumber(matchGroups[0])
             num, units = numWithUnits
             num = float(num)
@@ -371,22 +473,127 @@ class Number(Action):
 
 # SetFormat (pop 0, push 0, match regex) {{{2
 class SetFormat(Action):
-    def __init__(self, kind, description = None):
-        self.kind = kind
+    def __init__(self, name
+      , allowPrecision = True
+      , description = None
+      , summary = None
+    ):
+        self.name = name
         self.description = description
-        self.regex = re.compile('(%s)(\d{1,2})?' % kind)
-        self.register(self.kind)
+        self.summary = summary
+        self.allowPrecison = allowPrecision
+        if allowPrecision:
+            self.regex = re.compile(r'(%s)(\d{1,2})?\Z' % name)
+        else:
+            self.regex = re.compile(r'(%s)\Z' % name)
+        self.register(self.name)
 
     def execute(self, matchGroups, stack, calc):
         num = matchGroups[0]
         calc.formatter.setStyle(matchGroups[0])
-        if matchGroups[1] != None:
+        if self.allowPrecison and matchGroups[1] != None:
             calc.formatter.setDigits(int(matchGroups[1]))
+
+# Help (pop 0, push 0, match regex) {{{2
+italicsRegex = re.compile(r'#\{(\w+)\}')
+boldRegex = re.compile(r'@\{(\w+)\}')
+class Help(Action):
+    def __init__(self, name = None, description = None, summary = None):
+        self.name = name
+        self.description = description
+        self.summary = summary
+        self.regex = re.compile(r'\?(\S+)?')
+
+    def execute(self, matchGroups, stack, calc):
+        topic = matchGroups[0]
+
+        # give detailed help on a particular topic
+        if topic:
+            for action in calc.actions:
+                found = action.getName(topic)
+                if found:
+                    summary = action.getSummary()
+                    synopsis = italicsRegex.sub(r'\1', action.getSynopsis())
+                    aliases = action.getAliases()
+                    if aliases:
+                        if len(aliases) > 1:
+                            aliases = 'aliases: %s' % ','.join(aliases)
+                        else:
+                            aliases = 'alias: %s' % ','.join(aliases)
+                    else:
+                        aliases = ''
+                    if action.description:
+                        print action.description % (action.__dict__)
+                    else:
+                        print found + ':'
+                    if summary:
+                        print
+                        print self.formatHelpText(summary)
+                    if synopsis:
+                        print
+                        print synopsis
+                    if aliases:
+                        print
+                        print aliases
+                    return
+            print "%s: not found." % topic
+            print
+
+        # present the user with the list of available help topics
+        topics = [action.getName() for action in calc.actions if action.getName()]
+        colWidth = max([len(topic) for topic in topics]) + 3
+        topics.sort()
+        print "For summary of all topics, use 'help'."
+        print "For help on a particular topic, use '?topic'."
+        print
+        print "Available topics:"
+        numCols = 78//colWidth
+        numRows = (len(topics) + numCols - 1)//numCols
+        cols = []
+        for i in range(numCols):
+            cols.append(topics[i*numRows:(i+1)*numRows])
+        for i in range(len(cols[0])):
+            for j in range(numCols):
+                try:
+                    print "{0:{width}s}".format(cols[j][i], width=colWidth),
+                except IndexError:
+                    pass
+            print
+        return
+
+    def formatHelpText(self, text):
+        # get rid of leading indentation and break into individual lines
+        lines = dedent(text).strip().splitlines()
+        paragraphs = []
+        gatheredLines = []
+        verbatim = False
+        for line in lines:
+            if line.strip() == r'\verb{':
+                # start of verbatim region
+                verbatim = True
+                # emit lines gathered so far as a paragraph
+                paragraphs += [fill(' '.join(gatheredLines))]
+                gatheredLines = []
+            elif line.strip() == '}':
+                # end of verbatim region
+                verbatim = False
+            else:
+                line = italicsRegex.sub(r'\1', line)
+                line = boldRegex.sub(r'\1', line)
+                if verbatim:
+                    paragraphs += [line.rstrip()]
+                else:
+                    gatheredLines += [line.strip()]
+        if gatheredLines:
+            paragraphs += [fill(' '.join(gatheredLines))]
+        return '\n'.join(paragraphs)
 
 # Store (peek 1, push 0, match regex) {{{2
 class Store(Action):
-    def __init__(self, description = None):
+    def __init__(self, name, description = None, summary = None):
+        self.name = name
         self.description = description
+        self.summary = summary
         self.regex = re.compile(r'=([a-z]\w*)', re.I)
         self.register('store')
 
@@ -399,8 +606,10 @@ class Store(Action):
 
 # Recall (pop 0, push 1, match regex) {{{2
 class Recall(Action):
-    def __init__(self, description = None):
+    def __init__(self, name, description = None, summary = None):
+        self.name = name
         self.description = description
+        self.summary = summary
         self.regex = re.compile(r'([a-z]\w*)', re.I)
         self.register('recall')
 
@@ -413,9 +622,11 @@ class Recall(Action):
 
 # SetUnits (pop 1, push 1, match regex) {{{2
 class SetUnits(Action):
-    def __init__(self, description = None):
+    def __init__(self, name, description = None, summary = None):
+        self.name = name
         self.description = description
-        self.regex = re.compile(r"'(.*)'")
+        self.summary = summary
+        self.regex = re.compile(r'"(.*)"')
         self.register('units')
 
     def execute(self, matchGroups, stack, calc):
@@ -425,9 +636,11 @@ class SetUnits(Action):
 
 # Print (pop 0, push (Action)0, match regex) {{{2
 class Print(Action):
-    def __init__(self, description = None):
+    def __init__(self, name, description = None, summary = None):
+        self.name = name
         self.description = description
-        self.regex = re.compile(r'"(.*)"')
+        self.summary = summary
+        self.regex = re.compile(r'`(.*)`')
         self.argsRegex = re.compile(r'\${?(\w+|\$)}?')
         self.register('print')
 
@@ -471,9 +684,17 @@ class Swap(Action):
     """
     Swap the top two entries on the stack.
     """
-    def __init__(self, description = None):
-        self.key = 'swap'
+    def __init__(self, key
+      , description = None
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
+        self.key = key
         self.description = description
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -484,12 +705,23 @@ class Swap(Action):
 
 # Dup (peek 1, pu(Action)sh 1, match name) {{{2
 class Dup(Action):
-    def __init__(self, key, action, description = None, needCalc=False, units=''):
+    def __init__(self, key, action
+      , description = None
+      , needCalc=False
+      , units=''
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
         self.key = key
         self.action = action
         self.description = description
+        self.summary = summary
         self.needCalc = needCalc
         self.units = units
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -511,9 +743,17 @@ class Pop(Action):
     """
     Pop the latest value off stack and discard it.
     """
-    def __init__(self, description = None):
-        self.key = 'pop'
+    def __init__(self, key
+      , description = None
+      , synopsis = None
+      , summary = None
+      , aliases = frozenset()
+    ):
+        self.key = key
         self.description = description
+        self.synopsis = synopsis
+        self.summary = summary
+        self.aliases = aliases
         self.register(self.key)
 
     def execute(self, stack, calc):
@@ -536,80 +776,289 @@ class Category(Action):
 
 # Arithmetic Operators {{{2
 arithmeticOperators = Category('arithmeticOperators', "Arithmetic Operators")
+# addition {{{3
 addition = BinaryOp(
     '+'
   , operator.add
-  , "%(key)s: addition"
+  , description="%(key)s: addition"
   # keep units of x if they are the same as units of y
   , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+  , synopsis='#{x} <= #{x}+#{y}'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the
+        stack and the sum is placed back on the stack into the #{x}
+        register.
+    """
 )
+# subtraction {{{3
 subtraction = BinaryOp(
     '-'
   , operator.sub
-  , "%(key)s: subtraction"
+  , description="%(key)s: subtraction"
   # keep units of x if they are the same as units of y
   , units=lambda calc, units: units[0] if units[0] == units[1] else ''
+  , synopsis='#{x} <= #{x}-#{y}'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the
+        stack and the difference is placed back on the stack into the #{x}
+        register.
+    """
 )
-multiplication = BinaryOp('*', operator.mul, "%(key)s: multiplication")
-division = BinaryOp('/', operator.truediv, "%(key)s: true division")
-floorDivision = BinaryOp('//', operator.floordiv, "%(key)s: floor division")
-modulus = BinaryOp('%', operator.mod, "%(key)s: modulus")
+# multiplication {{{3
+multiplication = BinaryOp(
+    '*'
+  , operator.mul
+  , description="%(key)s: multiplication"
+  , synopsis='#{x} <= #{x}*#{y}'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the
+        stack and the product is placed back on the stack into the #{x}
+        register.
+    """
+)
+# true division {{{3
+trueDivision = BinaryOp(
+    '/'
+  , operator.truediv
+  , description="%(key)s: true division"
+  , synopsis='#{x} <= #{y}/#{x}'
+  , summary=r"""
+        The values in the #{x} and #{y} registers are popped from the stack and
+        the quotient is placed back on the stack into the #{x} register.  Both
+        values are treated as real numbers and the results in a real number. So
+        \verb{
+            @{0}: 1 2/
+            @{500m}:
+        }
+    """
+)
+# floor division {{{3
+floorDivision = BinaryOp(
+    '//'
+  , operator.floordiv
+  , description="%(key)s: floor division"
+  , synopsis='#{x} <= #{y}//#{x}'
+  , summary=r"""
+        The values in the #{x} and #{y} registers are popped from the
+        stack, the quotient is computed and then converted to an integer using
+        the floor operation (it is replaced by the largest integer that is
+        smaller than the quotient), and that is placed back on the stack into
+        the #{x} register.  So
+        \verb{
+            @{0}: 1 2//
+            @{0}:
+        }
+    """
+)
+# modulus {{{3
+modulus = BinaryOp(
+    '%'
+  , operator.mod
+  , description="%(key)s: modulus"
+  , synopsis='#{x} <= #{y}%#{x}'
+  , summary=r"""
+        The values in the #{x} and #{y} registers are popped from the stack, the
+        quotient is computed and the remainder is placed back on the stack into
+        the #{x} register.  So
+        \verb{
+            @{0}: 14 3%
+            @{2}:
+        }
+        In this case 2 is the remainder because 3 goes evenly into 14 three
+        times, which leaves a remainder of 2.
+    """
+)
+# percent change {{{3
 percentChange = BinaryOp(
     '%chg'
   , lambda y, x: 100*(x-y)/y
-  , "%(key)s: percent change (100*(x-y)/y)"
+  , description="%(key)s: percent change (100*(x-y)/y)"
+  , synopsis='#{x} <= (100*(#{x}-#{y})/#{y})'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and 
+        the percent difference between #{x} and #{y} relative to #{y} is pushed 
+        back into the #{x} register.
+    """
 )
-parallel = BinaryOp('||', lambda y, x: (x/(x+y))*y, "%(key)s: parallel combination")
-negation = UnaryOp('chs', operator.neg, "%(key)s: change sign")
-reciprocal = UnaryOp('recip', lambda x: 1/x, "%(key)s: reciprocal")
-ceiling = UnaryOp('ceil', math.ceil, "%(key)s: round towards positive infinity")
-floor = UnaryOp('floor', math.floor, "%(key)s: round towards negative infinity")
-factorial = UnaryOp('!', math.factorial, "%(key)s: factorial")
+# parallel combination {{{3
+parallel = BinaryOp(
+    '||'
+  , lambda y, x: (x/(x+y))*y
+  , description="%(key)s: parallel combination"
+  , synopsis='#{x} <= 1/(1/#{x}+1/#{y})'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and
+        replaced with the reciprocal of the sum of their reciprocals.  If the
+        values in the #{x} and #{y} registers are both resistances, both
+        elastances, or both inductances, then the result is the resistance,
+        elastance or inductance of the two in parallel. If the values are
+        conductances, capacitances or susceptances, then the result is the
+        conductance, capacitance or susceptance of the two in series.
+    """
+)
+# negation {{{3
+negation = UnaryOp(
+    'chs'
+  , operator.neg
+  , description="%(key)s: change sign"
+  , synopsis='#{x} <= -#{x}'
+  , summary="""
+        The value in the #{x} register is replaced with its negative. 
+    """
+)
+# reciprocal {{{3
+reciprocal = UnaryOp(
+    'recip'
+  , lambda x: 1/x
+  , description="%(key)s: reciprocal"
+  , synopsis='#{x} <= 1/#{x}'
+  , summary="""
+        The value in the #{x} register is replaced with its reciprocal. 
+    """
+)
+# ceiling {{{3
+ceiling = UnaryOp(
+    'ceil'
+  , math.ceil
+  , description="%(key)s: round towards positive infinity"
+  , synopsis='#{x} <= ceil(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its value rounded
+        towards infinity (replaced with the smallest integer greater than its
+        value).
+    """
+)
+# floor {{{3
+floor = UnaryOp(
+    'floor'
+  , math.floor
+  , description="%(key)s: round towards negative infinity"
+  , synopsis='#{x} <= floor(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its value rounded
+        towards negative infinity (replaced with the largest integer smaller
+        than its value).
+    """
+)
+# factorial {{{3
+factorial = UnaryOp(
+    '!'
+  , math.factorial
+  , description="%(key)s: factorial"
+  , synopsis='#{x} <= #{x}!'
+  , summary="""
+        The value in the #{x} register is replaced with its factorial.
+    """
+)
+# random number {{{3
+randomNumber = Constant(
+    'rand'
+  , random.random
+  , description="%(key)s: random number between 0 and 1"
+  , synopsis='#{x} <= rand'
+  , summary="""
+        A number between 0 and 1 is chosen at random and its value is pushed on
+        the stack into #{x} register.
+    """
+)
 
 # Logs, Powers, and Exponentials {{{2
 powersAndLogs = Category(
     'powersAndLogs'
   , "Powers, Roots, Exponentials and Logarithms"
 )
+# power {{{3
 power = BinaryOp(
     '**'
   , operator.pow
-  , "%(key)s: raise y to the power of x"
+  , description="%(key)s: raise y to the power of x"
+  , synopsis='#{x} <= #{y}**#{x}'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the
+        stack and replaced with the value of #{y} raised to the power of
+        #{x}. 
+    """
+  , aliases=['pow', 'ytox']
 )
-power.addAliases(['pow', 'ytox'])
+# exponential {{{3
 exponential = UnaryOp(
     'exp'
   , lambda x: cmath.exp(x) if type(x) == complex else math.exp(x)
-  , "%(key)s: natural exponential"
+  , description="%(key)s: natural exponential"
+  , synopsis='#{x} <= exp(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its exponential. 
+        Supports a complex argument.
+    """
+  , aliases=['powe']
 )
-exponential.addAliases(['powe'])
+# natural logarithm {{{3
 naturalLog = UnaryOp(
     'ln'
   , lambda x: cmath.log(x) if type(x) == complex else math.log(x)
-  , "%(key)s: natural logarithm"
+  , description="%(key)s: natural logarithm"
+  , synopsis='#{x} <= ln(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its natural logarithm. 
+        Supports a complex argument.
+    """
+  , aliases=['loge']
 )
-naturalLog.addAliases(['loge'])
-tenPower = UnaryOp('pow10', lambda x: 10**x, "%(key)s: raise 10 to the power of x")
-tenPower.addAliases(['10tox'])
-tenLog = UnaryOp(
-    'lg'
+# raise 10 to the power of x {{{3
+tenPower = UnaryOp(
+    'pow10'
+  , lambda x: 10**x
+  , description="%(key)s: raise 10 to the power of x"
+  , synopsis='#{x} <= 10**#{x}'
+  , summary="""
+        The value in the #{x} register is replaced with 10 raised to #{x}.
+    """
+  , aliases=['10tox']
+)
+# common logarithm {{{3
+commonLog = UnaryOp(
+    'log'
   , math.log10
-  , "%(key)s: base 10 logarithm"
+  , description="%(key)s: base 10 logarithm"
+  , synopsis='#{x} <= log(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its common logarithm. 
+    """
+  , aliases=['log10', 'lg']
 )
-tenLog.addAliases(['log', 'log10'])
-twoLog = UnaryOp(
-    'lb'
+# binary logarithm {{{3
+binaryLog = UnaryOp(
+    'log2'
   , lambda x: math.log(x)/math.log(2)
-  , "%(key)s: base 2 logarithm"
+  , description="%(key)s: base 2 logarithm"
+  , synopsis='#{x} <= log2(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its common logarithm. 
+    """
+  , aliases=['lb']
 )
-twoLog.addAliases(['log2'])
-square = UnaryOp('sqr', lambda x: x*x, "%(key)s: square")
+# square {{{3
+square = UnaryOp(
+    'sqr'
+  , lambda x: x*x
+  , description="%(key)s: square"
+  , synopsis='#{x} <= #{x}**2'
+  , summary="""
+        The value in the #{x} register is replaced with its square. 
+    """
+)
+# square root {{{3
 squareRoot = UnaryOp(
     'sqrt'
   , lambda x: cmath.sqrt(x) if type(x) == complex else math.sqrt(x)
-  , "%(key)s: square root"
+  , description="%(key)s: square root"
+  , synopsis='#{x} <= sqrt(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its square root.
+    """
 )
 
+# cube root {{{3
 from ctypes import util, cdll, c_double
 libm = cdll.LoadLibrary(util.find_library('m'))
 libm.cbrt.restype = c_double
@@ -617,7 +1066,11 @@ libm.cbrt.argtypes = [c_double]
 cubeRoot = UnaryOp(
     'cbrt'
   , lambda x: libm.cbrt(x)
-  , "%(key)s: cube root"
+  , description="%(key)s: cube root"
+  , synopsis='#{x} <= cbrt(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its cube root.
+    """
 )
 
 # Trig Functions {{{2
@@ -625,106 +1078,200 @@ trigFunctions = Category(
     'trigFunctions'
   , "Trigonometric Functions"
 )
+# sine {{{3
 sine = UnaryOp(
-        'sin'
-      , lambda x, calc: math.sin(calc._toRadians(x))
-      , "%(key)s: sine"
-      , True
-    )
+    'sin'
+  , lambda x, calc: math.sin(calc._toRadians(x))
+  , description="%(key)s: trigonometric sine"
+  , needCalc=True
+  , synopsis='#{x} <= sin(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its sine.
+    """
+)
+# cosine {{{3
 cosine = UnaryOp(
-        'cos'
-      , lambda x, calc: math.cos(calc._toRadians(x))
-      , "%(key)s: cosine"
-      , True
-    )
+    'cos'
+  , lambda x, calc: math.cos(calc._toRadians(x))
+  , description="%(key)s: trigonometric cosine"
+  , needCalc=True
+  , synopsis='#{x} <= cos(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its cosine.
+    """
+)
+# tangent {{{3
 tangent = UnaryOp(
-        'tan'
-      , lambda x, calc: math.tan(calc._toRadians(x))
-      , "%(key)s: tangent"
-      , True
-    )
+    'tan'
+  , lambda x, calc: math.tan(calc._toRadians(x))
+  , description="%(key)s: trigonometric tangent"
+  , needCalc=True
+  , synopsis='#{x} <= tan(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its tangent.
+    """
+)
+# arc sine {{{3
 arcSine = UnaryOp(
-        'asin'
-      , lambda x, calc: calc._fromRadians(math.asin(x))
-      , "%(key)s: arc sine"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
+    'asin'
+  , lambda x, calc: calc._fromRadians(math.asin(x))
+  , description="%(key)s: trigonometric arc sine"
+  , needCalc=True
+  , units=lambda calc, units: calc._angleUnits()
+  , synopsis='#{x} <= asin(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its arc sine.
+    """
+)
+# arc cosine {{{3
 arcCosine = UnaryOp(
-        'acos'
-      , lambda x, calc: calc._fromRadians(math.acos(x))
-      , "%(key)s: arc cosine"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
+    'acos'
+  , lambda x, calc: calc._fromRadians(math.acos(x))
+  , description="%(key)s: trigonometric arc cosine"
+  , needCalc=True
+  , units=lambda calc, units: calc._angleUnits()
+  , synopsis='#{x} <= acos(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its arc cosine.
+    """
+)
+# arc tangent {{{3
 arcTangent = UnaryOp(
-        'atan'
-      , lambda x, calc: calc._fromRadians(math.atan(x))
-      , "%(key)s: arc tangent"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
-    )
-setRadiansMode = Command('rads', useRadians, "%(key)s: use radians")
-setDegreesMode = Command('degs', useDegees, "%(key)s: use degrees")
+    'atan'
+  , lambda x, calc: calc._fromRadians(math.atan(x))
+  , description="%(key)s: trigonometric arc tangent"
+  , needCalc=True
+  , units=lambda calc, units: calc._angleUnits()
+  , synopsis='#{x} <= atan(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its arc tangent.
+    """
+)
+# radians {{{3
+setRadiansMode = Command(
+    'rads'
+  , useRadians
+  , description="%(key)s: use radians"
+  , summary="""
+        Switch the trigonometric mode to radians (functions such as #{sin},
+        #{cos}, #{tan}, and #{ptor} expect angles to be given in radians;
+        functions such as #{arg}, #{asin}, #{acos}, #{atan}, #{atan2}, and
+        #{rtop} should produce angles in radians).
+    """
+)
+# degrees {{{3
+setDegreesMode = Command(
+    'degs'
+  , useDegees
+  , description="%(key)s: use degrees"
+  , summary="""
+        Switch the trigonometric mode to degrees (functions such as #{sin},
+        #{cos}, #{tan}, and #{ptor} expect angles to be given in degrees;
+        functions such as #{arg}, #{asin}, #{acos}, #{atan}, #{atan2}, and
+        #{rtop} should produce angles in degrees).
+    """
+)
 
 # Complex and Vector Functions {{{2
 complexAndVectorFunctions = Category(
     'complexAndVectorFunctions'
   , "Complex and Vector Functions"
 )
-# Absolute Value of a complex number, also known as the magnitude, amplitude, or
-# modulus
+# absolute value {{{3
+# Absolute Value of a complex number.
+# Also known as the magnitude, amplitude, or modulus
 absoluteValue = Dup(
-        'abs'
-      , lambda x: abs(x)
-      , "%(key)s: magnitude"
-      , units=lambda calc, units: units[0]
-    )
-absoluteValue.addAliases(['mag'])
+    'abs'
+  , lambda x: abs(x)
+  , description="%(key)s: magnitude"
+  , units=lambda calc, units: units[0]
+  , synopsis='#{x}, #{y} <= abs(#{x}), #{x}'
+  , summary="""
+        The absolute value of the number in the #{x} register is pushed onto the
+        stack if it is real. If the value is complex, the magnitude is pushed
+        onto the stack.
+    """
+  , aliases=['mag']
+)
+# argument {{{3
 # Argument of a complex number, also known as the phase , or angle
 argument = Dup(
-        'arg'
-      , lambda x, calc: (
-            calc._fromRadians(math.atan2(x.imag,x.real))
-            if type(x) == complex
-            else 0
-        )
-      , "%(key)s: phase"
-      , True
-      , units=lambda calc, units: calc._angleUnits()
+    'arg'
+  , lambda x, calc: (
+        calc._fromRadians(math.atan2(x.imag,x.real))
+        if type(x) == complex
+        else 0
     )
-argument.addAliases(['ph'])
+  , description="%(key)s: phase"
+  , needCalc=True
+  , units=lambda calc, units: calc._angleUnits()
+  , synopsis='#{x}, #{y} <= arg(#{x}), #{x}'
+  , summary="""
+        The argument of the number in the #{x} register is pushed onto the
+        stack if it is complex. If the value is real, zero is pushed
+        onto the stack.
+    """
+  , aliases=['ph']
+)
+# hypotenuse {{{3
 hypotenuse = BinaryOp(
     'hypot'
   , math.hypot
-  , "%(key)s: hypotenuse"
+  , description="%(key)s: hypotenuse"
+  , synopsis='#{x} <= sqrt(#{x}**2+#{y}**2)'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and 
+        replaced with the length of the vector from the origin to the point
+        (#{x},#{y}).
+    """
+  , aliases=['len']
 )
-hypotenuse.addAliases(['len'])
+# arc tangent 2 {{{3
 arcTangent2 = BinaryOp(
     'atan2'
   , lambda y, x, calc: calc._fromRadians(math.atan2(y, x))
-  , "%(key)s: two-argument arc tangent"
-  , True
+  , description="%(key)s: two-argument arc tangent"
+  , needCalc=True
   , units=lambda calc, units: calc._angleUnits()
+  , synopsis='#{x} <= atan2(#{y},#{x})'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and 
+        replaced with the angle of the vector from the origin to the point.
+    """
+  , aliases=['angle']
 )
-arcTangent2.addAliases(['angle'])
+# rectangular to polar {{{3
 rectangularToPolar = BinaryIoOp(
     'rtop'
   , lambda y, x, calc: (math.hypot(y, x), calc._fromRadians(math.atan2(y,x)))
-  , "%(key)s: convert rectangular to polar coordinates"
-  , True
+  , description="%(key)s: convert rectangular to polar coordinates"
+  , needCalc=True
   , yUnits=lambda calc: calc._angleUnits()
+  , synopsis='#{x}, #{y} <= sqrt(#{x}**2+#{y}**2), atan2(#{y},#{x})'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and 
+        replaced with the length of the vector from the origin to the point 
+        (#{x},#{y}) and with the angle of the vector from the origin to the point 
+        (#{x},#{y}).
+    """
 )
+# polar to rectangular {{{3
 polarToRectangular = BinaryIoOp(
     'ptor'
   , lambda ph, mag, calc: (
         mag*math.cos(calc._toRadians(ph))
       , mag*math.sin(calc._toRadians(ph))
     )
-  , "%(key)s: convert polar to rectangular coordinates"
-  , True
+  , description="%(key)s: convert polar to rectangular coordinates"
+  , needCalc=True
   , xUnits=lambda calc: calc.stack.peek()[1]
   , yUnits=lambda calc: calc.stack.peek()[1]
+  , synopsis='#{x}, #{y} <= #{x}*cos(#{y}), #{x}*sin(#{y})'
+  , summary="""
+        The values in the #{x} and #{y} registers are popped from the stack and
+        interpreted as the length and angle of a vector and are replaced with
+        the coordinates of the end-point of that vector.
+    """
 )
 
 # Hyperbolic Functions {{{2
@@ -732,35 +1279,67 @@ hyperbolicFunctions = Category(
     'hyperbolicFunctions'
   , "Hyperbolic Functions"
 )
+# hyperbolic sine {{{3
 hyperbolicSine = UnaryOp(
     'sinh'
   , math.sinh
-  , "%(key)s: hyperbolic sine"
+  , description="%(key)s: hyperbolic sine"
+  , synopsis='#{x} <= sinh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic sine.
+    """
 )
+# hyperbolic cosine {{{3
 hyperbolicCosine = UnaryOp(
     'cosh'
   , math.cosh
-  , "%(key)s: hyperbolic cosine"
+  , description="%(key)s: hyperbolic cosine"
+  , synopsis='#{x} <= cosh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic cosine.
+    """
 )
+# hyperbolic tangent {{{3
 hyperbolicTangent = UnaryOp(
     'tanh'
   , math.tanh
-  , "%(key)s: hyperbolic tangent"
+  , description="%(key)s: hyperbolic tangent"
+  , synopsis='#{x} <= tanh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic tangent.
+    """
 )
+# hyperbolic arc sine {{{3
 hyperbolicArcSine = UnaryOp(
     'asinh'
   , math.asinh
-  , "%(key)s: hyperbolic arc sine"
+  , description="%(key)s: hyperbolic arc sine"
+  , synopsis='#{x} <= asinh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic arc sine.
+    """
 )
+# hyperbolic arc cosine {{{3
 hyperbolicArcCosine = UnaryOp(
     'acosh'
   , math.acosh
-  , "%(key)s: hyperbolic arc cosine"
+  , description="%(key)s: hyperbolic arc cosine"
+  , synopsis='#{x} <= acosh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic arc
+        cosine.
+    """
 )
+# hyperbolic arc tangent {{{3
 hyperbolicArcTangent = UnaryOp(
     'atanh'
   , math.atanh
-  , "%(key)s: hyperbolic arc tangent"
+  , description="%(key)s: hyperbolic arc tangent"
+  , synopsis='#{x} <= atanh(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its hyperbolic arc
+        tangent.
+    """
 )
 
 # Decibel Functions {{{2
@@ -768,197 +1347,424 @@ decibelFunctions = Category(
     'decibelFunctions'
   , "Decibel Functions"
 )
+# voltage or current to decibels {{{3
 decibels20 = UnaryOp(
     'db'
   , lambda x: 20*math.log10(x)
-  , "%(key)s: convert voltage or current to dB"
+  , description="%(key)s: convert voltage or current to dB"
+  , synopsis='#{x} <= 20*log(#{x})'
+  , summary="""
+        The value in the #{x} register is replaced with its value in 
+        decibels. It is appropriate to apply this form when 
+        converting voltage or current to decibels.
+    """
+  , aliases=['db20', 'v2db', 'i2db']
 )
-decibels20.addAliases(['db20', 'v2db', 'i2db'])
+# decibels to voltage or current {{{3
 antiDecibels20 = UnaryOp(
     'adb'
   , lambda x: 10**(x/20)
-  , "%(key)s: convert dB to voltage or current"
+  , description="%(key)s: convert dB to voltage or current"
+  , synopsis='#{x} <= #{x}=10**(#{x}/20)'
+  , summary="""
+        The value in the #{x} register is converted from decibels and that value
+        is placed back into the #{x} register.  It is appropriate to apply this
+        form when converting decibels to voltage or current.  
+    """
+  , aliases=['db2v', 'db2i']
 )
-antiDecibels20.addAliases(['db2v', 'db2i'])
+# power to decibels {{{3
 decibels10 = UnaryOp(
     'db10'
   , lambda x: 10*math.log10(x)
-  , "%(key)s: convert power to dB"
+  , description="%(key)s: convert power to dB"
+  , synopsis='#{x} <= 10*log(#{x})'
+  , summary="""
+        The value in the #{x} register is converted from decibels and that
+        value is placed back into the #{x} register.  It is appropriate to
+        apply this form when converting power to decibels.
+    """
+  , aliases=['p2db']
 )
-decibels10.addAliases(['p2db'])
+# decibels to power {{{3
 antiDecibels10 = UnaryOp(
     'adb10'
   , lambda x: 10**(x/10)
-  , "%(key)s: convert dB to power"
+  , description="%(key)s: convert dB to power"
+  , synopsis='#{x} <= 10**(#{x}/10)'
+  , summary="""
+        The value in the #{x} register is converted from decibels and that value
+        is placed back into the #{x} register.  It is appropriate to apply this
+        form when converting decibels to voltage or current.  
+    """
+  , aliases=['db2p']
 )
-antiDecibels10.addAliases(['db2p'])
+# voltage to dBm {{{3
 voltageToDbm = UnaryOp(
     'vdbm'
   , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Rref'][0]/2)
-  , "%(key)s: peak voltage to dBm (assumes reference resistance of Rref)"
-  , True
+  , description="%(key)s: convert peak voltage to dBm"
+  , needCalc=True
+  , synopsis='#{x}= 30+10*log10((#{x}**2)/(2*#{Rref}))'
+  , summary="""
+        The value in the #{x} register is expected to be the peak voltage of a
+        sinusoid that is driving a load resistor equal to #{Rref} (a predefined
+        variable).  It is replaced with the power delivered to the resistor in
+        decibels relative to 1 milliwatt.  
+    """
+  , aliases=['v2dbm']
 )
-voltageToDbm.addAliases(['v2dbm'])
+# dBm to voltage {{{3
 dbmToVoltage = UnaryOp(
     'dbmv'
   , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Rref'][0])
-  , "%(key)s: dBm to peak voltage (assumes reference resistance of Rref)"
-  , True
-  , 'V'
+  , description="%(key)s: dBm to peak voltage (assumes reference resistance of Rref)"
+  , needCalc=True
+  , units='V'
+  , synopsis='#{x}=sqrt(2*10**(#{x} - 30)/10)*#{Rref})'
+  , summary="""
+        The value in the #{x} register is expected to be a power in decibels
+        relative to one milliwatt. It is replaced with the peak voltage of a
+        sinusoid that would be needed to deliver the same power to a load
+        resistor equal to #{Rref} (a predefined variable).
+    """
+  , aliases=['dbm2v']
 )
-dbmToVoltage.addAliases(['dbm2v'])
+# current to dBm {{{3
 currentToDbm = UnaryOp(
     'idbm'
   , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][0]/2)
-  , "%(key)s: peak current to dBm (assumes reference resistance of Rref)"
-  , True
+  , description="%(key)s: peak current to dBm (assumes reference resistance of Rref)"
+  , needCalc=True
+  , synopsis='#{x}= 30+10*log10(((#{x}**2)*#{Rref}/2)'
+  , summary="""
+        The value in the #{x} register is expected to be the peak current of a
+        sinusoid that is driving a load resistor equal to #{Rref} (a predefined
+        variable).  It is replaced with the power delivered to the resistor in
+        decibels relative to 1 milliwatt.
+    """
+  , aliases=['i2dbm']
 )
-currentToDbm.addAliases(['i2dbm'])
+# dBm to current {{{3
 dbmToCurrent = UnaryOp(
     'dbmi'
   , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Rref'][0])
-  , "%(key)s: dBm to peak current (assumes reference resistance of Rref)"
-  , True
-  , 'A'
+  , description="%(key)s: dBm to peak current (assumes reference resistance of Rref)"
+  , needCalc=True
+  , units='A'
+  , synopsis='#{x}=sqrt(2*10**(#{x} - 30)/10)/#{Rref})'
+  , summary="""
+        The value in the #{x} register is expected to be a power in decibels
+        relative to one milliwatt. It is replaced with the peak current of a
+        sinusoid that would be needed to deliver the same power to a load
+        resistor equal to #{Rref} (a predefined variable).
+    """
+  , aliases=['dbm2i']
 )
-dbmToCurrent.addAliases(['dbm2i'])
 
 # Constants {{{2
 constants = Category(
     'constants'
   , "Constants"
 )
-pi = Constant('pi', lambda: math.pi, "%(key)s: 3.141592...", 'rads')
-twoPi = Constant('2pi', lambda: 2*math.pi, "%(key)s: 2*pi: 6.283185...", 'rads')
+# pi {{{3
+pi = Constant(
+    'pi'
+  , lambda: math.pi
+  , description="%(key)s: pi"
+  , units='rads'
+  , synopsis='#{x}=pi'
+  , summary="""
+        The value of pi (3.141592...) is pushed on the stack into the #{x}
+        register.
+    """
+)
+# 2 pi {{{3
+twoPi = Constant(
+    '2pi'
+  , lambda: 2*math.pi
+  , description="%(key)s: 2*pi"
+  , units='rads'
+  , synopsis='#{x}=2*pi'
+  , summary="""
+        Two times the value of pi (6.283185...) is pushed on the stack into the
+        #{x} register.
+    """
+)
+# sqrt 2 {{{3
 squareRoot2 = Constant(
     'rt2'
   , lambda: math.sqrt(2)
-  , "%(key)s: square root of two: 1.4142..."
+  , description="%(key)s: square root of two"
+  , synopsis='#{x}=sqrt(2)'
+  , summary="""
+        The square root of two (1.4142...) is pushed on the stack into the #{x}
+        register.
+    """
 )
+# j {{{3
 imaginaryUnit = Constant(
     'j'
   , lambda: 1j
-  , "%(key)s: imaginary unit (square root of -1)"
+  , description="%(key)s: imaginary unit (square root of -1)"
+  , synopsis='#{x}=j'
+  , summary="""
+        The imaginary unit (square root of -1) is pushed on the stack into
+        the #{x} register.
+    """
 )
-imaginaryTwoPi = Constant('j2pi', lambda: 2j*math.pi, "%(key)s: j*2*pi", 'rads')
-planksConstantH = Constant(
+# j2pi {{{3
+imaginaryTwoPi = Constant(
+    'j2pi'
+  , lambda: 2j*math.pi
+  , description="%(key)s: j*2*pi"
+  , units='rads'
+  , synopsis='#{x}=j*2*pi'
+  , summary="""
+        2 pi times the imaginary unit (j6.283185...) is pushed on the stack into
+        the #{x} register.
+    """
+)
+# plank constant {{{3
+planckConstantH = Constant(
     'h'
   , lambda: 6.62606957e-34
-  , "%(key)s: Plank's constant: 6.62606957e-34 J-s"
-  , 'J-s'
+  , description="%(key)s: Planck constant"
+  , units='J-s'
+  , synopsis='#{x}=h'
+  , summary="""
+        The Planck constant (6.62606957e-34 J-s) is pushed on the stack into
+        the #{x} register.
+    """
 )
-planksConstantHbar = Constant(
+# reduced plank constant {{{3
+planckConstantHbar = Constant(
     'hbar'
   , lambda: 1.054571726e-34
-  , "%(key)s: Plank's constant: 1.054571726e-34 J-s"
-  , 'J-s'
+  , description="%(key)s: Reduced Planck constant"
+  , units='J-s'
+  , synopsis='#{x}=h/(2*pi)'
+  , summary="""
+        The reduced Planck constant (1.054571726e-34 J-s) is pushed on the stack
+        into the #{x} register.
+    """
 )
-planksLength = Constant(
+# planck length {{{3
+planckLength = Constant(
     'lP'
   , lambda: 1.616199e-35
-  , "%(key)s: Plank's length: 1.616199e-35 m"
-  , 'm'
+  , description="%(key)s: Planck length"
+  , units='m'
+  , synopsis='#{x}=lP'
+  , summary="""
+        The Planck length (sqrt(h*G/(2*pi*c**3)) or 1.616199e-35 m) is pushed on
+        the stack into the #{x} register.
+    """
 )
-planksMass = Constant(
+# planck mass {{{3
+planckMass = Constant(
     'mP'
   , lambda: 2.17651e-5
-  , "%(key)s: Plank's mass: 2.17651e-5 g"
-  , 'g'
+  , description="%(key)s: Planck mass"
+  , units='g'
+  , synopsis='#{x}=mP'
+  , summary="""
+        The Planck mass (sqrt(h*c/(2*pi*G)) or 2.17651e-5 g) is pushed on
+        the stack into the #{x} register.
+    """
 )
-planksTemperature = Constant(
+# reduced planck mass {{{3
+planckMass = Constant(
+    'mPr'
+  , lambda: 2.17651e-5
+  , description="%(key)s: Reduced Planck mass"
+  , units='g'
+  , synopsis='#{x}=mPr'
+  , summary="""
+        The reduced Planck mass (sqrt(h*c/(16*pi**2*G)) or 4.341e-6 g) is pushed
+        on the stack into the #{x} register.
+    """
+
+)
+# planck temperature {{{3
+planckTemperature = Constant(
     'TP'
   , lambda: 1.416833e32
-  , "%(key)s: Plank's temperature: 1.416833e32 K"
-  , 'K'
+  , description="%(key)s: Planck temperature"
+  , units='K'
+  , synopsis='#{x}=TP'
+  , summary="""
+        The Planck temperature (mP*c**2/k or 1.416833e32 K) is pushed
+        on the stack into the #{x} register.
+    """
 )
-planksTime = Constant(
+# planck time {{{3
+planckTime = Constant(
     'tP'
   , lambda: 5.39106e-44
-  , "%(key)s: Plank's time: 5.39106e-44 s"
-  , 's'
+  , description="%(key)s: Planck time"
+  , units='s'
+  , synopsis='#{x}=tP'
+  , summary="""
+        The Planck time (sqrt(h*G/(2*pi*c**5)) or 5.39106e-44 s) is pushed on
+        the stack into the #{x} register.
+    """
 )
+# boltzmann constant {{{3
 boltzmann = Constant(
     'k'
   , lambda: 1.3806488e-23
-  , "%(key)s: Boltzmann's constant: 1.3806488e-23 J/K"
-  , 'J/K'
+  , description="%(key)s: Boltzmann constant"
+  , units='J/K'
+  , synopsis='#{x}=k'
+  , summary="""
+        The Boltzmann constant (R/NA) or 1.3806488e-23 J/K) is pushed on the
+        stack into the #{x} register.
+    """
 )
-chargeOfElectron = Constant(
+# elementary charge {{{3
+elementaryCharge = Constant(
     'q'
   , lambda: 1.602176565e-19
-  , "%(key)s: charge of an electron (the elementary charge): 1.602176565e-19 C"
-  , 'C'
+  , description="%(key)s: elementary charge (the charge of an electron)"
+  , units='C'
+  , synopsis='#{x}=q'
+  , summary="""
+        The elementary charge (the charge of an electron or 1.602176565e-19 C)
+        is pushed on the stack into the #{x} register.
+    """
 )
+# mass of electron {{{3
 massOfElectron = Constant(
     'me'
   , lambda: 9.10938291e-28
-  , "%(key)s: mass of an electron: 9.10938291e-28 g"
-  , 'g'
+  , description="%(key)s: mass of an electron"
+  , units='g'
+  , synopsis='#{x}=me'
+  , summary="""
+        The mass of an electron (9.10938291e-28 g) is pushed on the stack into
+        the #{x} register.
+    """
 )
+# mass of proton {{{3
 massOfProton = Constant(
     'mp'
   , lambda: 1.672621777e-24
-  , "%(key)s: mass of a proton: 1.672621777e-24 g"
-  , 'g'
+  , description="%(key)s: mass of a proton"
+  , units='g'
+  , synopsis='#{x}=mp'
+  , summary="""
+        The mass of a proton (1.672621777e-24 g) is pushed on the stack into
+        the #{x} register.
+    """
 )
+# speed of light {{{3
 speedOfLight = Constant(
     'c'
   , lambda: 2.99792458e8
-  , "%(key)s: speed of light in a vacuum: 2.99792458e8 m/s"
-  , 'm/s'
+  , description="%(key)s: speed of light in a vacuum: 2.99792458e8 m/s"
+  , units='m/s'
+  , synopsis='#{x}=c'
+  , summary="""
+        The speed of light in a vacuum (2.99792458e8 m/s) is pushed on the stack
+        into the #{x} register.
+    """
 )
+# gravitational constant {{{3
 gravitationalConstant = Constant(
     'G'
   , lambda: 6.6746e-11
-  , "%(key)s: universal gravitational constant: 6.6746e-11 m^3/(kg-s^2)"
-  , "m^3/(kg-s^2)"
+  , description="%(key)s: universal gravitational constant"
+  , units="m^3/(kg-s^2)"
+  , synopsis='#{x}=G'
+  , summary="""
+        The universal gravitational constant (6.6746e-11 m^3/(kg-s^2)) is pushed
+        on the stack into the #{x} register.
+    """
 )
+# acceleration of gravity {{{3
 standardAccelerationOfGravity = Constant(
     'g'
   , lambda: 9.80665
-  , "%(key)s: standard acceleration of gravity: 9.80665 m/s^2"
-  , 'm/s^2'
+  , description="%(key)s: standard acceleration of gravity"
+  , units='m/s^2'
+  , synopsis='#{x}=g'
+  , summary="""
+        The standard acceleration of gravity on earth (9.80665 m/s^2)) is pushed
+        on the stack into the #{x} register.
+    """
 )
+# avogadro constant {{{3
+avogadroConstant = Constant(
+    'NA'
+  , lambda: 6.02214129e23
+  , description="%(key)s: Avagadro Number"
+  , units='/mol'
+  , synopsis='#{x}=NA'
+  , summary="""
+        Avogadro constant (6.02214129e23) is pushed on the stack into the #{x}
+        register.
+    """
+)
+# gas constant {{{3
 molarGasConstant = Constant(
     'R'
   , lambda: 8.3144621
-  , "%(key)s: molar gas constant: 8.3144621 J/(mol-K)"
-  , 'J/(mol-K)'
+  , description="%(key)s: molar gas constant"
+  , units='J/(mol-K)'
+  , synopsis='#{x}=R'
+  , summary="""
+        The molar gas constant (8.3144621 J/(mol-K)) is pushed on the stack into
+        the #{x} register.
+    """
 )
+# zero celsius {{{3
 zeroCelsius = Constant(
     '0C'
   , lambda: 273.15
-  , "%(key)s: 0 Celsius in Kelvin: 273.15 K"
-  , 'K'
+  , description="%(key)s: 0 Celsius in Kelvin"
+  , units='K'
+  , synopsis='#{x}=0C'
+  , summary="""
+        Zero celsius in kelvin (273.15 K) is pushed on the stack into
+        the #{x} register.
+    """
 )
+# free space permittivity {{{3
 freeSpacePermittivity = Constant(
     'eps0'
   , lambda: 8.854187817e-12
-  , "%(key)s: 0 permittivity of free space: 8.854187817e-12 F/m"
-  , 'F/m'
+  , description="%(key)s: permittivity of free space"
+  , units='F/m'
+  , synopsis='#{x}=eps0'
+  , summary="""
+        The permittivity of free space (8.854187817e-12 F/m) is pushed on the
+        stack into the #{x} register.
+    """
 )
+# free space permeability {{{3
 freeSpacePermeability = Constant(
     'mu0'
   , lambda: 4e-7*math.pi
-  , "%(key)s: 0 permeability of free space: 4e-7*pi N/A^2"
-  , 'N/A^2'
+  , description="%(key)s: 0 permeability of free space"
+  , units='N/A^2'
+  , synopsis='#{x}=mu0'
+  , summary="""
+        The permeability of free space (4e-7*pi N/A^2) is pushed on the
+        stack into the #{x} register.
+    """
 )
+# free space characteristic impedance {{{3
 freeSpaceCharacteristicImpedance = Constant(
     'Z0'
   , lambda: 376.730313461
-  , "%(key)s: Characteristic impedance of free space: 376.730313461 Ohms"
-  , 'Ohms'
-)
-avagadroNumber = Constant(
-    'NA'
-  , lambda: 6.02214129e23
-  , "%(key)s: Avagadro Number: 6.02214129e23"
-  , 'Ohms'
-)
-randomNumber = Constant(
-    'rand'
-  , random.random
-  , "%(key)s: random number between 0 and 1"
+  , description="%(key)s: Characteristic impedance of free space"
+  , units='Ohms'
+  , synopsis='#{x}=Z0'
+  , summary="""
+        The characteristic impedance of free space (376.730313461 Ohms) is
+        pushed on the stack into the #{x} register.
+    """
 )
 
 # Numbers {{{2
@@ -966,39 +1772,113 @@ numbers = Category(
     'numbers'
   , "Numbers"
 )
-hexadecimalNumber = Number('hexnum', "0xFF (ex): a number in hexadecimal")
-octalNumber = Number('octnum', "077 (ex): a number in octal")
-    # oct must be before eng
+# hexadecimal number {{{3
+hexadecimalNumber = Number(
+    'hexnum'
+  , description="0x<N>: a hexadecimal number"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 16 (use a-f to represent digits greater than 9).  For
+        example, 0xFF represents the hexadecimal number FF or the decimal number
+        255.
+    """
+)
+# octal number {{{3
+octalNumber = Number(
+    'octnum'
+  , description="0o<N>: a number in octal"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 8 (it must not contain the digits 8 or 9).  For example,
+        0o77 represents the octal number 77 or the decimal number 63.
+    """
+)
+# binary number {{{3
+binaryNumber = Number(
+    'binnum'
+  , description="0b<N>: a number in octal"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 2 (it contain only the digits 0 or 1).  For example,
+        0b1111 represents the octal number 1111 or the decimal number 15.
+    """
+)
+# real number in engineering notation {{{3
+# oct must be before eng
 engineeringNumber = Number(
-        'engnum'
-      , "10MHz (ex): a real number, perhaps with a scale factor and units"
-    )
+    'engnum'
+  , description="<N[.M][S[U]]>: a real number"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is the
+        integer portion of the mantissa and M is an optional fractional part. S
+        is a letter that represents an SI scale factor. U the optional units
+        (must not contain special characters).  For example, 10MHz represents
+        1e7 Hz.
+    """
+)
+# real number in scientific notation {{{3
 scientificNumber = Number(
-        'scinum'
-      , "1e7 (ex): a real number in scientific notation, perhaps with units"
-    )
-# Verilog constants are incompatible with the print command because the
+    'scinum'
+  , description="<N[.M]>e<E[U]>: a real number in scientific notation"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is the
+        integer portion of the mantissa and M is an optional fractional part. E
+        is an integer exponent. U the optional units (must not contain special
+        characters).  For example, 2.2e-8F represents 22nF.
+    """
+)
+# hexadecimal number in verilog notation {{{3
+# Verilog constants are incompatible with generalized units because the
 # single quote in the Verilog constant conflicts with the single quotes that
-# surround units.
+# surround generalized units (ex: 6.28e6 'rads/s').
+# Is okay now, cause I switched the quote characters to free up single quotes.
 verilogHexadecimalNumber = Number(
     'vhexnum'
-  , "'hFF (ex): a number in Verilog hexadecimal"
+  , description="'h<N>: a number in Verilog hexadecimal notation"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 16 (use a-f to represent digits greater than 9).  For
+        example, 'hFF represents the hexadecimal number FF or the decimal number
+        255.
+    """
 )
+# decimal number in verilog notation {{{3
 verilogDecimalNumber = Number(
     'vdecnum'
-  , "'d99 (ex): a number in Verilog decimal"
+  , description="'d<N>: a number in Verilog decimal"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 10.  For example, 'd99 represents the decimal number 99.
+    """
 )
+# octal number in verilog notation {{{3
 verilogOctalNumber = Number(
     'voctnum'
-  , "'o77 (ex): a number in Verilog octal"
+  , description="'o<N>: a number in Verilog octal"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 8 (it must not contain the digits 8 or 9).  For example,
+        'o77 represents the octal number 77 or the decimal number 63.
+    """
 )
+# binary number in verilog notation {{{3
 verilogBinaryNumber = Number(
     'vbinnum'
-  , "'b11 (ex): a number in Verilog binary"
-)
-setEngineeringFormat = SetFormat(
-    'eng'
-  , "%(kind)s[N]: use engineering notation, optionally set precision to N digits"
+  , description="'b<N>: a number in Verilog binary"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  N is an
+        integer in base 2 (it must contain the digits 0 or 1).  For example,
+        'b1111 represents the binary number 1111 or the decimal number 15.
+    """
 )
 
 # Number Formats {{{2
@@ -1006,70 +1886,216 @@ numberFormats = Category(
     'numberFormats'
   , "Number Formats"
 )
+# fixed format {{{3
 setFixedFormat = SetFormat(
     'fix'
-  , "%(kind)s[N]: use fixed notation, optionally set precision to N digits"
+  , "%(name)s[N]: use fixed notation, optionally set precision to N digits"
+  , summary="""
+        Numbers are displayed with a fixed number of digits to the right of
+        the decimal point.
+    """
 )
+# engineering format {{{3
+setEngineeringFormat = SetFormat(
+    'eng'
+  , "%(name)s[N]: use engineering notation, optionally set precision to N digits"
+  , summary="""
+        Numbers are displayed with a fixed number of digits of precision
+        and the SI scale factors are used to convey the exponent when possible.
+    """
+)
+# scientific format {{{3
 setScientificFormat = SetFormat(
     'sci'
-  , "%(kind)s[N]: use scientific notation, optionally set precision to N digits"
+  , "%(name)s[N]: use scientific notation, optionally set precision to N digits"
+  , summary="""
+        Numbers are displayed with a fixed number of digits of precision
+        and the exponent is given explicitly as an integer.
+    """
 )
+# hexadecimal format {{{3
 setHexadecimalFormat = SetFormat(
     'hex'
-  , "%(kind)s[N]: use hexadecimal notation, optionally set precision to N digits"
+  , allowPrecision=False
+  , description="%(name)s: use hexadecimal notation"
+  , summary="""
+        Numbers are displayed in base 16 (a-f are used to represent digits
+        greater than 9).
+    """
 )
+# octal format {{{3
 setOctalFormat = SetFormat(
     'oct'
-  , "%(kind)s[N]: use octal notation, optionally set precision to N digits"
+  , allowPrecision=False
+  , description="%(name)s: use octal notation"
+  , summary="""
+        Numbers are displayed in base 8.
+    """
 )
+# binary format {{{3
+setBinaryFormat = SetFormat(
+    'bin'
+  , allowPrecision=False
+  , description="%(name)s: use binary notation"
+  , summary="""
+        Numbers are displayed in base 2.
+    """
+)
+# verilog hexadecimal format {{{3
 setVerilogHexadecimalFormat = SetFormat(
     'vhex'
-  , "%(kind)s[N]: use Verilog hexadecimal notation, optionally set precision to N digits"
+  , allowPrecision=False
+  , description="%(name)s: use Verilog hexadecimal notation"
+  , summary="""
+        Numbers are displayed in base 16 in Verilog format (a-f are used to
+        represent digits greater than 9) with a fixed number of digits.
+    """
 )
+# verilog decimal format {{{3
 setVerilogDecimalFormat = SetFormat(
     'vdec'
-  , "%(kind)s[N]: use Verilog decimal notation, optionally set precision to N digits"
+  , allowPrecision=False
+  , description="%(name)s: use Verilog decimal notation"
+  , summary="""
+        Numbers are displayed in base 10 in Verilog format with a fixed number
+        of digits.
+    """
 )
+# verilog octal format {{{3
 setVerilogOctalFormat = SetFormat(
     'voct'
-  , "%(kind)s[N]: use Verilog octal notation, optionally set precision to N digits"
+  , allowPrecision=False
+  , description="%(name)s: use Verilog octal notation"
+  , summary="""
+        Numbers are displayed in base 8 in Verilog format with a fixed number
+        of digits.
+    """
+)
+# verilog binary format {{{3
+setVerilogBinaryFormat = SetFormat(
+    'vbin'
+  , allowPrecision=False
+  , description="%(name)s: use Verilog binary notation"
+  , summary="""
+        Numbers are displayed in base 2 in Verilog format with a fixed number
+        of digits.
+    """
 )
 
 # Variables {{{2
 variableCommands = Category('variableCommands', "Variable Commands")
-storeToVariable = Store('=name: store value into a variable')
-recallFromVariable = Recall('name: recall value of a variable')
+# store to variable {{{3
+storeToVariable = Store(
+    'store'
+  , description='=name: store value into a variable'
+  , summary="""
+        Store the value in the #{x} register into a variable with the given
+        name.
+    """
+)
+# recall from variable {{{3
+recallFromVariable = Recall(
+    'recall'
+  , description='name: recall value of a variable'
+  , summary="""
+        Place the value of the variable with the given name into the #{x}
+        register.
+    """
+)
+# list variables {{{3
 listVariables = Command(
     'vars'
   , lambda stack, calc: calc.heap.display()
-  , "%(key)s: print variables"
+  , description="%(key)s: print variables"
+  , summary="""
+        List all defined variables and their values.
+    """
 )
 
 # Stack {{{2
 stackCommands = Category('stackCommands', "Stack Commands")
-swapXandY = Swap('%(key)s: swap x and y')
-duplicateX = Dup('dup', None, '%(key)s: push x onto the stack again')
-duplicateX.addAliases(['enter'])
-popX = Pop('%(key)s: discard x')
-popX.addAliases(['clrx'])
+# swap {{{3
+swapXandY = Swap(
+    'swap'
+  , description='%(key)s: swap x and y'
+  , synopsis='#{x}, #{y} <= #{y}, #{x}'
+  , summary="""
+        The values in the #{x} and #{y} registers are swapped.
+    """
+)
+# dup {{{3
+duplicateX = Dup(
+    'dup'
+  , None
+  , description="%(key)s: duplicate #{x}"
+  , synopsis='#{x}, #{y} <= #{x}, #{x}'
+  , summary="""
+        The value in the #{x} register is pushed onto the stack again.
+    """
+  , aliases=['enter']
+)
+# pop {{{3
+popX = Pop(
+    'pop'
+  , description='%(key)s: discard x'
+  , summary="""
+        The value in the #{x} register is pulled from the stack and discarded.
+    """
+  , aliases=['clrx']
+)
+# stack {{{3
 listStack = Command(
     'stack'
   , lambda stack, calc: stack.display()
-  , "%(key)s: print stack"
+  , description="%(key)s: print stack"
+  , summary="""
+        Print all the values stored on the stack.
+    """
 )
-clearStack = Command('clstack', lambda stack, calc: stack.clear(), "%(key)s: clear stack")
+clearStack = Command('clstack', lambda stack, calc: stack.clear(), description="%(key)s: clear stack")
 
 # Miscellaneous {{{2
 miscellaneousCommands = Category('miscellaneous', "Miscellaneous")
-printText = Print(' '.join([
-    '"text": print text'
-  , '(replacing $N and $Var with the values of register N and variable Var)'
-]))
-setUnits = SetUnits("'units': set the units of the x register")
-printAbout = Command('about', aboutMsg, "%(key)s: print information about ec")
-terminate = Command('quit', quit, "%(key)s: quit (:q or ^D also works)")
-terminate.addAliases([':q'])
-printHelp = Command('help', displayHelp)
+printText = Print(
+    name='print'
+  , description='`<text>`: print text'
+  , summary=dedent("""\
+        Print "text" to the terminal.  Generally used in scripts to report and
+        annotate results.  Any instances of $N or ${N} are replaced by the value
+        of register N, where 0 represents the #{x} register, 1 represents the
+        #{y} register, etc.  Any instances of $Var or ${Var} are replaced by the
+        value of the variable #{Var}.
+    """)
+)
+setUnits = SetUnits(
+    name='units'
+  , description='"<units>": set the units of the x register'
+)
+printAbout = Command(
+    'about'
+  , aboutMsg
+  , description="%(key)s: print information about this calculator"
+)
+terminate = Command(
+    'quit'
+  , quit
+  , description="%(key)s: quit (:q or ^D also works)"
+  , aliases=[':q']
+)
+printHelp = Command(
+    'help'
+  , displayHelp
+  , description="%(key)s: print the list of help topics"
+)
+detailedHelp = Help(
+    name='?'
+  , description="%(name)s[<topic>]: detailed help on a particular topic"
+  , summary=dedent("""\
+        A topic, in the form of a symbol or name, may follow the question mark,
+        in which case a detailed description will be printed for that topic.
+        If no topic is given, a list of available topics is listed.
+    """)
+)
 
 # Action Sublists {{{1
 # Arithmetic Operators {{{2
@@ -1078,7 +2104,7 @@ arithmeticOperatorActions = [
     addition,
     subtraction,
     multiplication,
-    division,
+    trueDivision,
     floorDivision,
     modulus,
     negation,
@@ -1097,8 +2123,8 @@ logPowerExponentialActions = [
     exponential,
     naturalLog,
     tenPower,
-    tenLog,
-    twoLog,
+    commonLog,
+    binaryLog,
     square,
     squareRoot,
     cubeRoot,
@@ -1164,21 +2190,22 @@ engineeringConstantActions = [
     imaginaryUnit,
     imaginaryTwoPi,
     boltzmann,
-    planksConstantH,
-    chargeOfElectron,
+    planckConstantH,
+    elementaryCharge,
     speedOfLight,
     freeSpacePermittivity,
     freeSpacePermeability,
     freeSpaceCharacteristicImpedance,
 ]
 physicsConstantActions = [
-    planksConstantH,
-    planksConstantHbar,
-    planksLength,
-    planksMass,
-    planksTemperature,
-    planksTime,
-    chargeOfElectron,
+    planckConstantH,
+    planckConstantHbar,
+    planckLength,
+    planckMass,
+    planckTemperature,
+    planckTime,
+    boltzmann,
+    elementaryCharge,
     massOfElectron,
     massOfProton,
     speedOfLight,
@@ -1188,13 +2215,14 @@ physicsConstantActions = [
     freeSpacePermeability,
 ]
 chemistryConstantActions = [
-    planksConstantH,
-    planksConstantHbar,
-    chargeOfElectron,
+    planckConstantH,
+    planckConstantHbar,
+    boltzmann,
+    elementaryCharge,
     massOfElectron,
     massOfProton,
     molarGasConstant,
-    avagadroNumber,
+    avogadroConstant,
 ]
 constantActions = (
     commonConstantActions +
@@ -1208,12 +2236,13 @@ numberActions = [
     numbers,
     hexadecimalNumber,
     octalNumber,
+    binaryNumber,
     engineeringNumber,
     scientificNumber,
-    #verilogHexadecimalNumber,
-    #verilogDecimalNumber,
-    #verilogOctalNumber,
-    #verilogBinaryNumber,
+    verilogHexadecimalNumber,
+    verilogDecimalNumber,
+    verilogOctalNumber,
+    verilogBinaryNumber,
 ]
 
 # Number Formats {{{2
@@ -1224,9 +2253,11 @@ numberFormatActions = [
     setScientificFormat,
     setHexadecimalFormat,
     setOctalFormat,
+    setBinaryFormat,
     setVerilogHexadecimalFormat,
     setVerilogDecimalFormat,
     setVerilogOctalFormat,
+    setVerilogBinaryFormat,
 ]
 
 # Variables {{{2
@@ -1256,6 +2287,7 @@ miscellaneousActions = [
     printAbout,
     terminate,
     printHelp,
+    detailedHelp,
 ]
 
 # Action Lists {{{1
@@ -1359,7 +2391,9 @@ class Calculator:
         (?<=[a-zA-Z0-9])    # alphanum before the split
         (?=[-+*/%!](\s|\Z)) # selected operators followed by white space or EOL
     ''', re.X)
-    stringSplitRegex = re.compile(r'''((?:"[^"]*"|'[^']*')+)''')
+    # strings are delimited by "" and `` (' is reserved for use with verilog
+    # integer literals)
+    stringSplitRegex = re.compile(r'''((?:"[^"]*"|`[^`]*`)+)''')
 
     # constructor {{{2
     def __init__(
@@ -1409,7 +2443,7 @@ class Calculator:
         First, strings must be kept intact.
         Second, operators can follow immediately after numbers of words without
             a space, such as in '2 3*'. We want to split those.
-        Third, parens, brackets, and braces may but up against the things they
+        Third, parens, brackets, and braces may butt up against the things they
             are grouping, as in '(1.6*)toKm'. In this case the parens should be
             split from their contents, so this should be split into ['(', '1.6',
             '*', ')toKm'].

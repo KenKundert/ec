@@ -34,7 +34,7 @@ testCases = [
       , 'units': ''
       , 'text': '4'
     }
-  , {   'stimulus': "25MHz 2pi * 'rads/s'"
+  , {   'stimulus': '25MHz 2pi * "rads/s"'
       , 'value': 2*25e6*math.pi
       , 'units': 'rads/s'
       , 'text': '157.08 Mrads/s'
@@ -109,46 +109,46 @@ testCases = [
       , 'units': ''
       , 'text': '32'
     }
-#  , {   'stimulus': "'h1f 'h01 +"
-#      , 'value': 32
-#      , 'units': ''
-#      , 'text': '32'
-#    }
-#  , {   'stimulus': "'d10 'd01 +"
-#      , 'value': 11
-#      , 'units': ''
-#      , 'text': '11'
-#    }
-  , {   'stimulus': "010 001 +"
+  , {   'stimulus': "'h1f 'h01 +"
+      , 'value': 32
+      , 'units': ''
+      , 'text': '32'
+    }
+  , {   'stimulus': "'d10 'd01 +"
+      , 'value': 11
+      , 'units': ''
+      , 'text': '11'
+    }
+  , {   'stimulus': "0o10 0o01 +"
       , 'value': 9
       , 'units': ''
       , 'text': '9'
     }
-#  , {   'stimulus': "'o10 'o01 +"
-#      , 'value': 9
-#      , 'units': ''
-#      , 'text': '9'
-#    }
-#  , {   'stimulus': "'b10 'b01 +"
-#      , 'value': 3
-#      , 'units': ''
-#      , 'text': '3'
-#    }
+  , {   'stimulus': "'o10 'o01 +"
+      , 'value': 9
+      , 'units': ''
+      , 'text': '9'
+    }
+  , {   'stimulus': "'b10 'b01 +"
+      , 'value': 3
+      , 'units': ''
+      , 'text': '3'
+    }
   , {   'stimulus': '2pi eng7'
       , 'value': 2*math.pi
       , 'units': 'rads'
       , 'text': '6.2831853 rads'
     }
-#  , {   'stimulus': "'h1f 'h01 + hex"
-#      , 'value': 32
-#      , 'units': ''
-#      , 'text': "0x0020"
-#    }
-#  , {   'stimulus': "'h1f 'h01 + vhex"
-#      , 'value': 32
-#      , 'units': ''
-#      , 'text': "'h0020"
-#    }
+  , {   'stimulus': "'h1f 'h01 + hex"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "0x20"
+    }
+  , {   'stimulus': "'h1f 'h01 + vhex"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "'h20"
+    }
   , {   'stimulus': "90 sin"
       , 'value': 1
       , 'units': ''
@@ -314,31 +314,31 @@ testCases = [
       , 'units': ''
       , 'text': "1"
     }
-#  , {   'stimulus': "'hABCDEF hex"
-#      , 'value': 11259375
-#      , 'units': ''
-#      , 'text': "0xabcdef"
-#    }
-#  , {   'stimulus': "'hABCDEF vhex"
-#      , 'value': 11259375
-#      , 'units': ''
-#      , 'text': "'habcdef"
-#    }
-#  , {   'stimulus': "'d1234567890 vdec"
-#      , 'value': 1234567890
-#      , 'units': ''
-#      , 'text': "'d1234567890"
-#    }
-  , {   'stimulus': "012345670 oct"
+  , {   'stimulus': "'hABCDEF hex"
+      , 'value': 11259375
+      , 'units': ''
+      , 'text': "0xabcdef"
+    }
+  , {   'stimulus': "'hABCDEF vhex"
+      , 'value': 11259375
+      , 'units': ''
+      , 'text': "'habcdef"
+    }
+  , {   'stimulus': "'d1234567890 vdec"
+      , 'value': 1234567890
+      , 'units': ''
+      , 'text': "'d1234567890"
+    }
+  , {   'stimulus': "0o12345670 oct"
       , 'value': 2739128
       , 'units': ''
-      , 'text': "012345670"
+      , 'text': "0o12345670"
     }
-#  , {   'stimulus': "'o12345670 voct"
-#      , 'value': 2739128
-#      , 'units': ''
-#      , 'text': "'o12345670"
-#    }
+  , {   'stimulus': "'o12345670 voct"
+      , 'value': 2739128
+      , 'units': ''
+      , 'text': "'o12345670"
+    }
   , {   'stimulus': "rt2 sci4"
       , 'value': math.sqrt(2)
       , 'units': ''
@@ -510,76 +510,88 @@ testCases = [
       , 'text': "1 pF"
       , 'warnings': ['c: variable has overridden built-in.']
     }
-  , {   'stimulus': "1 j+ 'V' mag"
+  , {   'stimulus': '1 j+ "V" mag'
       , 'value': math.sqrt(2)
       , 'units': 'V'
       , 'text': "1.4142 V"
     }
-  , {   'stimulus': "1 j+ 'V' mag pop"
+  , {   'stimulus': '1 j+ "V" mag pop'
       , 'value': 1 + 1j
       , 'units': 'V'
       , 'text': "1 V + j1 V"
     }
-  , {   'stimulus': "1 j+ 'V' ph"
+  , {   'stimulus': '1 j+ "V" ph'
       , 'value': 45
       , 'units': 'degs'
       , 'text': "45 degs"
     }
-  , {   'stimulus': "1 j+ 'V' ph pop"
+  , {   'stimulus': '1 j+ "V" ph pop'
       , 'value': 1 + 1j
       , 'units': 'V'
       , 'text': "1 V + j1 V"
     }
-  , {   'stimulus': '2 1 0 "Hello world!"'
+  , {   'stimulus': '2 1 0 `Hello world!`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["Hello world!"]
     }
-  , {   'stimulus': '2 1 0 "$0"'
+  , {   'stimulus': '2 1 0 `$0`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["0"]
     }
-  , {   'stimulus': '2 1 0 "$0 is x"'
+  , {   'stimulus': '2 1 0 `$0 is x`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["0 is x"]
     }
-  , {   'stimulus': '2 1 0 "x is $0"'
+  , {   'stimulus': '2 1 0 `x is $0`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["x is 0"]
     }
-  , {   'stimulus': '2 1 0 "x is $0, y is $1"'
+  , {   'stimulus': '2 1 0 `x is $0, y is $1`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["x is 0, y is 1"]
     }
-  , {   'stimulus': '2 1 0 "x is $0, y is $1, z = $2"'
+  , {   'stimulus': '2 1 0 `x is ${0}, y is ${1}`'
+      , 'value': 0
+      , 'units': ''
+      , 'text': "0"
+      , 'messages': ["x is 0, y is 1"]
+    }
+  , {   'stimulus': '2 1 0 `x is $0, y is $1, z = $2`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["x is 0, y is 1, z = 2"]
     }
-  , {   'stimulus': '2 1 0 "x is $0, y is $1, z = $2, t is $3"'
+  , {   'stimulus': '2 1 0 `x is $0, y is $1, z = $2, t is $3`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["x is 0, y is 1, z = 2, t is $?3?"]
       , 'warnings': ["$3: unknown."]
     }
-  , {   'stimulus': '"I have $Rref, you have $$50"'
+  , {   'stimulus': '`I have $Rref, you have $$50`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"
       , 'messages': ["I have 50 Ohms, you have $50"]
     }
-  , {   'stimulus': '"I have $Q, you have $$50"'
+  , {   'stimulus': '`I have ${Rref}, you have $$50`'
+      , 'value': 0
+      , 'units': ''
+      , 'text': "0"
+      , 'messages': ["I have 50 Ohms, you have $50"]
+    }
+  , {   'stimulus': '`I have $Q, you have $$50`'
       , 'value': 0
       , 'units': ''
       , 'text': "0"

@@ -1,6 +1,6 @@
 =freq
-2pi* 'rads/s' =omega
-Kdet Kvco freq/ M/ =a
-N F * =f
+2pi* "rads/s" =omega
+Kdet Kvco* omega/ M/ =a
+N F* =f
 a f* =T
-"openloop gain = $a\nfeedback factor = $f\nloopgain = $T"
+`openloop gain = $a\nfeedback factor = $f\nloopgain = $T`

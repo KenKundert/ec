@@ -29,7 +29,7 @@ specified, it would be started after all scripts have been run.
 .PP
 The contents of \fI~/.ecrc\fP, \fI./.ecrc\fP, and the start up file will be run 
 upon start up if they exist, and then the stack is cleared.
-.SS OPTIONS
+.SH OPTIONS
 .IP "-i, --interactive"
 Open an interactive session.
 .IP "-x, --printx"
@@ -41,7 +41,7 @@ session is run, stack is cleared after it is run.
 Do not use colors in the output.
 .IP "-h, --help"
 Print the usage and exit.
-.SS STACK
+.SH STACK
 As you enter numbers they are pushed onto a stack.  The most recent member of 
 the stack is referred to as the \fIx\fP register and the second most recent is 
 the \fIy\fP register.  All other members of the stack are unnamed.  Operators 
@@ -113,15 +113,15 @@ You can print the entire stack using \fIstack\fP, and clear it using
 .nf
 .RS
 \fB0\fP: 1 2 3 stack
-   3
-\fIy\fP: 2
-\fIx\fP: 1
+      3
+   \fIy\fP: 2
+   \fIx\fP: 1
 \fB3\fP: clstack
 \fB0\fP: stack
 \fB0\fP:
 .RE
 .fi
-.SS REAL NUMBERS
+.SH REAL NUMBERS
 Numbers can be entered using normal integer, floating point, and scientific 
 notations. For example,
 .nf
@@ -160,13 +160,13 @@ Optionally, numbers can be combined with simple units. For example,
 .fi
 .PP
 In this case the units must be simple identifiers (must not contain special 
-characters). For complex units, such as 'rads/s', or for numbers that do not 
+characters). For complex units, such as "rads/s", or for numbers that do not 
 have scale factors, it is possible to attach units to a number in the \fIx\fP 
 register by entering a quoted string.
 .nf
 .RS
 \fB0\fP: 6.626e-34
-\fB662.6e-36\fP: 'J-s'
+\fB662.6e-36\fP: "J-s"
 \fB662.6e-36 J-s\fP:
 .RE
 .fi
@@ -210,12 +210,12 @@ mode to indicate the desired precision.  For example,
 Notice that scientific notation always displays the specified number of digits 
 whereas engineering notation suppresses zeros at the end of the number.
 .PP
-When displaying number using engineering notation, \fBec\fP does not use the 
+When displaying numbers using engineering notation, \fBec\fP does not use the 
 full range of available scale factors under the assumption that the largest and 
 smallest would be unfamiliar to most people. For this reason, \fBec\fP only uses 
 the most common scale factors when outputting numbers (T, G, M, K, m, u, n, p, 
 f, a).
-.SS INTEGERS
+.SH INTEGERS
 You can enter integers in either hexadecimal (base 16), decimal (base 10) or 
 octal (base 8), as shown in the examples below:
 .TS
@@ -241,7 +241,7 @@ display mode to control the number of digits. For example:
 \fB01750\fP:
 .RE
 .fi
-.SS COMPLEX NUMBERS
+.SH COMPLEX NUMBERS
 \fBec\fP provides limited support for complex numbers. Two imaginary constants 
 are available that can be used to construct complex numbers, \fIj\fP and 
 \fIj2pi\fP. In addition, two functions are available for converting complex 
@@ -265,7 +265,7 @@ register. For example,
 Only a small number of functions actually support complex numbers; currently 
 only \fIexp\fP and \fIsqrt\fP. However, most of the basic arithmetic operators 
 support complex numbers.
-.SS CONSTANTS
+.SH CONSTANTS
 \fBec\fP provides several useful mathematical and physical constants that are 
 accessed by specifying them by name. The physical constants are given in MKS 
 units. The available constants include:
@@ -294,14 +294,14 @@ voltage, kT/q
 \fB25.865m\fP:
 .RE
 .fi
-.SS VARIABLES
+.SH VARIABLES
 You can store the contents of the \fIx\fP register to a variable by using an 
 equal sign followed immediately by the name of the variable. To recall it, 
 simply use the name. For example,
 .nf
 .RS
 \fB0\fP: 100MHz =freq
-\fB100 MHz\fP: 2pi* 'rads/s' =omega
+\fB100 MHz\fP: 2pi* "rads/s" =omega
 \fB628.32 Mrads/s\fP: 1pF =cin
 \fB1 pF\fP: 1 omega cin* /
 \fB1.5915K\fP:
@@ -326,7 +326,8 @@ as once a built-in name is overridden it can no longer be accessed.
 Notice that a variable \fIRref\fP exists that you did not create. This is 
 a predefined variable that is used in dBm calculations. You are free to change 
 its value if you like.
-.SS OPERATORS and FUNCTIONS
+.SH OPERATORS and FUNCTIONS
+.SS Arithmetic Operators
 \fBec\fP supports the following operators:
 .IP "+; addition"
 The values in the \fIx\fP and \fIy\fP registers are popped from the stack and 
@@ -400,6 +401,7 @@ negative infinity (replaced with the largest integer smaller than its value).
 .IP "!: factorial"
 The value in the \fIx\fP register is replaced with its factorial: 
 \fIx\fP=\fIx\fP!.
+.SS Powers, Logarithms and Roots
 .IP "exp: natural exponential"
 The value in the \fIx\fP register is replaced with its exponential: 
 \fIx\fP=\fIe\fP**\fIx\fP.  Supports a complex argument. Alias: \fIpowe\fP. 
@@ -438,6 +440,7 @@ registers are both resistances, both elastances, or both inductances, then the
 result is the resistance, elastance or inductance of the two in parallel. If the 
 values are conductances, capacitances or susceptances, then the result is the 
 conductance, capacitance or susceptance of the two in series.
+.SS Trigonometry
 .IP "sin: trigonometric sine"
 The value in the \fIx\fP register is replaced with its sine: 
 \fIx\fP=sin(\fIx\fP).
@@ -475,6 +478,7 @@ The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
 interpreted as the length and angle of a vector and are replaced with the 
 coordinates of the end-point of that vector: \fIx\fP=\fIx\fP*cos(\fIy\fP), 
 \fIy\fP=\fIx\fP*sin(\fIy\fP).
+.SS Hyperbolic Trigonometry
 .IP "sinh: hyperbolic sine"
 The value in the \fIx\fP register is replaced with its hyperbolic sine: 
 \fIx\fP=sinh(\fIx\fP).
@@ -493,6 +497,7 @@ cosine:\fIx\fP=acosh(\fIx\fP).
 .IP "atanh: hyperbolic arc tangent"
 The value in the \fIx\fP register is replaced with its hyperbolic arc 
 tangent:\fIx\fP=atanh(\fIx\fP).
+.SS Decibels
 .IP "db: convert to decibels"
 The value in the \fIx\fP register is replaced with its value in 
 decibels:\fIx\fP=20*log(\fIx\fP). It is appropriate to apply this form when 
@@ -539,7 +544,7 @@ Alias: \fIdbm2i\fP.
 .IP "rand: random number"
 The value a random variable with uniform distribution between 0 and 1 is pushed 
 into the \fIx\fP register: \fIx\fP=rand(0,1).
-.SS COMMANDS
+.SH COMMANDS
 .IP swap
 Swap the values in the \fIx\fP and \fIy\fP registers.
 .IP dup
@@ -564,7 +569,7 @@ and rtop should produce angles in degrees).
 Print a list of features available from \fBec\fP.
 .IP quit
 Terminate the program (:q and ctrl-D also work).
-.SS INITIALIZATION
+.SH INITIALIZATION
 At start up \fBec\fP reads and executes commands from files.
 It first tries '~/.ecrc' and runs any commands it contains if it exists.
 It then tries './.ecrc' if it exists.
@@ -576,13 +581,13 @@ you might use:
 .nf
 .RS
 eng6
-h 2pi / 'J-s' =hbar
+h 2pi / "J-s" =hbar
 .RE
 .fi
 This tells \fBec\fP to use 6 digits of resolution and predefines \fIhbar\fP as 
 a constant.
 After all of the startup files have been processed, the stack is cleared.
-.SS SCRIPTING
+.SH SCRIPTING
 Command line arguments are used as scripts. If the argument corresponds to an 
 existing file, the file is opened its contents are executed. Otherwise, the 
 argument itself is executed (often it needs to be quoted to protect its contents 
@@ -595,7 +600,7 @@ you certainly will if you are not using the interactive session, you must add
 print commands to your script, which is a double-quoted string. For example,
 .nf
 .RS
-\fB0\fP: "Hello world!"
+\fB0\fP: `Hello world!`
 Hello world!
 \fB0\fP:
 .RE
@@ -611,8 +616,8 @@ example,
 .nf
 .RS
 \fB0\fP: 100MHz =freq
-\fB100 MHz\fP: 2pi* 'rads/s'
-\fB628.32 Mrads/s\fP: "$freq corresponds to $0."
+\fB100 MHz\fP: 2pi* "rads/s"
+\fB628.32 Mrads/s\fP: `$freq corresponds to $0.`
 100 MHz corresponds to 628.32 Mrads/s.
 \fB628.32 Mrads/s\fP:
 .RE
@@ -623,16 +628,16 @@ contains a calculation for the loop gain of a PLL,
 .nf
 .RS
 =freq
-88.3u =Kdet
-9.07G =Kvco
+88.3u "V/per" =Kdet
+9.07G "Hz/V" =Kvco
 2 =M
 8 =N
 2 =F
-2pi* 'rads/s' =omega
-Kdet Kvco freq/ M/ =a
-N F * =f
+freq 2pi* "rads/s" =omega
+Kdet Kvco* omega/ M/ =a
+N F* =f
 a f* =T
-"Open loop gain = $a\enFeedback factor = $f\enLoop gain = $T"
+`Open loop gain = $a\enFeedback factor = $f\enLoop gain = $T`
 .RE
 .fi
 Notice that it starts by saving the value in the \fIx\fP register to the 
@@ -640,9 +645,9 @@ variable \fIfreq\fP. This script would be run as:
 .nf
 .RS
 > ec 1KHz lg
-Open loop gain = 4.535M
+Open loop gain = 63.732
 Feedback factor = 16
-Loop gain = 72.56M
+Loop gain = 1.0197K
 .RE
 .fi
 The first argument does not correspond to a file, so it is executed as a script.  
@@ -675,7 +680,7 @@ ec: -30 dbmv: unknown option.
 10 mV
 .RE
 .fi
-.SS DIAGNOSTICS
+.SH DIAGNOSTICS
 If an error occurs on a line, an error message is printed and the stack is 
 restored to the values it had before the line was entered. So it is almost as if 
 you never typed the line in at all.  The exception being that any variables or 
