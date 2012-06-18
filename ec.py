@@ -140,19 +140,19 @@ class Display:
         elif self.style == 'sci':
             return '{0:.{precision}e}'.format(num, precision=self.digits)
         elif self.style == 'hex':
-            return '{0:#x}'.format(int(num))
+            return '{0:#0{width}x}'.format(int(round(num)), width=self.digits+2)
         elif self.style == 'oct':
-            return '{0:#o}'.format(int(num))
+            return '{0:#0{width}o}'.format(int(round(num)), width=self.digits+2)
         elif self.style == 'bin':
-            return '{0:#b}'.format(int(num))
+            return '{0:#0{width}b}'.format(int(round(num)), width=self.digits+2)
         elif self.style == 'vhex':
-            return "'h{0:x}".format(int(num))
+            return "'h{0:0{width}x}".format(int(round(num)), width=self.digits)
         elif self.style == 'vdec':
-            return "'d{0:d}".format(int(num))
+            return "'d{0:0{width}d}".format(int(round(num)), width=self.digits)
         elif self.style == 'voct':
-            return "'o{0:o}".format(int(num))
+            return "'o{0:0{width}o}".format(int(round(num)), width=self.digits)
         elif self.style == 'vbin':
-            return "'b{0:b}".format(int(num))
+            return "'b{0:0{width}b}".format(int(round(num)), width=self.digits)
         else:
             raise AssertionError
 
@@ -1916,7 +1916,7 @@ setScientificFormat = SetFormat(
 # hexadecimal format {{{3
 setHexadecimalFormat = SetFormat(
     'hex'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use hexadecimal notation"
   , summary="""
         Numbers are displayed in base 16 (a-f are used to represent digits
@@ -1926,7 +1926,7 @@ setHexadecimalFormat = SetFormat(
 # octal format {{{3
 setOctalFormat = SetFormat(
     'oct'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use octal notation"
   , summary="""
         Numbers are displayed in base 8.
@@ -1935,7 +1935,7 @@ setOctalFormat = SetFormat(
 # binary format {{{3
 setBinaryFormat = SetFormat(
     'bin'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use binary notation"
   , summary="""
         Numbers are displayed in base 2.
@@ -1944,7 +1944,7 @@ setBinaryFormat = SetFormat(
 # verilog hexadecimal format {{{3
 setVerilogHexadecimalFormat = SetFormat(
     'vhex'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use Verilog hexadecimal notation"
   , summary="""
         Numbers are displayed in base 16 in Verilog format (a-f are used to
@@ -1954,7 +1954,7 @@ setVerilogHexadecimalFormat = SetFormat(
 # verilog decimal format {{{3
 setVerilogDecimalFormat = SetFormat(
     'vdec'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use Verilog decimal notation"
   , summary="""
         Numbers are displayed in base 10 in Verilog format with a fixed number
@@ -1964,7 +1964,7 @@ setVerilogDecimalFormat = SetFormat(
 # verilog octal format {{{3
 setVerilogOctalFormat = SetFormat(
     'voct'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use Verilog octal notation"
   , summary="""
         Numbers are displayed in base 8 in Verilog format with a fixed number
@@ -1974,7 +1974,7 @@ setVerilogOctalFormat = SetFormat(
 # verilog binary format {{{3
 setVerilogBinaryFormat = SetFormat(
     'vbin'
-  , allowPrecision=False
+  , allowPrecision=True
   , description="%(name)s: use Verilog binary notation"
   , summary="""
         Numbers are displayed in base 2 in Verilog format with a fixed number

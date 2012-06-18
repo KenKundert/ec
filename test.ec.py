@@ -142,12 +142,47 @@ testCases = [
   , {   'stimulus': "'h1f 'h01 + hex"
       , 'value': 32
       , 'units': ''
+      , 'text': "0x0020"
+    }
+  , {   'stimulus': "'h1f 'h01 + hex0"
+      , 'value': 32
+      , 'units': ''
       , 'text': "0x20"
+    }
+  , {   'stimulus': "'h1f 'h01 + oct"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "0o0040"
+    }
+  , {   'stimulus': "'h1f 'h01 + bin"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "0b100000"
     }
   , {   'stimulus': "'h1f 'h01 + vhex"
       , 'value': 32
       , 'units': ''
+      , 'text': "'h0020"
+    }
+  , {   'stimulus': "'h1f 'h01 + vhex0"
+      , 'value': 32
+      , 'units': ''
       , 'text': "'h20"
+    }
+  , {   'stimulus': "'h1f 'h01 + vdec"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "'d0032"
+    }
+  , {   'stimulus': "'h1f 'h01 + voct"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "'o0040"
+    }
+  , {   'stimulus': "'h1f 'h01 + vbin"
+      , 'value': 32
+      , 'units': ''
+      , 'text': "'b100000"
     }
   , {   'stimulus': "90 sin"
       , 'value': 1
