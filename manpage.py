@@ -5,7 +5,7 @@
 # Imports {{{1
 import re
 from textwrap import wrap, fill, dedent
-from pycalc import actionsToUse as actions
+from ec import actionsToUse as actions
 
 # Configuration {{{1
 complexNumbers = True
