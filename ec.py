@@ -825,7 +825,7 @@ trueDivision = BinaryOp(
   , summary=r"""
         The values in the #{x} and #{y} registers are popped from the stack and
         the quotient is placed back on the stack into the #{x} register.  Both
-        values are treated as real numbers and the results in a real number. So
+        values are treated as real numbers and the result is a real number. So
         \verb{
             @{0}: 1 2/
             @{500m}:
@@ -1772,25 +1772,51 @@ numbers = Category(
     'numbers'
   , "Numbers"
 )
+# real number in engineering notation {{{3
+engineeringNumber = Number(
+    'engnum'
+  , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  #{N} is the
+        integer portion of the mantissa and #{M} is an optional fractional part.
+        #{S} is a letter that represents an SI scale factor. #{U} the optional
+        units (must not contain special characters).  For example, 10MHz
+        represents 1e7 Hz.
+    """
+)
+# real number in scientific notation {{{3
+scientificNumber = Number(
+    'scinum'
+  , description="<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation"
+  , synopsis='#{x}=num'
+  , summary="""
+        The number is pushed on the stack into the #{x} register.  #{N} is the
+        integer portion of the mantissa and #{M} is an optional fractional part.
+        #{E} is an integer exponent. #{U} the optional units (must not contain
+        special characters).  For example, 2.2e-8F represents 22nF.
+    """
+)
 # hexadecimal number {{{3
 hexadecimalNumber = Number(
     'hexnum'
-  , description="0x<N>: a hexadecimal number"
+  , description="0x<#{N}>: a hexadecimal number"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
         example, 0xFF represents the hexadecimal number FF or the decimal number
         255.
     """
 )
 # octal number {{{3
+# oct must be before eng if we use the 0NNN form (as opposed to OoNNN form)
 octalNumber = Number(
     'octnum'
-  , description="0o<N>: a number in octal"
+  , description="0o<#{N}>: a number in octal"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
         0o77 represents the octal number 77 or the decimal number 63.
     """
@@ -1798,38 +1824,12 @@ octalNumber = Number(
 # binary number {{{3
 binaryNumber = Number(
     'binnum'
-  , description="0b<N>: a number in octal"
+  , description="0b<#{N}>: a number in octal"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
         0b1111 represents the octal number 1111 or the decimal number 15.
-    """
-)
-# real number in engineering notation {{{3
-# oct must be before eng
-engineeringNumber = Number(
-    'engnum'
-  , description="<N[.M][S[U]]>: a real number"
-  , synopsis='#{x}=num'
-  , summary="""
-        The number is pushed on the stack into the #{x} register.  N is the
-        integer portion of the mantissa and M is an optional fractional part. S
-        is a letter that represents an SI scale factor. U the optional units
-        (must not contain special characters).  For example, 10MHz represents
-        1e7 Hz.
-    """
-)
-# real number in scientific notation {{{3
-scientificNumber = Number(
-    'scinum'
-  , description="<N[.M]>e<E[U]>: a real number in scientific notation"
-  , synopsis='#{x}=num'
-  , summary="""
-        The number is pushed on the stack into the #{x} register.  N is the
-        integer portion of the mantissa and M is an optional fractional part. E
-        is an integer exponent. U the optional units (must not contain special
-        characters).  For example, 2.2e-8F represents 22nF.
     """
 )
 # hexadecimal number in verilog notation {{{3
@@ -1839,10 +1839,10 @@ scientificNumber = Number(
 # Is okay now, cause I switched the quote characters to free up single quotes.
 verilogHexadecimalNumber = Number(
     'vhexnum'
-  , description="'h<N>: a number in Verilog hexadecimal notation"
+  , description="'h<#{N}>: a number in Verilog hexadecimal notation"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
         example, 'hFF represents the hexadecimal number FF or the decimal number
         255.
@@ -1851,20 +1851,20 @@ verilogHexadecimalNumber = Number(
 # decimal number in verilog notation {{{3
 verilogDecimalNumber = Number(
     'vdecnum'
-  , description="'d<N>: a number in Verilog decimal"
+  , description="'d<#{N}>: a number in Verilog decimal"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 10.  For example, 'd99 represents the decimal number 99.
     """
 )
 # octal number in verilog notation {{{3
 verilogOctalNumber = Number(
     'voctnum'
-  , description="'o<N>: a number in Verilog octal"
+  , description="'o<#{N}>: a number in Verilog octal"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
         'o77 represents the octal number 77 or the decimal number 63.
     """
@@ -1872,10 +1872,10 @@ verilogOctalNumber = Number(
 # binary number in verilog notation {{{3
 verilogBinaryNumber = Number(
     'vbinnum'
-  , description="'b<N>: a number in Verilog binary"
+  , description="'b<#{N}>: a number in Verilog binary"
   , synopsis='#{x}=num'
   , summary="""
-        The number is pushed on the stack into the #{x} register.  N is an
+        The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
         'b1111 represents the binary number 1111 or the decimal number 15.
     """
@@ -1889,96 +1889,112 @@ numberFormats = Category(
 # fixed format {{{3
 setFixedFormat = SetFormat(
     'fix'
-  , "%(name)s[N]: use fixed notation, optionally set precision to N digits"
+  , description="%(name)s[<#{N}>]: use fixed notation"
   , summary="""
-        Numbers are displayed with a fixed number of digits to the right of
-        the decimal point.
+        Numbers are displayed with a fixed number of digits to the right of the
+        decimal point. If an optional whole number #{N} immediately follows
+        #{fix}, the number of digits to the right of the decimal point is set to
+        #{N}. 
     """
 )
 # engineering format {{{3
 setEngineeringFormat = SetFormat(
     'eng'
-  , "%(name)s[N]: use engineering notation, optionally set precision to N digits"
+  , description="%(name)s[<#{N}>]: use engineering notation"
   , summary="""
-        Numbers are displayed with a fixed number of digits of precision
-        and the SI scale factors are used to convey the exponent when possible.
+        Numbers are displayed with a fixed number of digits of precision and the
+        SI scale factors are used to convey the exponent when possible.  If an
+        optional whole number #{N} immediately follows #{eng}, the precision is
+        set to #{N} digits. 
     """
 )
 # scientific format {{{3
 setScientificFormat = SetFormat(
     'sci'
-  , "%(name)s[N]: use scientific notation, optionally set precision to N digits"
+  , description="%(name)s[<#{N}>]: use scientific notation"
   , summary="""
-        Numbers are displayed with a fixed number of digits of precision
-        and the exponent is given explicitly as an integer.
+        Numbers are displayed with a fixed number of digits of precision and the
+        exponent is given explicitly as an integer.  If an optional whole number
+        #{N} immediately follows #{sci}, the precision is set to #{N} digits. 
     """
 )
 # hexadecimal format {{{3
 setHexadecimalFormat = SetFormat(
     'hex'
   , allowPrecision=True
-  , description="%(name)s: use hexadecimal notation"
+  , description="%(name)s[<#{N}>]: use hexadecimal notation"
   , summary="""
         Numbers are displayed in base 16 (a-f are used to represent digits
-        greater than 9).
+        greater than 9) with a fixed number of digits.  If an optional whole
+        number #{N} immediately follows #{hex}, the number of digits displayed
+        is set to #{N}. 
     """
 )
 # octal format {{{3
 setOctalFormat = SetFormat(
     'oct'
   , allowPrecision=True
-  , description="%(name)s: use octal notation"
+  , description="%(name)s[<#{N}>]: use octal notation"
   , summary="""
-        Numbers are displayed in base 8.
+        Numbers are displayed in base 8 with a fixed number of digits.  If an
+        optional whole number #{N} immediately follows #{oct}, the number of
+        digits displayed is set to #{N}. 
     """
 )
 # binary format {{{3
 setBinaryFormat = SetFormat(
     'bin'
   , allowPrecision=True
-  , description="%(name)s: use binary notation"
+  , description="%(name)s[<#{N}>]: use binary notation"
   , summary="""
-        Numbers are displayed in base 2.
+        Numbers are displayed in base 2 with a fixed number of digits.  If an
+        optional whole number #{N} immediately follows #{bin}, the number of
+        digits displayed is set to #{N}. 
     """
 )
 # verilog hexadecimal format {{{3
 setVerilogHexadecimalFormat = SetFormat(
     'vhex'
   , allowPrecision=True
-  , description="%(name)s: use Verilog hexadecimal notation"
+  , description="%(name)s[<#{N}>]: use Verilog hexadecimal notation"
   , summary="""
         Numbers are displayed in base 16 in Verilog format (a-f are used to
-        represent digits greater than 9) with a fixed number of digits.
+        represent digits greater than 9) with a fixed number of digits.  If an
+        optional whole number #{N} immediately follows #{vhex}, the number of
+        digits displayed is set to #{N}. 
     """
 )
 # verilog decimal format {{{3
 setVerilogDecimalFormat = SetFormat(
     'vdec'
   , allowPrecision=True
-  , description="%(name)s: use Verilog decimal notation"
+  , description="%(name)s[<#{N}>]: use Verilog decimal notation"
   , summary="""
         Numbers are displayed in base 10 in Verilog format with a fixed number
-        of digits.
+        of digits.  If an optional whole number #{N} immediately follows
+        #{vdec}, the number of digits displayed is set to #{N}. 
     """
 )
 # verilog octal format {{{3
 setVerilogOctalFormat = SetFormat(
     'voct'
   , allowPrecision=True
-  , description="%(name)s: use Verilog octal notation"
+  , description="%(name)s[<#{N}>]: use Verilog octal notation"
   , summary="""
-        Numbers are displayed in base 8 in Verilog format with a fixed number
-        of digits.
+        Numbers are displayed in base 8 in Verilog format with a fixed number of
+        digits.  If an optional whole number #{N} immediately follows #{voct},
+        the number of digits displayed is set to #{N}. 
     """
 )
 # verilog binary format {{{3
 setVerilogBinaryFormat = SetFormat(
     'vbin'
   , allowPrecision=True
-  , description="%(name)s: use Verilog binary notation"
+  , description="%(name)s[<#{N}>]: use Verilog binary notation"
   , summary="""
-        Numbers are displayed in base 2 in Verilog format with a fixed number
-        of digits.
+        Numbers are displayed in base 2 in Verilog format with a fixed number of
+        digits.  If an optional whole number #{N} immediately follows #{vbin},
+        the number of digits displayed is set to #{N}. 
     """
 )
 
@@ -1987,7 +2003,7 @@ variableCommands = Category('variableCommands', "Variable Commands")
 # store to variable {{{3
 storeToVariable = Store(
     'store'
-  , description='=name: store value into a variable'
+  , description='=<#{name}>: store value into a variable'
   , summary="""
         Store the value in the #{x} register into a variable with the given
         name.
@@ -1996,7 +2012,7 @@ storeToVariable = Store(
 # recall from variable {{{3
 recallFromVariable = Recall(
     'recall'
-  , description='name: recall value of a variable'
+  , description='<#{name}>: recall value of a variable'
   , summary="""
         Place the value of the variable with the given name into the #{x}
         register.
@@ -2062,16 +2078,17 @@ clearStack = Command(
 )
 
 # Miscellaneous {{{2
-miscellaneousCommands = Category('miscellaneous', "Miscellaneous")
+miscellaneousCommands = Category('miscellaneous', "Miscellaneous Commands")
 printText = Print(
     name='print'
   , description='`<text>`: print text'
   , summary=dedent("""\
-        Print "text" to the terminal.  Generally used in scripts to report and
-        annotate results.  Any instances of $N or ${N} are replaced by the value
-        of register N, where 0 represents the #{x} register, 1 represents the
-        #{y} register, etc.  Any instances of $Var or ${Var} are replaced by the
-        value of the variable #{Var}.
+        Print "text" (the contents of the back-quotes) to the terminal.
+        Generally used in scripts to report and annotate results.  Any instances
+        of $N or ${N} are replaced by the value of register N, where 0
+        represents the #{x} register, 1 represents the #{y} register, etc.  Any
+        instances of $Var or ${Var} are replaced by the value of the variable
+        #{Var}.
     """)
 )
 setUnits = SetUnits(
@@ -2241,11 +2258,11 @@ constantActions = (
 # Numbers {{{2
 numberActions = [
     numbers,
+    engineeringNumber,
+    scientificNumber,
     hexadecimalNumber,
     octalNumber,
     binaryNumber,
-    engineeringNumber,
-    scientificNumber,
     verilogHexadecimalNumber,
     verilogDecimalNumber,
     verilogOctalNumber,
