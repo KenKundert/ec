@@ -523,7 +523,9 @@ class Help(Action):
                     else:
                         aliases = ''
                     if action.description:
-                        print action.description % (action.__dict__)
+                        print italicsRegex.sub(r'\1',
+                            action.description % (action.__dict__)
+                        )
                     else:
                         print found + ':'
                     if summary:
