@@ -1,4 +1,5 @@
 from distutils.core import setup
+import manpage # simply importing the manpage creates the manpage as a side effect
 
 longDescription='''
 Engineering calculator.

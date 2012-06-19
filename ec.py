@@ -232,7 +232,7 @@ class Action:
 
     def getSynopsis(self):
         try:
-            return self.synopsis if self.synopysis else ''
+            return self.synopsis if self.synopsis else ''
         except AttributeError:
             return ''
 
@@ -529,11 +529,11 @@ class Help(Action):
                     if summary:
                         print
                         print self.formatHelpText(summary)
+                    if synopsis or aliases:
+                        print
                     if synopsis:
-                        print
-                        print synopsis
+                        print 'synopsis: %s' % synopsis
                     if aliases:
-                        print
                         print aliases
                     return
             print "%s: not found." % topic
@@ -872,8 +872,8 @@ modulus = BinaryOp(
 percentChange = BinaryOp(
     '%chg'
   , lambda y, x: 100*(x-y)/y
-  , description="%(key)s: percent change (100*(x-y)/y)"
-  , synopsis='#{x} <= (100*(#{x}-#{y})/#{y})'
+  , description="%(key)s: percent change"
+  , synopsis='#{x} <= 100*(#{x}-#{y})/#{y}'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         the percent difference between #{x} and #{y} relative to #{y} is pushed 
@@ -2273,8 +2273,8 @@ numberActions = [
 numberFormatActions = [
     numberFormats,
     setEngineeringFormat,
-    setFixedFormat,
     setScientificFormat,
+    setFixedFormat,
     setHexadecimalFormat,
     setOctalFormat,
     setBinaryFormat,
