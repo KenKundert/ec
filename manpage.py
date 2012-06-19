@@ -46,9 +46,7 @@ class Comment(ManPage):
     def __init__(self, comment):
         global document
         lines = dedent(comment).strip().splitlines()
-        #document += [r'\" %s' % line for line in lines]
-        # Adding the comments seems to add a bunch of blank space at the
-        # beginning of the document
+        document += [r'\" %s' % line for line in lines]
 
 # Title class {{{2
 class Title(ManPage):
