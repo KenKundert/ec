@@ -2689,6 +2689,7 @@ if __name__ == '__main__':
     # Run start up files {{{2
     rcFiles = ['%s/.ecrc' % each for each in ['~', '.']]
     for each in rcFiles + startUpFile:
+        lineno = None
         try:
             cmdFile = expanduser(each)
             with open(cmdFile) as pFile:
@@ -2696,8 +2697,11 @@ if __name__ == '__main__':
                     prompt = evaluateLine(calc, line, prompt)
         except IOError, err:
             if err.errno != 2 or each not in rcFiles:
-                exit('%s.$s: %s: %s' % (
-                    each, lineno+1, err.filename, err.strerror
+                exit('%s%s: %s: %s' % (
+                    each
+                  , ('.%s' % lineno+1) if lineno != None else ''
+                  , err.filename
+                  , err.strerror
                 ))
     calc.stack.clear()
     prompt = '0'
