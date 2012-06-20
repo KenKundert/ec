@@ -17,6 +17,15 @@ from os.path import expanduser
 from copy import copy
 from textwrap import wrap, fill, dedent
 
+# Utility functions {{{1
+italicsRegex = re.compile(r'#\{(\w+)\}')
+boldRegex = re.compile(r'@\{(\w+)\}')
+
+def stripFormatting(text):
+    text = italicsRegex.sub(r'\1', text)
+    text = boldRegex.sub(r'\1', text)
+    return text
+
 # Utility classes {{{1
 # CalculatorError {{{2
 class CalculatorError(Exception):
@@ -178,7 +187,9 @@ def displayHelp(stack, calc):
                 else:
                     aliases = ''
                 lines += wrap(
-                    each.description % (each.__dict__) + aliases
+                    stripFormatting(
+                        each.description % (each.__dict__)
+                    ) + aliases
                   , initial_indent='    '
                   , subsequent_indent='        '
                 )
@@ -495,8 +506,6 @@ class SetFormat(Action):
             calc.formatter.setDigits(int(matchGroups[1]))
 
 # Help (pop 0, push 0, match regex) {{{2
-italicsRegex = re.compile(r'#\{(\w+)\}')
-boldRegex = re.compile(r'@\{(\w+)\}')
 class Help(Action):
     def __init__(self, name = None, description = None, summary = None):
         self.name = name
@@ -513,7 +522,7 @@ class Help(Action):
                 found = action.getName(topic)
                 if found:
                     summary = action.getSummary()
-                    synopsis = italicsRegex.sub(r'\1', action.getSynopsis())
+                    synopsis = stripFormatting(action.getSynopsis())
                     aliases = action.getAliases()
                     if aliases:
                         if len(aliases) > 1:
@@ -523,7 +532,7 @@ class Help(Action):
                     else:
                         aliases = ''
                     if action.description:
-                        print italicsRegex.sub(r'\1',
+                        print stripFormatting(
                             action.description % (action.__dict__)
                         )
                     else:
@@ -580,8 +589,7 @@ class Help(Action):
                 # end of verbatim region
                 verbatim = False
             else:
-                line = italicsRegex.sub(r'\1', line)
-                line = boldRegex.sub(r'\1', line)
+                line = stripFormatting(line)
                 if verbatim:
                     paragraphs += [line.rstrip()]
                 else:
