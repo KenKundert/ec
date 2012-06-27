@@ -204,36 +204,31 @@ class Display:
         self.digits = digits
 
     def format(self, val):
-        # need to
-        # 1. strip out the old formatting stuff
-        # 2. fix the zero suppression on complex numbers (the following code
-        #    seems to be assume that the format function returns a tuple, but I
-        #    believe that is an error. The test needs to work with with integers
-        #    with leading 0's as well as reals.
-        #    should, I believe, which means the format actions I wrote are
-        #    wrong, they should return a tuple not a string
-        # 3. need to add the unit handling for the case where
-        #    self.formatterTakesUnits is false.
         num, units = val
         if type(num) == complex:
             real = self.format((num.real, units))
             imag = self.format((num.imag, units))
-            if imag[0] in ['0', '-0']:
+            zero = self.format((0, units))
+            # suppress the imaginary if it would display as zero
+            if imag == zero:
                 return real
             elif imag[0] == '-':
-                return "%s - j%s" % (real, imag[1:])
+                if imag[1:] == zero:
+                    return real
+                else:
+                    return "%s - j%s" % (real, imag[1:])
             else:
                 return "%s + j%s" % (real, imag)
         if self.formatterTakesUnits:
             return self.formatter(num, units, self.digits)
         else:
-            value = self.formatter(num, self.digits)
+            number = self.formatter(num, self.digits)
             if units == '$':
-                return units + value
+                return units + number
             elif units == '':
-                return value
+                return number
             else:
-                return value + ' ' + units
+                return number + ' ' + units
 
     def clear(self):
         self.formatter = self.defaultFormatter
