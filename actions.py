@@ -903,7 +903,7 @@ massOfProton = Constant(
 speedOfLight = Constant(
     'c'
   , lambda: 2.99792458e8
-  , description="%(key)s: speed of light in a vacuum: 2.99792458e8 m/s"
+  , description="%(key)s: speed of light in a vacuum"
   , units='m/s'
   , synopsis='#{x}=c'
   , summary="""

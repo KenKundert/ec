@@ -16,7 +16,7 @@
 # Imports {{{1
 import re
 from textwrap import wrap, fill, dedent
-from actions import actionsToUse as actions
+from actions import actionsToUse as actions, Constant
 
 # Configuration {{{1
 complexNumbers = True
@@ -506,22 +506,36 @@ Paragraph('''
     accessed by specifying them by name. The physical constants are given in MKS
     units. The available constants include:
 ''')
+constants = []
+for action in actions:
+    if isinstance(action, Constant):
+        value = action.action()
+        # strip off the key
+        # semicolons interfere with the table column separator
+        # need to figure out how to escape them
+        assert ';' not in action.key, '%s: key must not contain semicolon'
+        assert ';' not in action.description, '%s: description must not contain semicolon'
+        assert ';' not in action.units, '%s: units must not contain semicolon'
+        description = action.description.split(':', 1)[1].strip()
+        # add the value to the description
+        # actually, do not add the value, it makes text too wide and in the case
+        # of rand is misleading 
+        #if value and action.units:
+        #    desc = '%s (%s %s)' % (description, value, action.units)
+        #elif value:
+        #    desc = '%s (%s)' % (description, value)
+        #elif action.units:
+        #    desc = '%s (%s)' % (description, action.units)
+        #else:
+        #    desc = description
+        if action.units:
+            description = '%s (%s)' % (description, action.units)
+        constants += ['    ;%s;%s' % (action.key, description)]
 Table('''
     tab(;);
     lrl.
-    ;pi;3.141592...
-    ;2pi;6.283185...
-    ;rt2;square root of two: 1.4142...
-    ;j;the imaginary unit, sqrt(-1)
-    ;j2pi;j6.283185...
-    ;h;Plank's contant: 6.6260693e-34 J-s
-    ;k;Boltzmann's contant: 1.3806505e-23 J/K
-    ;q;charge of an electron: 1.60217653e-19 Coul
-    ;c;speed of light in a vacuum: 2.99792458e8 m/s
-    ;0C;0 Celsius in Kelvin: 273.15 K
-    ;eps0;permittivity of free space: 8.854187817e-12 F/m
-    ;mu0;permeability of free space: 4e-7*pi N/A^2
-''')
+%s
+''' % '\n'.join(constants))
 Paragraph('''
     As an example of using the predefined constants, consider computing the
     thermal voltage, kT/q.

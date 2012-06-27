@@ -411,7 +411,6 @@ class Constant(Action):
     """
     def __init__(self, key, action
       , description = None
-      , needCalc = False
       , units = ''
       , synopsis = None
       , summary = None
@@ -420,7 +419,6 @@ class Constant(Action):
         self.key = key
         self.action = action
         self.description = description
-        self.needCalc = needCalc
         self.units = units
         self.synopsis = synopsis
         self.summary = summary
@@ -428,10 +426,7 @@ class Constant(Action):
 
     def execute(self, calc):
         stack = calc.stack
-        if self.needCalc:
-            result = self.action(calc)
-        else:
-            result = self.action()
+        result = self.action()
         stack.push((result, self.units))
 
 # UnaryOp (pop 1, push 1, match name) {{{2

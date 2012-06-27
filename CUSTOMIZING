@@ -1,0 +1,55 @@
+You can customize EC by adding, deleting, or modifying the various actions
+available. To do so, it is useful to know a little about how it is put together.
+
+EC is constructed from four files:
+    calculator.py:
+	Foundation of the calculator, contains the class definitions used to
+	construct the calculator.
+    actions.py:
+	Contains the definitions of all actions available, including operators,
+	functions, numbers, formats, and commands. It should be possible to
+	confine any customization to this file.
+    ec.py:
+        Provides a command line interface for the calculator.
+    manpage.py:
+        Generates the manpage for the calculator. The sections that describe the
+	details of the available actions are automatically generated from the
+	information contained in actions.py. However, you may find it necessary
+	to modify the remaining text descriptions if you make large changes.
+
+calculator.py provides a collection of class definitions that are used implement
+the various types of available actions. Those classes include:
+    Command (matches a key, pops 0, pushes 0)
+    Constant (matches a key, pops 0, pushes 1)
+    UnaryOp (matches a key, pops 1, pushes 1)
+    BinaryOp (matches a key, pops 2, pushes 1)
+    BinaryIoOp (matches a key, pops 2, pushes 2)
+    Dup (matches a key, peeks 1, pushes 1)
+    Number (matches a pattern, pops 0, pushes 1)
+    SetFormat (matches a pattern, pops 0, pushes 0)
+    Help (matches a pattern, pops 0, pushes 0)
+    Store (matches a pattern, peeks 1, pushes 0)
+    Recall (matches a pattern, pops 0, pushes 1)
+    SetUnits (matches a pattern, pops 1, pushes 1)
+    Print (matches a pattern, pops 0, pushes 0)
+    Category (not an action, merely a header in the help summary)
+
+An action is created by instantiating one of these classes. Generally the
+function that implements the desired action is passed into the constructor for
+one of these classes along with various parameters that describe the action.
+Simply instantiating one of these classes does not add this action to the
+calculator. To do that, you place the objects created by instantiating these
+classes into a list called 'actionsToUse'. It is imported by ec.py and used to
+initialize the calculator. 
+
+Besides 'actionsToUse', three other variables are imported by ec.py and used
+when initializing the calculator:
+    actionsToUse: A list of actions to be made available by the calculator.
+    predefinedVariables: A dictionary of variables that should be predefined
+        each variable consists of a name (a string) and a value (a tuple
+	consisting of a number (the value) and a string (the units)).
+    defaultFormat: An object of the SetFormat class that specifies the initial
+	format the calculator uses.
+    defaultDigits: An integer that specifies how many digits should be initially
+        used.
+
