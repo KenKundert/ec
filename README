@@ -8,24 +8,24 @@ and uses a text-only user interface.
 Requires Python version 2.6.
 
 To get the source code:
-> git clone git@github.com:KenKundert/ec.git
+$ git clone git@github.com:KenKundert/ec.git
 
 Once cloned, you can get the latest updates using:
-> git pull
+$ git pull
 
 To run the regression tests:
-> ./test
+$ ./test
 
 To install into ~/local (modify the script to change the install directory):
-> ./install
+$ ./install
 
 Be sure to add ~/local/lib/python to your PYTHONPATH.
 
 To read the EC manual:
-> man ec
+$ man ec
 
 To run EC:
-> ec
+$ ec
 0:
 
 What follows is a brief tour of EC:
@@ -144,7 +144,7 @@ EC also takes commands from the command line. For example:
 
 EC prints quoted strings while interpolating the values of registers and 
 variables when requested. For example:
-> ec degs 500 1000 rtop "'V/V'" '"Gain = $0 @ $1."'
+$ ec degs 500 1000 rtop "'V/V'" '"Gain = $0 @ $1."'
 Gain = 1.118 KV/V @ 26.565 degs.
 
 You can get a list of actions available with:

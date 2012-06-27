@@ -1,11 +1,22 @@
 #!/usr/bin/env python
 #
 # Manpage generator for Engineering Calculator
+# For more information about writing man pages, see
+# http://man7.org/linux/man-pages/man7/man-pages.7.html
+# and
+# http://man7.org/linux/man-pages/man7/man.7.html
+# TODO:
+# 1. consider going with the latex style of \bold{} and \italics{} (or perhaps
+#    @b{} @i(), @v{}) (the #{} and @{} is too mysterious). Then allow bold and
+#    italics to span lines if they are complete lines like \verb. Add support
+#    for newline or break line as well (helps in the options).
+# 2. could go with a more latex feel, one big text file with \title{} and such. 
+#    would not be hard.
 
 # Imports {{{1
 import re
 from textwrap import wrap, fill, dedent
-from ec import actionsToUse as actions
+from actions import actionsToUse as actions
 
 # Configuration {{{1
 complexNumbers = True
@@ -18,10 +29,21 @@ document = []
 # Classes {{{1
 # ManPage base class {{{2
 class ManPage():
+    '''
+    Base class for man page objects. Do not instantiate this class directly.
+    '''
     def __init__(self, text):
         raise NotImplementedError
 
     def formatText(self, text):
+        '''
+        Process the simple in-line macros that are allowed in the text:
+        #{text}: italics
+        @{text}: bold
+        \verb{
+            text
+        }: do not fill
+        '''
         # get rid of leading indentation and break into individual lines
         lines = dedent(text).strip().splitlines()
         gatheredLines = []
@@ -39,27 +61,71 @@ class ManPage():
         return '\n'.join(gatheredLines)
 
     def escapeQuotes(self, text):
+        '''
+        Return text with any double quotes escaped.
+        '''
         return text.replace('"', '""')
+
+# Title class {{{2
+class Title(ManPage):
+    '''
+    Generate the title line for the man page.
+
+    This should be the first thing added to a man page.
+
+    Takes the following arguments:
+    title: The title of the man page (will be converted to all caps)
+    section: The section number in which the man page should be placed
+    date: The date of the last revision. Dates should be written in the form
+        YYYY-MM-DD. If not given it will take todays date.
+    source: The source of the command, function, or system call (the person or
+        group that created it).
+    manual: The title of the manual
+    proprocessors: a list of characters that specify the preprocessors needed to
+    processs the man page. Choose from:
+        e  eqn
+        g  grap
+        p  pic
+        r  refer
+        t  tbl
+        v  vgrind
+        Generally you should try to avoid all preprocessors. Using tbl is pretty
+        safe.
+    '''
+    def __init__(self, title, section
+        , date=None
+        , source=None
+        , manual=None
+        , preprocessors=None
+    ):
+        assert not document, "Title should be the first thing placed into a manpage."
+        if preprocessors:
+            document.append(r'\" %s' % preprocessors)
+        if not date:
+            from datetime import date as Date
+            date = Date.today()
+        def quote(text):
+            return '"%s"' % text
+        document.append(
+            '.TH {title} {section} {date} {source} {manual}'.format(
+                title=title.upper()
+              , section=section
+              , date=quote(date)
+              , source=quote(source) if source else ''
+              , manual=quote(manual) if manual else ''
+            )
+        )
 
 # Comment class {{{2
 class Comment(ManPage):
     def __init__(self, comment):
+        '''
+        Inserts a comment into the man page.
+        '''
         global document
+        assert document, "Comment should not be the first thing placed into a manpage."
         lines = dedent(comment).strip().splitlines()
         document += [r'\" %s' % line for line in lines]
-
-# Title class {{{2
-class Title(ManPage):
-    def __init__(self, title, section, date, source=None, manual=None):
-        document.append(
-            '.TH {title} {section} {date} {source} {manual}'.format(
-                title=title
-              , section=section
-              , date=date
-              , source=source if source else ''
-              , manual=manual if manual else ''
-            )
-        )
 
 # Section class {{{2
 class Section(ManPage):
@@ -116,8 +182,13 @@ class Email(ManPage):
 
 # Document {{{1
 # Front matter {{{2
-from datetime import date
-Title(title='ec', section='1', date='%s' % date.today())
+Title(
+    title='ec'
+  , section='1'
+  , source='Ken Kundert'
+  , manual='Engineering Calculator'
+  , preprocessors='t'
+)
 Comment("""
 ec.1 - the *roff document processor source for the ec manual
 
@@ -132,9 +203,9 @@ or
    evince ec.pdf
 """)
 Section('Name')
-Paragraph('ec - An engineering calculator')
-Section('Syntax')
-Paragraph('@{ec} [#{options}] [#{scripts ...}]')
+Paragraph('ec - engineering calculator')
+Section('Synopsis')
+Paragraph('@{ec} [#{options}] [#{scripts} ...]')
 # Description {{{2
 Section('Description')
 Paragraph('''
@@ -157,21 +228,21 @@ Paragraph('''
 ''')
 # Options {{{2
 Section(title='Options')
-IndentedParagraph('-i, --interactive', text='''
+IndentedParagraph('@{-i}, @{--interactive}', text='''
     Open an interactive session.
 ''')
-IndentedParagraph(title='-x, --printx', text='''
+IndentedParagraph(title='@{-x}, @{--printx}', text='''
     Print value of x register upon termination, ignored with interactive
     sessions.
 ''')
-IndentedParagraph(title='-s, --startup file', text='''
+IndentedParagraph(title='@{-s}, @{--startup} #{file}', text='''
     Run commands from file to initialize calculator before any script or
     interactive session is run, stack is cleared after it is run.
 ''')
-IndentedParagraph(title='-c, --nocolor', text='''
+IndentedParagraph(title='@{-c}, @{--nocolor}', text='''
     Do not use colors in the output.
 ''')
-IndentedParagraph(title='-h, --help', text='''
+IndentedParagraph(title='@{-h}, @{--help}', text='''
     Print the usage and exit.
 ''')
 # Stack {{{2
@@ -610,7 +681,7 @@ Paragraph('''
     variable #{freq}. This script would be run as:
 ''')
 Listing('''
-    > ec 1KHz lg
+    $ ec 1KHz lg
     Open loop gain = 63.732
     Feedback factor = 16
     Loop gain = 1.0197K
@@ -629,7 +700,7 @@ Paragraph('''
     example of how this could be useful is:
 ''')
 Listing('''
-    > ec -x 1.52e-11F
+    $ ec -x 1.52e-11F
     15.2 pF
 ''')
 Paragraph('''
@@ -643,9 +714,9 @@ Paragraph('''
     the minus sign and follow it with #{chs}. For example,
 ''')
 Listing('''
-    > ec -x -30 dbmv 
+    $ ec -x -30 dbmv 
     ec: -30 dbmv: unknown option.
-    > ec -x 30 chs dbmv 
+    $ ec -x 30 chs dbmv 
     10 mV
 ''')
 
@@ -676,7 +747,7 @@ Paragraph('''
     state it had before the offending line was entered.
 ''')
 
-# Author {{{2
+# End Matter {{{2
 Section('Author')
 Paragraph('''
     Ken Kundert
@@ -687,6 +758,8 @@ Paragraph('''
 Email('''
     ec@shalmirane.com
 ''')
+Section('See Also')
+Paragraph('bc, dc')
 
 # Print the document {{{2
 try:

@@ -13,7 +13,7 @@ setup(
   , author="Ken Kundert"
   , author_email='ec@shalmirane.com'
   , scripts=['ec']
-  , py_modules=['ec', 'engfmt', 'cmdline', 'textcolors']
+  , py_modules=['ec', 'calculator', 'actions', 'engfmt', 'cmdline', 'textcolors']
   , data_files=[
         ('man/man1', ['ec.1'])
     ]

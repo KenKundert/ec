@@ -4,8 +4,9 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
-from ec import (
-    Calculator, actions, Display, CalculatorError, predefinedVariables
+from calculator import Calculator, Display, CalculatorError
+from actions import (
+    allActions, predefinedVariables, defaultFormat, defaultDigits
 )
 import math
 
@@ -382,42 +383,37 @@ testCases = [
   , {   'stimulus': "h sci4"
       , 'value': 6.6260693e-34
       , 'units': 'J-s'
-      , 'text': "6.6261e-34"
+      , 'text': "6.6261e-34 J-s"
     }
   , {   'stimulus': "k sci4"
       , 'value': 1.3806488e-23
       , 'units': 'J/K'
-      , 'text': "1.3806e-23"
+      , 'text': "1.3806e-23 J/K"
     }
   , {   'stimulus': "q sci4"
       , 'value': 1.602176565e-19
       , 'units': 'C'
-      , 'text': "1.6022e-19"
+      , 'text': "1.6022e-19 C"
     }
   , {   'stimulus': "c sci4"
       , 'value': 2.99792458e8
       , 'units': 'm/s'
-      , 'text': "2.9979e+08"
+      , 'text': "2.9979e+08 m/s"
     }
-#  , {   'stimulus': "G sci4"
-#      , 'value': 6.6746e-11
-#      , 'units': ''
-#      , 'text': "6.6746e-11"
-#    }
   , {   'stimulus': "0C sci4"
       , 'value': 273.15
       , 'units': 'K'
-      , 'text': "2.7315e+02"
+      , 'text': "2.7315e+02 K"
     }
   , {   'stimulus': "eps0 sci4"
       , 'value': 8.854187817e-12
       , 'units': 'F/m'
-      , 'text': "8.8542e-12"
+      , 'text': "8.8542e-12 F/m"
     }
   , {   'stimulus': "mu0 sci4"
       , 'value': 4e-7*math.pi
       , 'units': 'N/A^2'
-      , 'text': "1.2566e-06"
+      , 'text': "1.2566e-06 N/A^2"
     }
   , {   'stimulus': "100 db"
       , 'value': 40
@@ -646,8 +642,8 @@ def grabWarnings(warning):
     warnings += [warning]
 
 calc = Calculator(
-    actions
-  , Display('eng', 4)
+    allActions
+  , Display(defaultFormat, defaultDigits)
   , predefinedVariables=predefinedVariables
   , messagePrinter=grabMessages
   , warningPrinter=grabWarnings
