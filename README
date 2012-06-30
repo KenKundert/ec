@@ -62,7 +62,7 @@ follow a number or a name. For example,
 To store a value into a variable, type an equal sign followed by a name. To
 recall it, simply use the name.
 0: 100MHz =freq
-100M: 2pi* =omega
+100MHz: 2pi* =omega
 628.32M: 1pF =Cin
 1pF: 1 omega/ Cin/
 1.5915K:
@@ -82,7 +82,7 @@ and it remembers them, but they do not survive any operation other than a
 copy. In this way it should never display incorrect or misleading units, however
 it displays units when it can. For example,
 0: 100MHz =freq
-100 MHz: 2pi* 'rads/s' =omega
+100 MHz: 2pi* "rads/s" =omega
 628.32 Mrads/s: vars
   Rref = 50 Ohms
   freq = 100 MHz
@@ -90,7 +90,7 @@ it displays units when it can. For example,
 628.32 Mrads/s: 2pi /
 100M:
 Notice that EC captured units on 100MHz and stored them into the memory freq.
-Also notice that the units of 'rads/s' were explicitly specified, and they were
+Also notice that the units of "rads/s" were explicitly specified, and they were
 also captured. Finally, notice that dividing by 2pi cleared the units.
 
 Normally units are given after the number, however a dollar sign would be given
@@ -98,14 +98,18 @@ immediately before.
 0: $100M
 $100M:
 
-You can enter hexadecimal or octal numbers. For example:
+You can enter hexadecimal, octal, or binary numbers, in either traditional
+programmers notation or in Verilog notation. For example:
 0: 0xFF
 255:
 
-You can also display numbers in hexadecimal or octal. To do so, use hex, or oct:
+You can also display numbers in hexadecimal, octal, or binary in both
+traditional or Verilog notation. To do so, use hex, oct, bin, vhex, voct, or
+vbin:
 0: 255
 255: hex4
-0x000ff:
+0x00ff: vbin
+'b11111111:
 
 You can convert voltages into dBm using:
 0: 10 vdbm
