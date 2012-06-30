@@ -16,10 +16,7 @@
 # Imports {{{1
 import re
 from textwrap import wrap, fill, dedent
-from actions import actionsToUse as actions, Constant
-
-# Configuration {{{1
-complexNumbers = True
+from actions import actionsToUse as actions, Constant, documentComplexNumbers
 
 # Globals {{{1
 italicsRegex = re.compile(r'#\{([^}]+)\}')
@@ -472,7 +469,7 @@ Listing('''
     @{'o1750}:
 ''')
 # Complex Numbers {{{2
-if complexNumbers:
+if documentComplexNumbers:
     Section('Complex Numbers')
     Paragraph('''
         @{ec} provides limited support for complex numbers. Two imaginary constants

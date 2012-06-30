@@ -1674,3 +1674,4 @@ actionsToUse = engineeringActions
 predefinedVariables = {'Rref': (50, 'Ohms')}
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
+documentComplexNumbers = True

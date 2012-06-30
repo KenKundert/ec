@@ -42,6 +42,15 @@ calculator. To do that, you place the objects created by instantiating these
 classes into a list called 'actionsToUse'. It is imported by ec.py and used to
 initialize the calculator. 
 
+Several list of actions suitable for different disciplines are collected into
+lists that can easily be assigned to 'actionsToUse'. This provides an easy way
+change the personality of the calculator. The following lists are predefined:
+    allActions
+    engineeringActions
+    physicsActions
+    chemistryActions
+To change the personality, simply assign the desired list to 'actionsToUse'.
+
 Besides 'actionsToUse', three other variables are imported by ec.py and used
 when initializing the calculator:
     actionsToUse: A list of actions to be made available by the calculator.
@@ -52,4 +61,8 @@ when initializing the calculator:
 	format the calculator uses.
     defaultDigits: An integer that specifies how many digits should be initially
         used.
-
+In addition, there is another variable that affects the way the creation of the
+man page:
+    documentComplexNumbers: Set this to true if your list of actions includes
+	the ability to create and operate on complex numbers. It will add the
+	section on complex numbers to the man page.
