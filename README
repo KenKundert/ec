@@ -7,7 +7,7 @@ and uses a text-only user interface.
 
 Requires Python version 2.6, including the docutils package. On Redhat systems,
 you can get these dependencies by running as root:
-# yum install python docutils
+# yum install python python-docutils
 
 To get the source code:
 $ git clone git@github.com:KenKundert/ec.git
