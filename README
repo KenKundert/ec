@@ -5,7 +5,9 @@ This calculator is noteworthy in that it employs a stack model of computation
 (Reverse Polish Notation), it supports numbers with SI scale factors and units, 
 and uses a text-only user interface.
 
-Requires Python version 2.6.
+Requires Python version 2.6, including the docutils package. On Redhat systems,
+you can get these dependencies by running as root:
+# yum install python docutils
 
 To get the source code:
 $ git clone git@github.com:KenKundert/ec.git
