@@ -34,9 +34,38 @@ the various types of available actions. Those classes include:
     Print (matches a pattern, pops 0, pushes 0)
     Category (not an action, merely a header in the help summary)
 
+To get more information about each of these classes, open a Python shell, import 
+calculator, and apply the help function on the class you are interested in. For 
+example to get more information on Command:
+    $ python
+    >>> from calculator import *
+    >>> help(Command)
+
 An action is created by instantiating one of these classes. Generally the
 function that implements the desired action is passed into the constructor for
 one of these classes along with various parameters that describe the action.
+
+These classes take many of the same arguments when they are instantiated.
+Generally they take either *key* or *pattern*. *key* is used when the action
+would be triggered when the user enters a fixed string. Examples include
+functions such as *sin*, operators such as *+*, and commands such as *dup*.
+*pattern* is used for actions that are triggered by regular expressions, such
+numbers and commands that take arguments, such as *sci* and save or recall. When
+*pattern* is specified, *name* must be given. It gives a name for those actions
+so that the user can ask for help on them. Other arguments are *description*,
+*summary*, and *synopsis*. *description* is a half-line description of the
+action that should take the form "label: description". The label should either
+be *key* or a abstraction of *pattern*. You can use "%(name)s" within the string
+to access attributes within the action, and generally parameters to the constructor
+are saved as attributes with the same name. So it is common to use something
+like "%(key)s: description ..." as a description. *summary* is a longer
+description that is presented to the user when they ask for help. It is also
+used to describe the action in the man page. Finally, *synopsis* is a brief
+description of the effect on the stack of the action. In each of these strings
+(*description*, *summary*, and *synopsis*), you can change the type face used in
+the man page using "@{...}" for bold font and "#{...}" for italics. So, "#{x} +
+#{y}" will be rendered as "x + y" with *x* and *y* in italics.
+
 Simply instantiating one of these classes does not add this action to the
 calculator. To do that, you place the objects created by instantiating these
 classes into a list called 'actionsToUse'. It is imported by ec.py and used to

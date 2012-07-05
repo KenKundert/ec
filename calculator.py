@@ -368,7 +368,7 @@ class Command(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         self.action(calc)
 
 # Constant (pop 0, push 1, match name) {{{2
@@ -419,7 +419,7 @@ class Constant(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         stack = calc.stack
         result = self.action()
         stack.push((result, self.units))
@@ -477,7 +477,7 @@ class UnaryOp(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         stack = calc.stack
         x, xUnits = stack.pop()
         if self.needCalc:
@@ -543,7 +543,7 @@ class BinaryOp(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         stack = calc.stack
         x, xUnits = stack.pop()
         y, yUnits = stack.pop()
@@ -618,7 +618,7 @@ class BinaryIoOp(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         stack = calc.stack
         x, xUnits = stack.pop()
         y, yUnits = stack.pop()
@@ -692,7 +692,7 @@ class Dup(Action):
         self.summary = summary
         self.aliases = aliases
 
-    def execute(self, calc):
+    def _execute(self, calc):
         stack = calc.stack
         x, xUnits = stack.peek()
         if self.action:
@@ -757,7 +757,7 @@ class Number(Action):
         self.summary = summary
         self.regex = re.compile(pattern)
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         if self.needCalc:
             num, units = self.action(matchGroups, calc)
         else:
@@ -820,7 +820,7 @@ class SetFormat(Action):
         self.summary = summary
         self.regex = re.compile(pattern)
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         calc.formatter.setFormatter(self)
         if matchGroups and matchGroups[0] != None:
             calc.formatter.setDigits(int(matchGroups[0]))
@@ -853,7 +853,7 @@ class Help(Action):
         self.summary = summary
         self.regex = re.compile(r'\?(\S+)?')
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         topic = matchGroups[0]
 
         # give detailed help on a particular topic
@@ -872,8 +872,11 @@ class Help(Action):
                     else:
                         aliases = ''
                     if action.description:
-                        print stripFormatting(
-                            action.description % (action.__dict__)
+                        print fill(
+                            stripFormatting(
+                                action.description % (action.__dict__)
+                            )
+                          , subsequent_indent='    '
                         )
                     else:
                         print found + ':'
@@ -960,13 +963,14 @@ class Store(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, summary = None):
+    def __init__(self, name, description = None, synopsis = None, summary = None):
         self.name = name
         self.description = description
+        self.synopsis = synopsis
         self.summary = summary
         self.regex = re.compile(r'=([a-z]\w*)', re.I)
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         try:
             calc.heap[name] = calc.stack.peek()
@@ -995,13 +999,14 @@ class Recall(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, summary = None):
+    def __init__(self, name, description = None, synopsis = None, summary = None):
         self.name = name
         self.description = description
+        self.synopsis = synopsis
         self.summary = summary
         self.regex = re.compile(r'([a-z]\w*)', re.I)
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         if name in calc.heap:
             calc.stack.push(calc.heap[name])
@@ -1030,13 +1035,14 @@ class SetUnits(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, summary = None):
+    def __init__(self, name, description = None, synopsis = None, summary = None):
         self.name = name
         self.description = description
+        self.synopsis = synopsis
         self.summary = summary
         self.regex = re.compile(r'"(.*)"')
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         stack = calc.stack
         units, = matchGroups
         x, xUnits = stack.pop()
@@ -1070,7 +1076,7 @@ class Print(Action):
         self.regex = re.compile(r'`(.*)`')
         self.argsRegex = re.compile(r'\${?(\w+|\$)}?')
 
-    def execute(self, matchGroups, calc):
+    def _execute(self, matchGroups, calc):
         # Prints a message after expanding any $codes it contains
         # $N or ${N} are replaced by the contents of a stack register (0=x, ...)
         # $name or ${name} are replaced by the contents of a variable
@@ -1258,12 +1264,12 @@ class Calculator:
         try:
             for cmd in given:
                 if cmd in self.smplActions:
-                    self.smplActions[cmd].execute(self)
+                    self.smplActions[cmd]._execute(self)
                 else:
                     for action in self.regexActions:
                         match = action.regex.match(cmd)
                         if match:
-                            action.execute(match.groups(), self)
+                            action._execute(match.groups(), self)
                             break
                     else:
                         raise CalculatorError("%s: unrecognized" % cmd)
@@ -1384,6 +1390,7 @@ class Calculator:
                             aliases = ' (alias: %s)' % ','.join(aliases)
                     else:
                         aliases = ''
+                    label = action.key if hasattr(action, 'key') else action.name
                     lines += wrap(
                         stripFormatting(
                             each.description % (each.__dict__)
