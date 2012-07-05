@@ -1,4 +1,6 @@
 *.py[co]
+ec.1
+ec.rst
 
 # Packages
 *.egg

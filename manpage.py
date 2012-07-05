@@ -1,11 +1,11 @@
 #!/bin/env python
 # Convert the restructured text version of the manpage to a nroff manpage file.
 
-from kskutils import conjoin, dedent
 from actions import actionsToUse as actions, Constant, documentComplexNumbers
 from datetime import date as Date
 from docutils.core import publish_string
 from docutils.writers import manpage
+from textwrap import dedent
 import re
 
 # Document {{{1
@@ -570,7 +570,7 @@ def formatText(text, indent=''):
     }: do not fill
     '''
     # get rid of leading indentation and break into individual lines
-    lines = dedent(text, stripBraces=False).strip().splitlines()
+    lines = dedent(text).strip().splitlines()
     gatheredLines = []
     fill = True
     for line in lines:
@@ -638,10 +638,10 @@ for action in actions:
         actionText += text
 
 # Generate restructured text {{{1
-rst = dedent(document).format(
+rst = dedent(document[1:-1]).format(
     date=Date.today()
   , version='1'
-  , complexNumbers=dedent(complexNumberSection)
+  , complexNumbers=dedent(complexNumberSection[1:-1])
   , constantsTable=constantsTable
   , actions='\n'.join(actionText)
 )
