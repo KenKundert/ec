@@ -1,7 +1,10 @@
 #!/bin/env python
 # Convert the restructured text version of the manpage to a nroff manpage file.
 
-from actions import actionsToUse as actions, Constant, documentComplexNumbers
+from actions import (
+    actionsToUse as actions
+  , Constant, documentIntegers, documentVerilogIntegers, documentComplexNumbers
+)
 from datetime import date as Date
 from docutils.core import publish_string
 from docutils.writers import manpage
@@ -235,45 +238,7 @@ document = r"""{
     only uses the most common scale factors when outputting numbers (T, G, M, K,
     m, u, n, p, f, a).
 
-    INTEGERS
-    ========
-
-    You can enter integers in either hexadecimal (base 16), decimal (base 10),
-    octal (base 8), or binary (base 2). You can use either programmers notation
-    (leading 0) or Verilog notation (leading ') as shown in the examples below:
-
-        0xFF
-            hexadecimal
-        99
-            decimal
-        0o77
-            octal
-        0b1101
-            binary
-        'hFF
-            Verilog hexadecimal
-        'd99
-            Verilog decimal
-        'o77
-            Verilog octal
-        'b1101
-            Verilog binary
-
-    Internally, **ec** represents all numbers as double-precision real numbers.
-    To display them as decimal integers, use *fix0*. However, you can display
-    the numbers in either base 16 (hexadecimal), base 10 (decimal), base 8
-    (octal) or base 2 (binary)  by setting the display mode.  Use either *hex*,
-    *fix0*, *oct*, *bin*, *vhex*, *vdec*, *voct*, or *vbin*. In each of
-    these cases the number is rounded to the closest integer before it is
-    displayed. Add an integer after the display mode to control the number of
-    digits. For example:
-
-       |   **0**: 1000
-       |   **1K**: hex
-       |   **0x3b8**: hex8
-       |   **0x000003b8**: hex0
-       |   **0x3b8**: voct
-       |   **'o1750**:
+    {integers}
 
     {complexNumbers}
 
@@ -488,6 +453,92 @@ document = r"""{
     bc, dc
 }"""
 
+# Integers {{{1
+integerSectionWithVerilog = r"""{
+    INTEGERS
+    ========
+
+    You can enter integers in either hexadecimal (base 16), decimal (base 10),
+    octal (base 8), or binary (base 2). You can use either programmers notation
+    (leading 0) or Verilog notation (leading ') as shown in the examples below:
+
+        0xFF
+            hexadecimal
+        99
+            decimal
+        0o77
+            octal
+        0b1101
+            binary
+        'hFF
+            Verilog hexadecimal
+        'd99
+            Verilog decimal
+        'o77
+            Verilog octal
+        'b1101
+            Verilog binary
+
+    Internally, **ec** represents all numbers as double-precision real numbers.
+    To display them as decimal integers, use *fix0*. However, you can display
+    the numbers in either base 16 (hexadecimal), base 10 (decimal), base 8
+    (octal) or base 2 (binary)  by setting the display mode.  Use either *hex*,
+    *fix0*, *oct*, *bin*, *vhex*, *vdec*, *voct*, or *vbin*. In each of
+    these cases the number is rounded to the closest integer before it is
+    displayed. Add an integer after the display mode to control the number of
+    digits. For example:
+
+       |   **0**: 1000
+       |   **1K**: hex
+       |   **0x3b8**: hex8
+       |   **0x000003b8**: hex0
+       |   **0x3b8**: voct
+       |   **'o1750**:
+}"""
+
+integerSectionWithoutVerilog = r"""{
+    INTEGERS
+    ========
+
+    You can enter integers in either hexadecimal (base 16), decimal (base 10),
+    octal (base 8), or binary (base 2) using programmers notation as shown in 
+    the examples below:
+
+        0xFF
+            hexadecimal
+        99
+            decimal
+        0o77
+            octal
+        0b1101
+            binary
+
+    Internally, **ec** represents all numbers as double-precision real numbers.
+    To display them as decimal integers, use *fix0*. However, you can display
+    the numbers in either base 16 (hexadecimal), base 10 (decimal), base 8
+    (octal) or base 2 (binary)  by setting the display mode.  Use either *hex*,
+    *fix0*, *oct*, or *bin*. In each of these cases the number is rounded to the 
+    closest integer before it is displayed. Add an integer after the display 
+    mode to control the number of digits. For example:
+
+       |   **0**: 1000
+       |   **1K**: hex
+       |   **0x3b8**: hex8
+       |   **0x000003b8**: hex0
+       |   **0x3b8**: oct
+       |   **0o1750**:
+}"""
+
+if documentIntegers:
+    if documentVerilogIntegers:
+        integerSection = integerSectionWithVerilog[1:-1]
+    else:
+        integerSection = integerSectionWithoutVerilog[1:-1]
+else:
+    integerSection = ''
+
+
+# Complex Numbers {{{1
 complexNumberSection = r"""{
     COMPLEX NUMBERS
     ===============
@@ -515,8 +566,9 @@ complexNumberSection = r"""{
     support complex numbers.
 }"""
 
-if not documentComplexNumbers:
-    # Clear out the description of complex numbers if it is not desired.
+if documentComplexNumbers:
+    complexNumberSection = complexNumberSection[1:-1]
+else:
     complexNumberSection = ""
 
 # Constants Table {{{1
@@ -641,7 +693,8 @@ for action in actions:
 rst = dedent(document[1:-1]).format(
     date=Date.today()
   , version='1'
-  , complexNumbers=dedent(complexNumberSection[1:-1])
+  , integers=dedent(integerSection)
+  , complexNumbers=dedent(complexNumberSection)
   , constantsTable=constantsTable
   , actions='\n'.join(actionText)
 )

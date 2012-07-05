@@ -1776,4 +1776,26 @@ actionsToUse = engineeringActions
 predefinedVariables = {'Rref': (50, 'Ohms')}
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
-documentComplexNumbers = True
+documentComplexNumbers = (
+    imaginaryUnit in actionsToUse or
+    imaginaryTwoPi in actionsToUse
+)
+documentVerilogIntegers = (
+    verilogHexadecimalNumber or
+    verilogDecimalNumber or
+    verilogOctalNumber or
+    verilogBinaryNumber or
+    setVerilogHexadecimalFormat or
+    setVerilogDecimalFormat or
+    setVerilogOctalFormat or
+    setVerilogBinaryFormat
+)
+documentIntegers = (
+    documentVerilogIntegers or
+    hexadecimalNumber or
+    octalNumber or
+    binaryNumber or
+    setHexadecimalFormat or
+    setOctalFormat or
+    setBinaryFormat
+)
