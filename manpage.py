@@ -4,6 +4,7 @@
 from actions import (
     actionsToUse as actions
   , Constant, documentIntegers, documentVerilogIntegers, documentComplexNumbers
+  , date, version
 )
 from datetime import date as Date
 from docutils.core import publish_string
@@ -682,17 +683,17 @@ for action in actions:
             else:
                 aliases = ''
             text = [formatDescription(action.description % (action.__dict__))]
+            text += [formatText(summary, '    ')]
             if synopsis:
                 text += [formatSynopsis(synopsis)]
-            text += [formatText(summary, '    ')]
             if aliases:
                 text += [formatText(aliases, '    ')]
         actionText += text
 
 # Generate restructured text {{{1
 rst = dedent(document[1:-1]).format(
-    date=Date.today()
-  , version='1'
+    date=date if date else Date.today()
+  , version=version
   , integers=dedent(integerSection)
   , complexNumbers=dedent(complexNumberSection)
   , constantsTable=constantsTable

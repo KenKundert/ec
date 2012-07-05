@@ -886,7 +886,7 @@ class Help(Action):
                     if synopsis or aliases:
                         print
                     if synopsis:
-                        print 'synopsis: %s' % synopsis
+                        print 'stack: %s' % synopsis
                     if aliases:
                         print aliases
                     return
@@ -1377,12 +1377,12 @@ class Calculator:
         Print a single line summary of all available actions.
         '''
         lines = []
-        for each in calc.actions:
-            if each.description:
-                if hasattr(each, 'category'):
-                    lines += ['\n' + each.description % (each.__dict__)]
+        for action in calc.actions:
+            if action.description:
+                if hasattr(action, 'category'):
+                    lines += ['\n' + action.description % (action.__dict__)]
                 else:
-                    aliases = each.getAliases()
+                    aliases = action.getAliases()
                     if aliases:
                         if len(aliases) > 1:
                             aliases = ' (aliases: %s)' % ','.join(aliases)
@@ -1393,7 +1393,7 @@ class Calculator:
                     label = action.key if hasattr(action, 'key') else action.name
                     lines += wrap(
                         stripFormatting(
-                            each.description % (each.__dict__)
+                            action.description % (action.__dict__)
                         ) + aliases
                       , initial_indent='    '
                       , subsequent_indent='        '

@@ -298,7 +298,7 @@ binaryLog = UnaryOp(
   , description="%(key)s: base 2 logarithm"
   , synopsis='x, ... => log2(x), ...'
   , summary="""
-        The value in the #{x} register is replaced with its common logarithm. 
+        The value in the #{x} register is replaced with its base 2 logarithm. 
     """
   , aliases=['lb']
 )
@@ -1774,8 +1774,14 @@ chemistryActions = (
 # actions by commenting out undesired ones in the lists above.
 actionsToUse = engineeringActions
 predefinedVariables = {'Rref': (50, 'Ohms')}
+
+# The following variables are imported into the calculator and affect its
+# defautl behavior.
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
+
+# The following variables control the generation of the documentation (the man
+# page).
 documentComplexNumbers = (
     imaginaryUnit in actionsToUse or
     imaginaryTwoPi in actionsToUse
@@ -1799,3 +1805,5 @@ documentIntegers = (
     setOctalFormat or
     setBinaryFormat
 )
+date = None # if this is set to none, the date that ./install is run is used
+version = '1.0.0'

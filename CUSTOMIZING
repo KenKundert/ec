@@ -41,12 +41,12 @@ example to get more information on Command:
     >>> from calculator import *
     >>> help(Command)
 
-An action is created by instantiating one of these classes. Generally the
+An action is created by instantiating one of these classes.  Generally the
 function that implements the desired action is passed into the constructor for
 one of these classes along with various parameters that describe the action.
 
-These classes take many of the same arguments when they are instantiated.
-Generally they take either *key* or *pattern*. *key* is used when the action
+These classes take many of the same arguments when they are instantiated.  
+Generally they take either *key* or *pattern*. *key* is used when the action 
 would be triggered when the user enters a fixed string. Examples include
 functions such as *sin*, operators such as *+*, and commands such as *dup*.
 *pattern* is used for actions that are triggered by regular expressions, such
@@ -61,19 +61,32 @@ are saved as attributes with the same name. So it is common to use something
 like "%(key)s: description ..." as a description. *summary* is a longer
 description that is presented to the user when they ask for help. It is also
 used to describe the action in the man page. Finally, *synopsis* is a brief
-description of the effect on the stack of the action. In each of these strings
-(*description*, *summary*, and *synopsis*), you can change the type face used in
-the man page using "@{...}" for bold font and "#{...}" for italics. So, "#{x} +
-#{y}" will be rendered as "x + y" with *x* and *y* in italics.
+description of the effect on the stack of the action.
 
-Simply instantiating one of these classes does not add this action to the
-calculator. To do that, you place the objects created by instantiating these
-classes into a list called 'actionsToUse'. It is imported by ec.py and used to
-initialize the calculator. 
+In each of these strings (*description*, *summary*, and *synopsis*), you can use 
+simple inline macros to do the following:
+    #{text}: set text in italics
+    @{text}: set text in bold
+    \verb{
+	text
+    }: set text alone on a line or lines while maintaining line breaks
+So, "#{x} + #{y}" will be rendered as "x + y" with *x* and *y* in italics. The 
+beginning and end of a type face specifier (#{} or @{}) must fall on the same 
+line and the specifiers must not be nested.  For the no fill directive (\verb{}) 
+the beginning and end must be alone on their lines. For example, to illustrate 
+the computation of one half, you might use:
+\verb{
+    @{0}: 1 2/
+    @{500m}:
+}
 
-Several list of actions suitable for different disciplines are collected into
-lists that can easily be assigned to 'actionsToUse'. This provides an easy way
-change the personality of the calculator. The following lists are predefined:
+Simply instantiating one of these classes does not add this action to the 
+calculator. To do that, you place the objects created by instantiating these 
+classes into a list called 'actionsToUse'. It is imported by ec.py and used to 
+initialize the calculator.  Several list of actions suitable for different 
+disciplines are collected into lists that can easily be assigned to 
+'actionsToUse'. This provides an easy way change the personality of the 
+calculator. The following lists are predefined:
     allActions
     engineeringActions
     physicsActions
@@ -90,8 +103,8 @@ when initializing the calculator:
 	format the calculator uses.
     defaultDigits: An integer that specifies how many digits should be initially
         used.
-In addition, there is additional variables that affects the way the creation of
-the man page:
+In addition, there are several other variables that affect the creation of the
+man page:
     documentIntegers: Set this to true if your list of actions includes the
 	ability to enter and display integers of various bases. It adds the
 	section on integers to the man page.
@@ -102,3 +115,6 @@ the man page:
     documentComplexNumbers: Set this to true if your list of actions includes
 	the ability to create and operate on complex numbers. It adds the
 	section on complex numbers to the man page.
+    version: The version number for the calculator.
+    date: The date of the last change to the calculator. Set this to None if you 
+	want to use the date the calculator was last installed.
