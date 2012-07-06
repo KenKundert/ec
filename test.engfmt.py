@@ -428,4 +428,4 @@ if printSummary:
     print '%s tests run, %s failures detected.' % (testsRun, failures)
 
 writeSummary(testsRun, failures)
-exit(int(bool(failures)))
+exit(bool(failures))

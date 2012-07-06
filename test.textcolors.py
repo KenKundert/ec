@@ -120,4 +120,4 @@ if printSummary:
     print '%s tests run, %s failures detected.' % (testsRun, failures)
 
 writeSummary(testsRun, failures)
-exit(0 if testsRun == numTests else 0)
+exit(testsRun != numTests)
