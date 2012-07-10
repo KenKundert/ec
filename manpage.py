@@ -415,14 +415,17 @@ document = r"""{
     In this example, **ec** is used simply to convert a number into the more
     readable engineering notation.
 
-    One issue with command line scripting that you need to be careful of is that
-    if an argument is a number with a leading minus sign it will be mistaken to
-    be a command line option. To avoid this issue, specify the number without
-    the minus sign and follow it with *chs*. For example,
+    One issue with command line scripting that you need to be careful of is that 
+    if an argument is a number with a leading minus sign it will be mistaken to 
+    be a command line option. To avoid this issue, specify the number without 
+    the minus sign and follow it with *chs*.  Alternatively, you can embed the 
+    number in quotes but add a leading space.  For example,
 
     |   $ ec -x -30 dbmv 
     |   ec: -30 dbmv: unknown option.
     |   $ ec -x 30 chs dbmv 
+    |   10 mV
+    |   $ ec -x ' -30' dbmv
     |   10 mV
 
     DIAGNOSTICS
