@@ -165,7 +165,7 @@ class Heap:
         """
         for key in sorted(self.heap.keys()):
             self.parent.printMessage(
-                '  %s: %s' % (key, calc.format(self.heap[key]))
+                '  %s: %s' % (key, self.parent.format(self.heap[key]))
             )
 
     def __getitem__(self, key):
@@ -1151,7 +1151,7 @@ class Calculator:
     # space. This allows certain operators to be given abutted to numbers
     operatorSplitRegex = re.compile('''
         (?<=[a-zA-Z0-9])    # alphanum before the split
-        (?=[-+*/%!](\s|\Z)) # selected operators followed by white space or EOL
+        (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z)) # selected operators followed by white space or EOL: - + * / % ! ** || //
     ''', re.X)
     # strings are delimited by "" and `` (' is reserved for use with verilog
     # integer literals)
@@ -1301,7 +1301,6 @@ class Calculator:
         Restore stack to its state before the last evaluate.
         Used for recovering from errors.
         '''
-        assert self.backUpStack and self.prevStack
         self.stack = self.prevStack
         return self.format(self.stack.peek())
 

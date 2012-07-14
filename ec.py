@@ -49,6 +49,8 @@ opt.setSummary(' '.join([
 opt.setNumArgs(1, 'file')
 opt = clp.addOption(key='nocolor', shortName='c', longName='nocolor')
 opt.setSummary('Do not color the output.')
+opt = clp.addOption(key='verbose', shortName='v', longName='verbose')
+opt.setSummary('Narrate the execution of any scripts.')
 opt = clp.addOption(
     key='help', shortName='h', longName='help', action=clp.printHelp
 )
@@ -65,6 +67,7 @@ colorize = 'nocolor' not in opts
 startUpFile = opts.get('startup', [])
 interactiveSession = True if 'interactive' in opts else not args
 printXuponTermination = 'printx' in opts
+verbose = 'verbose' in opts
 
 # Import and configure the text colorizer {{{1
 if colorize:
@@ -92,8 +95,11 @@ def evaluateLine(calc, line, prompt):
         )
         prompt = calc.format(result)
     except CalculatorError, err:
-        print error(err.message)
-        prompt = calc.restoreStack()
+        if interactiveSession:
+            print error(err.message)
+            prompt = calc.restoreStack()
+        else:
+            sys.exit(error(err.message))
     return prompt
 
 # Create calculator {{{1
@@ -115,6 +121,10 @@ for each in rcFiles + startUpFile:
         with open(cmdFile) as pFile:
             for lineno, line in enumerate(pFile):
                 prompt = evaluateLine(calc, line, prompt)
+                if verbose:
+                    print "%s %s: %s ==> %s" % (
+                        cmdFile, lineno, line.strip(), prompt
+                    )
     except IOError, err:
         if err.errno != 2 or each not in rcFiles:
             exit('%s%s: %s: %s' % (
@@ -135,9 +145,15 @@ for arg in args:
                 for lineno, line in enumerate(pFile):
                     loc = '%s.%s: ' % (cmdFile, lineno+1)
                     prompt = evaluateLine(calc, line, prompt)
+                    if verbose:
+                        print "%s %s: %s ==> %s" % (
+                            cmdFile, lineno, line.strip(), prompt
+                        )
         else:
             loc = ''
             prompt = evaluateLine(calc, arg, prompt)
+            if verbose:
+                print "%s ==> %s" % (line, prompt)
     except IOError, err:
         if err.errno != 2:
             exit('%s: %s' % (err.filename, err.strerror))

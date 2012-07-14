@@ -61,6 +61,7 @@ document = r"""{
                          any script or interactive session is run, stack is
                          cleared after it is run.
     -c, --nocolor        Do not use colors in the output.
+    -v, --verbose        Narrate the execution of any scripts.
     -h, --help           Print the usage and exit.
 
     STACK

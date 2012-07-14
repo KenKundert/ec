@@ -52,6 +52,9 @@ feedback factor = 16
 loopgain = 1.0197K
 '''
     }
+  , {   'stimulus': '-v regress.ec < /dev/null > /dev/null'
+      , 'output': ''
+    }
 ]
 
 # Run tests {{{1
@@ -80,9 +83,15 @@ for index, case in enumerate(testCases):
         print status('Trying %d:' % index), stimulus
 
     calc.clear()
-    pipe = Popen(stimulus, shell=True, bufsize=-1, stdout=PIPE).stdout
-    result = pipe.read()
-    if expectedResult != result:
+    pipe = Popen(stimulus, shell=True, bufsize=-1, stdout=PIPE)
+    pipe.wait()
+    result = pipe.stdout.read()
+    if pipe.returncode != 0:
+        failures += 1
+        print fail('Failure detected (%s):' % failures)
+        print info('    Given:'), stimulus
+        print info('    Result  : invalid return code:'), pipe.returncode
+    elif expectedResult != result:
         failures += 1
         print fail('Failure detected (%s):' % failures)
         print info('    Given:'), stimulus

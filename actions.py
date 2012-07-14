@@ -317,7 +317,7 @@ square = UnaryOp(
 # square root {{{3
 squareRoot = UnaryOp(
     'sqrt'
-  , lambda x: cmath.sqrt(x) if type(x) == complex else math.sqrt(x)
+  , lambda x: cmath.sqrt(x) if type(x) == complex or x < 0 else math.sqrt(x)
   , description="%(key)s: square root"
   , synopsis='x, ... => sqrt(x), ...'
   , summary="""
@@ -1158,7 +1158,7 @@ binaryNumber = Number(
 # Is okay now, I switched the quote characters to free up single quotes.
 verilogHexadecimalNumber = Number(
     pattern=r"\A([-+]?)'[hH]([0-9a-fA-F_]*[0-9a-fA-F])\Z"
-  , action=lambda matches: (int(matches[0]+matches[1], base=16), '')
+  , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=16), '')
   , name='vhexnum'
   , description="'h<#{N}>: a number in Verilog hexadecimal notation"
   , synopsis='... => num, ...'
@@ -1173,7 +1173,7 @@ verilogHexadecimalNumber = Number(
 # decimal number in verilog notation {{{3
 verilogDecimalNumber = Number(
     pattern=r"\A([-+]?)'[dD]([0-9_]*[0-9]+)\Z"
-  , action=lambda matches: (int(matches[0]+matches[1], base=10), '')
+  , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=10), '')
   , name='vdecnum'
   , description="'d<#{N}>: a number in Verilog decimal"
   , synopsis='... => num, ...'
@@ -1186,7 +1186,7 @@ verilogDecimalNumber = Number(
 # octal number in verilog notation {{{3
 verilogOctalNumber = Number(
     pattern=r"\A([-+]?)'[oO]([0-7_]*[0-7]+)\Z"
-  , action=lambda matches: (int(matches[0]+matches[1], base=8), '')
+  , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=8), '')
   , name='voctnum'
   , description="'o<#{N}>: a number in Verilog octal"
   , synopsis='... => num, ...'
@@ -1200,7 +1200,7 @@ verilogOctalNumber = Number(
 # binary number in verilog notation {{{3
 verilogBinaryNumber = Number(
     pattern=r"\A([-+]?)'[bB]([01_]*[01]+)\Z"
-  , action=lambda matches: (int(matches[0]+matches[1], base=2), '')
+  , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=2), '')
   , name='vbinnum'
   , description="'b<#{N}>: a number in Verilog binary"
   , synopsis='... => num, ...'
@@ -1434,7 +1434,7 @@ popX = Command(
 # stack {{{3
 listStack = Command(
     'stack'
-  , lambda calc: stack.display()
+  , lambda calc: calc.stack.display()
   , description="%(key)s: print stack"
   , summary="""
         Print all the values stored on the stack.
