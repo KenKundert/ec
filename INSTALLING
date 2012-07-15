@@ -1,0 +1,68 @@
+Introducing ec
+==============
+This is ec, a version of ec that is provided for use with newer versions of
+python. This version of ec requires python 2.6 or later and the docutils
+package. Another version of ec called ec0 is available that has been tested to
+work on python 2.3 or later and does not require docutils.  If you have a
+choice, it is recommended that you used the normal version of ec.  That version
+more likely to be updated and enhanced. If you don't have a recent version of
+python, you can install it from source (not as difficult as it sounds,
+directions are given below).  However, if that is not your thing; ec0 is the
+version for you (once installed, it masquerades as ec).
+
+ec is available from https://github.com/KenKundert/ec.
+ec0 is available from https://github.com/KenKundert/ec0.
+
+To download ec, use either:
+    $ git clone git@github.com:KenKundert/ec.git
+Using git allows you to get updates using:
+    $ git pull
+Alternatively, you can download the source as a tar or zip file by visiting
+https://github.com/KenKundert/ec0/downloads.
+
+Once you have your copy of ec, test it with
+    $ ./test
+All tests should pass. Then you can install it using
+    $ ./install
+It will install the program into ~/local unless you change the install script.  
+Both the program and a man page are installed.
+
+Installing Python from Source
+=============================
+If you do not have a recent version of Python installed on your machine, you can
+install a copy even if you do not have root access.
+
+These instructions assume that the source will be placed in ~/packages and the 
+binaries will be placed in ~/local. You will need to adapt the instructions 
+accordingly if you want to place the files in different places. You should also 
+adapt the instructions so as the get the latest available versions for python 
+and setuptools.
+
+Getting python ...
+    $ mkdir ~/packages
+    $ cd ~/packages
+    $ mkdir python
+    $ cd python
+    $ wget http://www.python.org/ftp/python/2.7.2/Python-2.7.2.tgz
+
+Making python ...
+    $ tar zxf Python-2.7.2.tgz
+    $ cd Python-2.7.2
+    $ ./configure --prefix=$HOME/local
+    $ make
+    $ make install
+    $ cd ..
+
+To use this version of python, you should put it on your path and also add 
+~/local/lib64/python and ~/local/lib/python to your PYTHONPATH.
+
+Then you should install setuptools
+    $ wget "http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz"
+    $ tar zxf setuptools-0.6c11.tar.gz
+    $ cd setuptools-0.6c11
+    $ python setup.py install --home=$HOME/local
+    $ cd ..
+
+From here you can easily install many of the your favorite modules.
+Specifically, you should install docutils.
+    $ easy_install docutils
