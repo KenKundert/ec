@@ -25,7 +25,12 @@ Once you have your copy of ec, test it with
 All tests should pass. Then you can install it using
     $ ./install
 It will install the program into ~/local unless you change the install script.  
-Both the program and a man page are installed.
+Both the program and a man page are installed. You do not need root access to 
+install into ~/local, but in doing so it is only easily accessible by you and 
+you will need to add ~/local/lib/python to your PYTHONPATH. Alternatively, you 
+can edit ./install and remove the '--home' option. That will cause EC to be 
+installed so that it is accessible to all users without having to change their 
+PYTHONPATH, but it requires that you be root when you run the ./install command.
 
 Installing Python from Source
 =============================
