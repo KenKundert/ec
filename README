@@ -50,7 +50,7 @@ You can string together an arbitrarily long calculation on a single line
 117:
 
 Or, you can string a long calculation over multiple lines (this calculates the 
-value of two parallel 100 ohm resistors.
+value of two parallel 100 ohm resistors).
 0: 100
 100: 100
 100: ||
@@ -69,7 +69,7 @@ recall it, simply use the name.
 1pF: 1 omega/ Cin/
 1.5915K:
 
-Display memories using:
+Display variables using:
 628.32M: vars
   Cin = 1pF
   Rref = 50 Ohms
@@ -103,7 +103,12 @@ $100M:
 You can enter hexadecimal, octal, or binary numbers, in either traditional
 programmers notation or in Verilog notation. For example:
 0: 0xFF
-255:
+255: 0o77
+63: 0b1111
+15: 'hFF
+255: 'o77
+63: 'b1111
+15:
 
 You can also display numbers in hexadecimal, octal, or binary in both
 traditional or Verilog notation. To do so, use hex, oct, bin, vhex, voct, or
@@ -145,17 +150,26 @@ file with the following contents:
     2.2kOhms =rz
 
 EC also takes commands from the command line. For example:
-> ec -x "125mV 67uV / db"
+$ ec -x "125mV 67uV / db"
 65.417
 
-EC prints quoted strings while interpolating the values of registers and 
+EC prints back-quoted strings while interpolating the values of registers and 
 variables when requested. For example:
-$ ec degs 500 1000 rtop "'V/V'" '"Gain = $0 @ $1."'
+$ ec 'degs 500 1000 rtop "V/V" `Gain = $0 @ $1.`'
 Gain = 1.118 KV/V @ 26.565 degs.
 
-You can get a list of actions available with:
+You can get a list of the actions available with:
+0: ?
+
+You can get help on a specific topic, such as //, with:
+0: ?//
+
+You can get a list of the help topics available with:
 0: help
-There is much more available that what is described here.
+
+There is much more available that what is described here. For more information,
+run:
+$ man ec
 
 You can quit the program using
 0: quit
