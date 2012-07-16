@@ -18,7 +18,11 @@ To download ec, use either:
 Using git allows you to get updates using:
     $ git pull
 Alternatively, you can download the source as a tar or zip file by visiting
-https://github.com/KenKundert/ec0/downloads.
+https://github.com/KenKundert/ec0/downloads or by running:
+    $ wget --no-check-certificate https://github.com/KenKundert/ec/tarball/master
+    $ tar zxf master
+    $ rm -rf master ec
+    $ mv KenKundert-ec-* ec
 
 Once you have your copy of ec, test it with
     $ ./test
