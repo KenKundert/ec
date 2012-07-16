@@ -105,6 +105,21 @@ testCases = [
       , 'units': ''
       , 'text': '2'
     }
+  , {   'stimulus': '-4 sqrt'
+      , 'value': 2j
+      , 'units': ''
+      , 'text': 'j2'
+    }
+  , {   'stimulus': '8 cbrt'
+      , 'value': 2.0
+      , 'units': ''
+      , 'text': '2'
+    }
+  , {   'stimulus': '-8 cbrt'
+      , 'value': -2.0
+      , 'units': ''
+      , 'text': '-2'
+    }
   , {   'stimulus': "0x1f 0x01 +"
       , 'value': 32
       , 'units': ''
