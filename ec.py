@@ -65,7 +65,7 @@ args = clp.getArguments()
 progName = clp.progName()
 colorize = 'nocolor' not in opts
 startUpFile = opts.get('startup', [])
-interactiveSession = True if 'interactive' in opts else not args
+interactiveSession = 'interactive' in opts or not args
 printXuponTermination = 'printx' in opts
 verbose = 'verbose' in opts
 
@@ -127,7 +127,7 @@ for each in rcFiles + startUpFile:
                     )
     except IOError, err:
         if err.errno != 2 or each not in rcFiles:
-            exit('%s%s: %s: %s' % (
+            sys.exit('%s%s: %s: %s' % (
                 each
               , ('.%s' % lineno+1) if lineno != None else ''
               , err.filename
@@ -156,7 +156,7 @@ for arg in args:
                 print "%s ==> %s" % (line, prompt)
     except IOError, err:
         if err.errno != 2:
-            exit('%s: %s' % (err.filename, err.strerror))
+            sys.exit('%s: %s' % (err.filename, err.strerror))
 
 # Interact with user {{{1
 if (interactiveSession):
@@ -165,7 +165,8 @@ if (interactiveSession):
             entered = raw_input('%s: ' % highlight(prompt))
         except (EOFError, KeyboardInterrupt):
             print
-            exit()
+            sys.exit(1)
         prompt = evaluateLine(calc, entered, prompt)
 elif printXuponTermination:
     print prompt
+sys.exit(0)

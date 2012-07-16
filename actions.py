@@ -32,7 +32,7 @@ addition = BinaryOp(
   , description="%(key)s: addition"
   # keep units of x if they are the same as units of y
   , units=lambda calc, units: units[0] if units[0] == units[1] else ''
-  , synopsis='x, y, ... => x+y, ...'
+  , synopsis='#{x}, #{y}, ... => #{x}+#{y}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the
         stack and the sum is placed back on the stack into the #{x}
@@ -47,7 +47,7 @@ subtraction = BinaryOp(
   , description="%(key)s: subtraction"
   # keep units of x if they are the same as units of y
   , units=lambda calc, units: units[0] if units[0] == units[1] else ''
-  , synopsis='x, ... => x-y, ...'
+  , synopsis='#{x}, #{y}, ... => #{x}-#{y}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the
         stack and the difference is placed back on the stack into the #{x}
@@ -60,7 +60,7 @@ multiplication = BinaryOp(
     '*'
   , operator.mul
   , description="%(key)s: multiplication"
-  , synopsis='x, y, ... => x*y, ...'
+  , synopsis='#{x}, #{y}, ... => #{x}*#{y}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the
         stack and the product is placed back on the stack into the #{x}
@@ -73,7 +73,7 @@ trueDivision = BinaryOp(
     '/'
   , operator.truediv
   , description="%(key)s: true division"
-  , synopsis='x, y, ... => y/x, ...'
+  , synopsis='#{x}, #{y}, ... => #{y}/#{x}, ...'
   , summary=r"""
         The values in the #{x} and #{y} registers are popped from the stack and
         the quotient is placed back on the stack into the #{x} register.  Both
@@ -90,7 +90,7 @@ floorDivision = BinaryOp(
     '//'
   , operator.floordiv
   , description="%(key)s: floor division"
-  , synopsis='x, y, ... => y//x, ...'
+  , synopsis='#{x}, #{y}, ... => #{y}//#{x}, ...'
   , summary=r"""
         The values in the #{x} and #{y} registers are popped from the
         stack, the quotient is computed and then converted to an integer using
@@ -109,7 +109,7 @@ modulus = BinaryOp(
     '%'
   , operator.mod
   , description="%(key)s: modulus"
-  , synopsis='x, y, ... => y%x, ...'
+  , synopsis='#{x}, #{y}, ... => #{y}%#{x}, ...'
   , summary=r"""
         The values in the #{x} and #{y} registers are popped from the stack, the
         quotient is computed and the remainder is placed back on the stack into
@@ -128,7 +128,7 @@ percentChange = BinaryOp(
     '%chg'
   , lambda y, x: 100*(x-y)/y
   , description="%(key)s: percent change"
-  , synopsis='x, y, ... => 100*(x-y)/y, ...'
+  , synopsis='#{x}, #{y}, ... => 100*(#{x}-#{y})/#{y}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         the percent difference between #{x} and #{y} relative to #{y} is pushed 
@@ -141,7 +141,7 @@ parallel = BinaryOp(
     '||'
   , lambda y, x: (x/(x+y))*y
   , description="%(key)s: parallel combination"
-  , synopsis='x, y, ... => 1/(1/x+1/y), ...'
+  , synopsis='#{x}, #{y}, ... => 1/(1/#{x}+1/#{y}), ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and
         replaced with the reciprocal of the sum of their reciprocals.  If the
@@ -158,7 +158,7 @@ negation = UnaryOp(
     'chs'
   , operator.neg
   , description="%(key)s: change sign"
-  , synopsis='x, ... => -x, ...'
+  , synopsis='#{x}, ... => -#{x}, ...'
   , summary="""
         The value in the #{x} register is replaced with its negative. 
     """
@@ -169,7 +169,7 @@ reciprocal = UnaryOp(
     'recip'
   , lambda x: 1/x
   , description="%(key)s: reciprocal"
-  , synopsis='x, ... => 1/x, ...'
+  , synopsis='#{x}, ... => 1/#{x}, ...'
   , summary="""
         The value in the #{x} register is replaced with its reciprocal. 
     """
@@ -180,7 +180,7 @@ ceiling = UnaryOp(
     'ceil'
   , math.ceil
   , description="%(key)s: round towards positive infinity"
-  , synopsis='x, ... => ceil(x), ...'
+  , synopsis='#{x}, ... => ceil(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its value rounded
         towards infinity (replaced with the smallest integer greater than its
@@ -193,7 +193,7 @@ floor = UnaryOp(
     'floor'
   , math.floor
   , description="%(key)s: round towards negative infinity"
-  , synopsis='x, ... => floor(x), ...'
+  , synopsis='#{x}, ... => floor(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its value rounded
         towards negative infinity (replaced with the largest integer smaller
@@ -202,22 +202,24 @@ floor = UnaryOp(
 )
 
 # factorial {{{3
-factorial = UnaryOp(
-    '!'
-  , math.factorial
-  , description="%(key)s: factorial"
-  , synopsis='x, ... => x!, ...'
-  , summary="""
-        The value in the #{x} register is replaced with its factorial.
-    """
-)
-
+try:
+    factorial = UnaryOp(
+        '!'
+      , math.factorial
+      , description="%(key)s: factorial"
+      , synopsis='#{x}, ... => #{x}!, ...'
+      , summary="""
+            The value in the #{x} register is replaced with its factorial.
+        """
+    )
+except AttributeError:
+    factorial = None
 # random number {{{3
 randomNumber = Constant(
     'rand'
   , random.random
   , description="%(key)s: random number between 0 and 1"
-  , synopsis='... => rand, ...'
+  , synopsis='... => #{rand}, ...'
   , summary="""
         A number between 0 and 1 is chosen at random and its value is pushed on
         the stack into #{x} register.
@@ -232,7 +234,7 @@ power = BinaryOp(
     '**'
   , operator.pow
   , description="%(key)s: raise y to the power of x"
-  , synopsis='x, y, ... => y**x, ...'
+  , synopsis='#{x}, #{y}, ... => #{y}**#{x}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the
         stack and replaced with the value of #{y} raised to the power of
@@ -246,7 +248,7 @@ exponential = UnaryOp(
     'exp'
   , lambda x: cmath.exp(x) if type(x) == complex else math.exp(x)
   , description="%(key)s: natural exponential"
-  , synopsis='x, ... => exp(x), ...'
+  , synopsis='#{x}, ... => exp(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its exponential. 
         Supports a complex argument.
@@ -259,7 +261,7 @@ naturalLog = UnaryOp(
     'ln'
   , lambda x: cmath.log(x) if type(x) == complex else math.log(x)
   , description="%(key)s: natural logarithm"
-  , synopsis='x, ... => ln(x), ...'
+  , synopsis='#{x}, ... => ln(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its natural logarithm. 
         Supports a complex argument.
@@ -272,7 +274,7 @@ tenPower = UnaryOp(
     'pow10'
   , lambda x: 10**x
   , description="%(key)s: raise 10 to the power of x"
-  , synopsis='x, ... => 10**x, ...'
+  , synopsis='#{x}, ... => 10**#{x}, ...'
   , summary="""
         The value in the #{x} register is replaced with 10 raised to #{x}.
     """
@@ -284,7 +286,7 @@ commonLog = UnaryOp(
     'log'
   , math.log10
   , description="%(key)s: base 10 logarithm"
-  , synopsis='x, ... => log(x), ...'
+  , synopsis='#{x}, ... => log(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its common logarithm. 
     """
@@ -296,7 +298,7 @@ binaryLog = UnaryOp(
     'log2'
   , lambda x: math.log(x)/math.log(2)
   , description="%(key)s: base 2 logarithm"
-  , synopsis='x, ... => log2(x), ...'
+  , synopsis='#{x}, ... => log2(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its base 2 logarithm. 
     """
@@ -308,7 +310,7 @@ square = UnaryOp(
     'sqr'
   , lambda x: x*x
   , description="%(key)s: square"
-  , synopsis='x, ... => x**2, ...'
+  , synopsis='#{x}, ... => #{x}**2, ...'
   , summary="""
         The value in the #{x} register is replaced with its square. 
     """
@@ -319,26 +321,29 @@ squareRoot = UnaryOp(
     'sqrt'
   , lambda x: cmath.sqrt(x) if type(x) == complex or x < 0 else math.sqrt(x)
   , description="%(key)s: square root"
-  , synopsis='x, ... => sqrt(x), ...'
+  , synopsis='#{x}, ... => sqrt(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its square root.
     """
 )
 
 # cube root {{{3
-from ctypes import util, cdll, c_double
-libm = cdll.LoadLibrary(util.find_library('m'))
-libm.cbrt.restype = c_double
-libm.cbrt.argtypes = [c_double]
-cubeRoot = UnaryOp(
-    'cbrt'
-  , lambda x: libm.cbrt(x)
-  , description="%(key)s: cube root"
-  , synopsis='x, ... => cbrt(x), ...'
-  , summary="""
-        The value in the #{x} register is replaced with its cube root.
-    """
-)
+try:
+    from ctypes import util, cdll, c_double
+    libm = cdll.LoadLibrary(util.find_library('m'))
+    libm.cbrt.restype = c_double
+    libm.cbrt.argtypes = [c_double]
+    cubeRoot = UnaryOp(
+        'cbrt'
+      , lambda x: libm.cbrt(x)
+      , description="%(key)s: cube root"
+      , synopsis='#{x}, ... => cbrt(#{x}), ...'
+      , summary="""
+            The value in the #{x} register is replaced with its cube root.
+        """
+    )
+except ImportError:
+    cubeRoot = None
 
 # Trig Functions {{{2
 trigFunctions = Category("Trigonometric Functions")
@@ -349,7 +354,7 @@ sine = UnaryOp(
   , lambda x, calc: math.sin(calc.toRadians(x))
   , description="%(key)s: trigonometric sine"
   , needCalc=True
-  , synopsis='x, ... => sin(x), ...'
+  , synopsis='#{x}, ... => sin(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its sine.
     """
@@ -361,7 +366,7 @@ cosine = UnaryOp(
   , lambda x, calc: math.cos(calc.toRadians(x))
   , description="%(key)s: trigonometric cosine"
   , needCalc=True
-  , synopsis='x, ... => cos(x), ...'
+  , synopsis='#{x}, ... => cos(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its cosine.
     """
@@ -373,7 +378,7 @@ tangent = UnaryOp(
   , lambda x, calc: math.tan(calc.toRadians(x))
   , description="%(key)s: trigonometric tangent"
   , needCalc=True
-  , synopsis='x, ... => tan(x), ...'
+  , synopsis='#{x}, ... => tan(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its tangent.
     """
@@ -386,7 +391,7 @@ arcSine = UnaryOp(
   , description="%(key)s: trigonometric arc sine"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='x, ... => asin(x), ...'
+  , synopsis='#{x}, ... => asin(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its arc sine.
     """
@@ -399,7 +404,7 @@ arcCosine = UnaryOp(
   , description="%(key)s: trigonometric arc cosine"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='x, ... => acos(x), ...'
+  , synopsis='#{x}, ... => acos(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its arc cosine.
     """
@@ -412,7 +417,7 @@ arcTangent = UnaryOp(
   , description="%(key)s: trigonometric arc tangent"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='x, ... => atan(x), ...'
+  , synopsis='#{x}, ... => atan(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its arc tangent.
     """
@@ -455,7 +460,7 @@ absoluteValue = Dup(
   , lambda x: abs(x)
   , description="%(key)s: magnitude"
   , units=lambda calc, units: units[0]
-  , synopsis='x, ... => abs(x), x, ...'
+  , synopsis='#{x}, ... => abs(#{x}), ...'
   , summary="""
         The absolute value of the number in the #{x} register is pushed onto the
         stack if it is real. If the value is complex, the magnitude is pushed
@@ -480,7 +485,7 @@ argument = Dup(
   , description="%(key)s: phase"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='x, ... => arg(x), x, ...'
+  , synopsis='#{x}, ... => arg(#{x}), ...'
   , summary="""
         The argument of the number in the #{x} register is pushed onto the
         stack if it is complex. If the value is real, zero is pushed
@@ -493,7 +498,7 @@ hypotenuse = BinaryOp(
     'hypot'
   , math.hypot
   , description="%(key)s: hypotenuse"
-  , synopsis='x, y, ... => sqrt(x**2+y**2), ...'
+  , synopsis='#{x}, #{y}, ... => sqrt(#{x}**2+#{y}**2), ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point
@@ -509,7 +514,7 @@ arcTangent2 = BinaryOp(
   , description="%(key)s: two-argument arc tangent"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='x, y, ... => atan2(y,x), ...'
+  , synopsis='#{x}, #{y}, ... => atan2(#{y},#{x}), ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         replaced with the angle of the vector from the origin to the point.
@@ -524,7 +529,7 @@ rectangularToPolar = BinaryIoOp(
   , description="%(key)s: convert rectangular to polar coordinates"
   , needCalc=True
   , yUnits=lambda calc: calc.angleUnits()
-  , synopsis='x, y, ... => sqrt(x**2+y**2), atan2(y,x), ...'
+  , synopsis='#{x}, #{y}, ... => sqrt(#{x}**2+#{y}**2), atan2(#{y},#{x}), ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point 
@@ -544,7 +549,7 @@ polarToRectangular = BinaryIoOp(
   , needCalc=True
   , xUnits=lambda calc: calc.stack.peek()[1]
   , yUnits=lambda calc: calc.stack.peek()[1]
-  , synopsis='x, y, ... => x*cos(y), x*sin(y), ...'
+  , synopsis='#{x}, #{y}, ... => #{x}*cos(#{y}), #{x}*sin(#{y}), ...'
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and
         interpreted as the length and angle of a vector and are replaced with
@@ -560,7 +565,7 @@ hyperbolicSine = UnaryOp(
     'sinh'
   , math.sinh
   , description="%(key)s: hyperbolic sine"
-  , synopsis='x, ... => sinh(x), ...'
+  , synopsis='#{x}, ... => sinh(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its hyperbolic sine.
     """
@@ -571,7 +576,7 @@ hyperbolicCosine = UnaryOp(
     'cosh'
   , math.cosh
   , description="%(key)s: hyperbolic cosine"
-  , synopsis='x, ... => cosh(x), ...'
+  , synopsis='#{x}, ... => cosh(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its hyperbolic cosine.
     """
@@ -582,46 +587,53 @@ hyperbolicTangent = UnaryOp(
     'tanh'
   , math.tanh
   , description="%(key)s: hyperbolic tangent"
-  , synopsis='x, ... => tanh(x), ...'
+  , synopsis='#{x}, ... => tanh(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its hyperbolic tangent.
     """
 )
 
 # hyperbolic arc sine {{{3
-hyperbolicArcSine = UnaryOp(
-    'asinh'
-  , math.asinh
-  , description="%(key)s: hyperbolic arc sine"
-  , synopsis='x, ... => asinh(x), ...'
-  , summary="""
-        The value in the #{x} register is replaced with its hyperbolic arc sine.
-    """
-)
-
+try:
+    hyperbolicArcSine = UnaryOp(
+        'asinh'
+      , math.asinh
+      , description="%(key)s: hyperbolic arc sine"
+      , synopsis='#{x}, ... => asinh(#{x}), ...'
+      , summary="""
+            The value in the #{x} register is replaced with its hyperbolic arc sine.
+        """
+    )
+except AttributeError:
+    hyperbolicArcSine = None
 # hyperbolic arc cosine {{{3
-hyperbolicArcCosine = UnaryOp(
-    'acosh'
-  , math.acosh
-  , description="%(key)s: hyperbolic arc cosine"
-  , synopsis='x, ... => acosh(x), ...'
-  , summary="""
-        The value in the #{x} register is replaced with its hyperbolic arc
-        cosine.
-    """
-)
-
+try:
+    hyperbolicArcCosine = UnaryOp(
+        'acosh'
+      , math.acosh
+      , description="%(key)s: hyperbolic arc cosine"
+      , synopsis='#{x}, ... => acosh(#{x}), ...'
+      , summary="""
+            The value in the #{x} register is replaced with its hyperbolic arc
+            cosine.
+        """
+    )
+except AttributeError:
+    hyperbolicArcCosine = None
 # hyperbolic arc tangent {{{3
-hyperbolicArcTangent = UnaryOp(
-    'atanh'
-  , math.atanh
-  , description="%(key)s: hyperbolic arc tangent"
-  , synopsis='x, ... => atanh(x), ...'
-  , summary="""
-        The value in the #{x} register is replaced with its hyperbolic arc
-        tangent.
-    """
-)
+try:
+    hyperbolicArcTangent = UnaryOp(
+        'atanh'
+      , math.atanh
+      , description="%(key)s: hyperbolic arc tangent"
+      , synopsis='#{x}, ... => atanh(#{x}), ...'
+      , summary="""
+            The value in the #{x} register is replaced with its hyperbolic arc
+            tangent.
+        """
+    )
+except AttributeError:
+    hyperbolicArcTangent = None
 
 # Decibel Functions {{{2
 decibelFunctions = Category("Decibel Functions")
@@ -631,7 +643,7 @@ decibels20 = UnaryOp(
     'db'
   , lambda x: 20*math.log10(x)
   , description="%(key)s: convert voltage or current to dB"
-  , synopsis='x, ... => 20*log(x), ...'
+  , synopsis='#{x}, ... => 20*log(#{x}), ...'
   , summary="""
         The value in the #{x} register is replaced with its value in 
         decibels. It is appropriate to apply this form when 
@@ -645,7 +657,7 @@ antiDecibels20 = UnaryOp(
     'adb'
   , lambda x: 10**(x/20)
   , description="%(key)s: convert dB to voltage or current"
-  , synopsis='x, ... => 10**(x/20), ...'
+  , synopsis='#{x}, ... => 10**(#{x}/20), ...'
   , summary="""
         The value in the #{x} register is converted from decibels and that value
         is placed back into the #{x} register.  It is appropriate to apply this
@@ -658,7 +670,7 @@ decibels10 = UnaryOp(
     'db10'
   , lambda x: 10*math.log10(x)
   , description="%(key)s: convert power to dB"
-  , synopsis='x, ... => 10*log(x), ...'
+  , synopsis='#{x}, ... => 10*log(#{x}), ...'
   , summary="""
         The value in the #{x} register is converted from decibels and that
         value is placed back into the #{x} register.  It is appropriate to
@@ -672,7 +684,7 @@ antiDecibels10 = UnaryOp(
     'adb10'
   , lambda x: 10**(x/10)
   , description="%(key)s: convert dB to power"
-  , synopsis='x, ... => 10**(x/10), ...'
+  , synopsis='#{x}, ... => 10**(#{x}/10), ...'
   , summary="""
         The value in the #{x} register is converted from decibels and that value
         is placed back into the #{x} register.  It is appropriate to apply this
@@ -687,7 +699,7 @@ voltageToDbm = UnaryOp(
   , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Rref'][0]/2)
   , description="%(key)s: convert peak voltage to dBm"
   , needCalc=True
-  , synopsis='x, ... => 30+10*log10((x**2)/(2*#{Rref})), ...'
+  , synopsis='#{x}, ... => 30+10*log10((#{x}**2)/(2*#{Rref})), ...'
   , summary="""
         The value in the #{x} register is expected to be the peak voltage of a
         sinusoid that is driving a load resistor equal to #{Rref} (a predefined
@@ -704,7 +716,7 @@ dbmToVoltage = UnaryOp(
   , description="%(key)s: dBm to peak voltage"
   , needCalc=True
   , units='V'
-  , synopsis='x, ... => sqrt(2*10**(x - 30)/10)*#{Rref}), ...'
+  , synopsis='#{x}, ... => sqrt(2*10**(#{x} - 30)/10)*#{Rref}), ...'
   , summary="""
         The value in the #{x} register is expected to be a power in decibels
         relative to one milliwatt. It is replaced with the peak voltage of a
@@ -720,7 +732,7 @@ currentToDbm = UnaryOp(
   , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][0]/2)
   , description="%(key)s: peak current to dBm"
   , needCalc=True
-  , synopsis='x, ... => 30+10*log10(((x**2)*#{Rref}/2), ...'
+  , synopsis='#{x}, ... => 30+10*log10(((#{x}**2)*#{Rref}/2), ...'
   , summary="""
         The value in the #{x} register is expected to be the peak current of a
         sinusoid that is driving a load resistor equal to #{Rref} (a predefined
@@ -737,7 +749,7 @@ dbmToCurrent = UnaryOp(
   , description="%(key)s: dBm to peak current"
   , needCalc=True
   , units='A'
-  , synopsis='x, ... => sqrt(2*10**(x - 30)/10)/#{Rref}), ...'
+  , synopsis='#{x}, ... => sqrt(2*10**(#{x} - 30)/10)/#{Rref}), ...'
   , summary="""
         The value in the #{x} register is expected to be a power in decibels
         relative to one milliwatt. It is replaced with the peak current of a
@@ -756,7 +768,7 @@ pi = Constant(
   , lambda: math.pi
   , description="%(key)s: the ratio of a circle's circumference to its diameter"
   , units='rads'
-  , synopsis='... => pi, ...'
+  , synopsis='... => #{pi}, ...'
   , summary="""
         The value of pi (3.141592...) is pushed on the stack into the #{x}
         register.
@@ -769,7 +781,7 @@ twoPi = Constant(
   , lambda: 2*math.pi
   , description="%(key)s: the ratio of a circle's circumference to its radius"
   , units='rads'
-  , synopsis='... => 2*pi, ...'
+  , synopsis='... => 2*#{pi}, ...'
   , summary="""
         Two times the value of pi (6.283185...) is pushed on the stack into the
         #{x} register.
@@ -793,7 +805,7 @@ imaginaryUnit = Constant(
     'j'
   , lambda: 1j
   , description="%(key)s: imaginary unit (square root of -1)"
-  , synopsis='... => j, ...'
+  , synopsis='... => #{j}, ...'
   , summary="""
         The imaginary unit (square root of -1) is pushed on the stack into
         the #{x} register.
@@ -806,7 +818,7 @@ imaginaryTwoPi = Constant(
   , lambda: 2j*math.pi
   , description="%(key)s: j*2*pi"
   , units='rads'
-  , synopsis='... => j*2*pi, ...'
+  , synopsis='... => #{j}*2*#{pi}, ...'
   , summary="""
         2 pi times the imaginary unit (j6.283185...) is pushed on the stack into
         the #{x} register.
@@ -819,7 +831,7 @@ planckConstant = Constant(
   , lambda: 6.62606957e-34
   , description="%(key)s: Planck constant"
   , units='J-s'
-  , synopsis='... => h, ...'
+  , synopsis='... => #{h}, ...'
   , summary="""
         The Planck constant (6.62606957e-34 J-s) is pushed on the stack into
         the #{x} register.
@@ -832,7 +844,7 @@ planckConstantReduced = Constant(
   , lambda: 1.054571726e-34
   , description="%(key)s: Reduced Planck constant"
   , units='J-s'
-  , synopsis='... => h/(2*pi), ...'
+  , synopsis='... => #{h}/(2*#{pi}), ...'
   , summary="""
         The reduced Planck constant (1.054571726e-34 J-s) is pushed on the stack
         into the #{x} register.
@@ -845,7 +857,7 @@ planckLength = Constant(
   , lambda: 1.616199e-35
   , description="%(key)s: Planck length"
   , units='m'
-  , synopsis='... => lP, ...'
+  , synopsis='... => #{lP}, ...'
   , summary="""
         The Planck length (sqrt(h*G/(2*pi*c**3)) or 1.616199e-35 m) is pushed on
         the stack into the #{x} register.
@@ -858,7 +870,7 @@ planckMass = Constant(
   , lambda: 2.17651e-5
   , description="%(key)s: Planck mass"
   , units='g'
-  , synopsis='... => mP, ...'
+  , synopsis='... => #{mP}, ...'
   , summary="""
         The Planck mass (sqrt(h*c/(2*pi*G)) or 2.17651e-5 g) is pushed on
         the stack into the #{x} register.
@@ -871,7 +883,7 @@ planckMassReduced = Constant(
   , lambda: 2.17651e-5
   , description="%(key)s: Reduced Planck mass"
   , units='g'
-  , synopsis='... => mPr, ...'
+  , synopsis='... => #{mPr}, ...'
   , summary="""
         The reduced Planck mass (sqrt(h*c/(16*pi**2*G)) or 4.341e-6 g) is pushed
         on the stack into the #{x} register.
@@ -884,7 +896,7 @@ planckTemperature = Constant(
   , lambda: 1.416833e32
   , description="%(key)s: Planck temperature"
   , units='K'
-  , synopsis='... => TP, ...'
+  , synopsis='... => #{TP}, ...'
   , summary="""
         The Planck temperature (mP*c**2/k or 1.416833e32 K) is pushed
         on the stack into the #{x} register.
@@ -897,7 +909,7 @@ planckTime = Constant(
   , lambda: 5.39106e-44
   , description="%(key)s: Planck time"
   , units='s'
-  , synopsis='... => tP, ...'
+  , synopsis='... => #{tP}, ...'
   , summary="""
         The Planck time (sqrt(h*G/(2*pi*c**5)) or 5.39106e-44 s) is pushed on
         the stack into the #{x} register.
@@ -910,7 +922,7 @@ boltzmann = Constant(
   , lambda: 1.3806488e-23
   , description="%(key)s: Boltzmann constant"
   , units='J/K'
-  , synopsis='... => k, ...'
+  , synopsis='... => #{k}, ...'
   , summary="""
         The Boltzmann constant (R/NA) or 1.3806488e-23 J/K) is pushed on the
         stack into the #{x} register.
@@ -923,7 +935,7 @@ elementaryCharge = Constant(
   , lambda: 1.602176565e-19
   , description="%(key)s: elementary charge (the charge of an electron)"
   , units='C'
-  , synopsis='... => q, ...'
+  , synopsis='... => #{q}, ...'
   , summary="""
         The elementary charge (the charge of an electron or 1.602176565e-19 C)
         is pushed on the stack into the #{x} register.
@@ -936,7 +948,7 @@ massOfElectron = Constant(
   , lambda: 9.10938291e-28
   , description="%(key)s: mass of an electron"
   , units='g'
-  , synopsis='... => me, ...'
+  , synopsis='... => #{me}, ...'
   , summary="""
         The mass of an electron (9.10938291e-28 g) is pushed on the stack into
         the #{x} register.
@@ -949,7 +961,7 @@ massOfProton = Constant(
   , lambda: 1.672621777e-24
   , description="%(key)s: mass of a proton"
   , units='g'
-  , synopsis='... => mp, ...'
+  , synopsis='... => #{mp}, ...'
   , summary="""
         The mass of a proton (1.672621777e-24 g) is pushed on the stack into
         the #{x} register.
@@ -962,7 +974,7 @@ speedOfLight = Constant(
   , lambda: 2.99792458e8
   , description="%(key)s: speed of light in a vacuum"
   , units='m/s'
-  , synopsis='... => c, ...'
+  , synopsis='... => #{c}, ...'
   , summary="""
         The speed of light in a vacuum (2.99792458e8 m/s) is pushed on the stack
         into the #{x} register.
@@ -975,7 +987,7 @@ gravitationalConstant = Constant(
   , lambda: 6.6746e-11
   , description="%(key)s: universal gravitational constant"
   , units="m^3/(kg-s^2)"
-  , synopsis='... => G, ...'
+  , synopsis='... => #{G}, ...'
   , summary="""
         The universal gravitational constant (6.6746e-11 m^3/(kg-s^2)) is pushed
         on the stack into the #{x} register.
@@ -988,7 +1000,7 @@ standardAccelerationOfGravity = Constant(
   , lambda: 9.80665
   , description="%(key)s: standard acceleration of gravity"
   , units='m/s^2'
-  , synopsis='... => g, ...'
+  , synopsis='... => #{g}, ...'
   , summary="""
         The standard acceleration of gravity on earth (9.80665 m/s^2)) is pushed
         on the stack into the #{x} register.
@@ -1001,7 +1013,7 @@ avogadroConstant = Constant(
   , lambda: 6.02214129e23
   , description="%(key)s: Avagadro Number"
   , units='/mol'
-  , synopsis='... => NA, ...'
+  , synopsis='... => #{NA}, ...'
   , summary="""
         Avogadro constant (6.02214129e23) is pushed on the stack into the #{x}
         register.
@@ -1014,7 +1026,7 @@ molarGasConstant = Constant(
   , lambda: 8.3144621
   , description="%(key)s: molar gas constant"
   , units='J/(mol-K)'
-  , synopsis='... => R, ...'
+  , synopsis='... => #{R}, ...'
   , summary="""
         The molar gas constant (8.3144621 J/(mol-K)) is pushed on the stack into
         the #{x} register.
@@ -1027,7 +1039,7 @@ zeroCelsius = Constant(
   , lambda: 273.15
   , description="%(key)s: 0 Celsius in Kelvin"
   , units='K'
-  , synopsis='... => 0C, ...'
+  , synopsis='... => #{0C}, ...'
   , summary="""
         Zero celsius in kelvin (273.15 K) is pushed on the stack into
         the #{x} register.
@@ -1040,7 +1052,7 @@ freeSpacePermittivity = Constant(
   , lambda: 8.854187817e-12
   , description="%(key)s: permittivity of free space"
   , units='F/m'
-  , synopsis='... => eps0, ...'
+  , synopsis='... => #{eps0}, ...'
   , summary="""
         The permittivity of free space (8.854187817e-12 F/m) is pushed on the
         stack into the #{x} register.
@@ -1053,7 +1065,7 @@ freeSpacePermeability = Constant(
   , lambda: 4e-7*math.pi
   , description="%(key)s: permeability of free space"
   , units='N/A^2'
-  , synopsis='... => mu0, ...'
+  , synopsis='... => #{mu0}, ...'
   , summary="""
         The permeability of free space (4e-7*pi N/A^2) is pushed on the
         stack into the #{x} register.
@@ -1066,7 +1078,7 @@ freeSpaceCharacteristicImpedance = Constant(
   , lambda: 376.730313461
   , description="%(key)s: Characteristic impedance of free space"
   , units='Ohms'
-  , synopsis='... => Z0, ...'
+  , synopsis='... => #{Z0}, ...'
   , summary="""
         The characteristic impedance of free space (376.730313461 Ohms) is
         pushed on the stack into the #{x} register.
@@ -1082,7 +1094,7 @@ engineeringNumber = Number(
   , action=lambda matches: toNumber(matches[0])
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is the
         integer portion of the mantissa and #{M} is an optional fractional part.
@@ -1098,7 +1110,7 @@ scientificNumber = Number(
   , action=lambda matches: (float(matches[0]), matches[1])
   , name='scinum'
   , description="<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is the
         integer portion of the mantissa and #{M} is an optional fractional part.
@@ -1113,7 +1125,7 @@ hexadecimalNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1], base=16), '')
   , name='hexnum'
   , description="0x<#{N}>: a hexadecimal number"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
@@ -1129,7 +1141,7 @@ octalNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1], base=8), '')
   , name='octnum'
   , description="0o<#{N}>: a number in octal"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
@@ -1143,7 +1155,7 @@ binaryNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1], base=2), '')
   , name='binnum'
   , description="0b<#{N}>: a number in octal"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
@@ -1161,7 +1173,7 @@ verilogHexadecimalNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=16), '')
   , name='vhexnum'
   , description="'h<#{N}>: a number in Verilog hexadecimal notation"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
@@ -1176,7 +1188,7 @@ verilogDecimalNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=10), '')
   , name='vdecnum'
   , description="'d<#{N}>: a number in Verilog decimal"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 10.  For example, 'd99 represents the decimal number 99.
@@ -1189,7 +1201,7 @@ verilogOctalNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=8), '')
   , name='voctnum'
   , description="'o<#{N}>: a number in Verilog octal"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
@@ -1203,7 +1215,7 @@ verilogBinaryNumber = Number(
   , action=lambda matches: (int(matches[0]+matches[1].replace('_',''), base=2), '')
   , name='vbinnum'
   , description="'b<#{N}>: a number in Verilog binary"
-  , synopsis='... => num, ...'
+  , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
@@ -1365,7 +1377,7 @@ variableCommands = Category("Variable Commands")
 storeToVariable = Store(
     'store'
   , description='=<#{name}>: store value into a variable'
-  , synopsis='x, ... => x, ...'
+  , synopsis='... => ...'
   , summary="""
         Store the value in the #{x} register into a variable with the given
         name.
@@ -1376,7 +1388,7 @@ storeToVariable = Store(
 recallFromVariable = Recall(
     'recall'
   , description='<#{name}>: recall value of a variable'
-  , synopsis='... => name, ...'
+  , synopsis='... => #{name}, ...'
   , summary="""
         Place the value of the variable with the given name into the #{x}
         register.
@@ -1401,7 +1413,7 @@ swapXandY = Command(
     'swap'
   , Calculator.swap
   , description='%(key)s: swap x and y'
-  , synopsis='x, y, ... => y, x, ...'
+  , synopsis='#{x}, #{y}, ... => #{y}, #{x}, ...'
   , summary="""
         The values in the #{x} and #{y} registers are swapped.
     """
@@ -1412,7 +1424,7 @@ duplicateX = Dup(
     'dup'
   , None
   , description="%(key)s: duplicate #{x}"
-  , synopsis='x, ... => x, x, ...'
+  , synopsis='#{x}, ... => #{x}, #{x}, ...'
   , summary="""
         The value in the #{x} register is pushed onto the stack again.
     """
@@ -1424,7 +1436,7 @@ popX = Command(
     'pop'
   , Calculator.pop
   , description='%(key)s: discard x'
-  , synopsis='x, ... => ...'
+  , synopsis='#{x}, ... => ...'
   , summary="""
         The value in the #{x} register is pulled from the stack and discarded.
     """
@@ -1776,7 +1788,7 @@ actionsToUse = engineeringActions
 predefinedVariables = {'Rref': (50, 'Ohms')}
 
 # The following variables are imported into the calculator and affect its
-# defautl behavior.
+# default behavior.
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
 

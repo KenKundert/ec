@@ -6,7 +6,7 @@ from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
 from calculator import Calculator, Display, CalculatorError
 from actions import allActions, defaultFormat, defaultDigits
-import math
+import math, sys
 from subprocess import Popen, PIPE
 
 # Initialization {{{1
@@ -116,4 +116,4 @@ if printSummary:
     print '%s tests run, %s failures detected.' % (testsRun, failures)
 
 writeSummary(testsRun, failures)
-exit(0 if testsRun == numTests else 0)
+sys.exit(testsRun != numTests)

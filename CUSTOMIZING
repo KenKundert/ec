@@ -3,19 +3,19 @@ available. To do so, it is useful to know a little about how it is put together.
 
 EC is constructed from four files:
     calculator.py:
-	Foundation of the calculator, contains the class definitions used to
-	construct the calculator.
+        Foundation of the calculator, contains the class definitions used to
+        construct the calculator.
     actions.py:
-	Contains the definitions of all actions available, including operators,
-	functions, numbers, formats, and commands. It should be possible to
-	confine any customization to this file.
+        Contains the definitions of all actions available, including operators,
+        functions, numbers, formats, and commands. It should be possible to
+        confine any customization to this file.
     ec.py:
         Provides a command line interface for the calculator.
     manpage.py:
         Generates the manpage for the calculator. The sections that describe the
-	details of the available actions are automatically generated from the
-	information contained in actions.py. However, you may find it necessary
-	to modify the remaining text descriptions if you make large changes.
+        details of the available actions are automatically generated from the
+        information contained in actions.py. However, you may find it necessary
+        to modify the remaining text descriptions if you make large changes.
 
 calculator.py provides a collection of class definitions that are used implement
 the various types of available actions. Those classes include:
@@ -68,7 +68,7 @@ simple inline macros to do the following:
     #{text}: set text in italics
     @{text}: set text in bold
     \verb{
-	text
+        text
     }: set text alone on a line or lines while maintaining line breaks
 So, "#{x} + #{y}" will be rendered as "x + y" with *x* and *y* in italics. The 
 beginning and end of a type face specifier (#{} or @{}) must fall on the same 
@@ -98,23 +98,23 @@ when initializing the calculator:
     actionsToUse: A list of actions to be made available by the calculator.
     predefinedVariables: A dictionary of variables that should be predefined
         each variable consists of a name (a string) and a value (a tuple
-	consisting of a number (the value) and a string (the units)).
+        consisting of a number (the value) and a string (the units)).
     defaultFormat: An object of the SetFormat class that specifies the initial
-	format the calculator uses.
+        format the calculator uses.
     defaultDigits: An integer that specifies how many digits should be initially
         used.
 In addition, there are several other variables that affect the creation of the
 man page:
     documentIntegers: Set this to true if your list of actions includes the
-	ability to enter and display integers of various bases. It adds the
-	section on integers to the man page.
+        ability to enter and display integers of various bases. It adds the
+        section on integers to the man page.
     documentVerilogIntegers: Set this to true if your list of actions includes
-	the ability to enter and display Verilog integers of various bases. It
-	chooses the section on integers to be the one that include documentation
-	of Verilog integers to the man page.
+        the ability to enter and display Verilog integers of various bases. It
+        chooses the section on integers to be the one that include documentation
+        of Verilog integers to the man page.
     documentComplexNumbers: Set this to true if your list of actions includes
-	the ability to create and operate on complex numbers. It adds the
-	section on complex numbers to the man page.
+        the ability to create and operate on complex numbers. It adds the
+        section on complex numbers to the man page.
     version: The version number for the calculator.
     date: The date of the last change to the calculator. Set this to None if you 
-	want to use the date the calculator was last installed.
+        want to use the date the calculator was last installed.

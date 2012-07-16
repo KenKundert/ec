@@ -212,6 +212,8 @@ class Display:
             # suppress the imaginary if it would display as zero
             if imag == zero:
                 return real
+            elif real == zero:
+                return "j" + imag
             elif imag[0] == '-':
                 if imag[1:] == zero:
                     return real
@@ -1176,7 +1178,13 @@ class Calculator:
         self.regexActions = []
         names = set()
         for action in actions:
-            if hasattr(action, 'key'):
+            if not action:
+                # not an action, skip it
+                # this generally occurs for operations that do not exist in
+                # earlier versions of the python math library (it is easier
+                # to set them to None that to edit them out of the list)
+                continue
+            elif hasattr(action, 'key'):
                 if action.key not in alreadySeen:
                     self.smplActions.update({action.key: action})
                     prunedActions += [action]
@@ -1389,7 +1397,6 @@ class Calculator:
                             aliases = ' (alias: %s)' % ','.join(aliases)
                     else:
                         aliases = ''
-                    label = action.key if hasattr(action, 'key') else action.name
                     lines += wrap(
                         stripFormatting(
                             action.description % (action.__dict__)

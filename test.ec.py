@@ -8,7 +8,7 @@ from calculator import Calculator, Display, CalculatorError
 from actions import (
     allActions, predefinedVariables, defaultFormat, defaultDigits
 )
-import math
+import math, sys
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
@@ -722,4 +722,4 @@ if printSummary:
     print '%s tests run, %s failures detected.' % (testsRun, failures)
 
 writeSummary(testsRun, failures)
-exit(0 if testsRun == numTests else 0)
+sys.exit(testsRun != numTests)
