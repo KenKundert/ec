@@ -373,5 +373,4 @@ def allFromEngFmt(str):
         out += str[prevEnd:beginMatch] + number + units
         prevEnd = match.end(3)
     out += str[prevEnd:]
-    #print "Out: '%s" % out
     return out
