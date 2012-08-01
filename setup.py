@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from distutils.core import setup
 import manpage # simply importing the manpage creates the manpage as a side effect
 
