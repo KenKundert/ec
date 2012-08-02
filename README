@@ -10,7 +10,7 @@ you can get these dependencies by running as root:
 # yum install python python-docutils
 
 To get the source code:
-$ git clone git@github.com:KenKundert/ec.git
+$ git clone git://github.com/KenKundert/ec.git
 
 Once cloned, you can get the latest updates using:
 $ git pull
