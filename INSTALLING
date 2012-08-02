@@ -14,7 +14,7 @@ ec is available from https://github.com/KenKundert/ec.
 ec0 is available from https://github.com/KenKundert/ec0.
 
 To download ec, use either:
-    $ git clone git@github.com:KenKundert/ec.git
+    $ git clone git://github.com/KenKundert/ec.git
 Using git allows you to get updates using:
     $ git pull
 Alternatively, you can download the source as a tar or zip file by visiting
@@ -28,13 +28,13 @@ Once you have your copy of ec, test it with
     $ ./test
 All tests should pass. Then you can install it using
     $ ./install
-It will install the program into ~/local unless you change the install script.  
-Both the program and a man page are installed. You do not need root access to 
-install into ~/local, but in doing so it is only easily accessible by you and 
-you will need to add ~/local/lib/python to your PYTHONPATH. Alternatively, you 
-can edit ./install and remove the '--home' option. That will cause EC to be 
-installed so that it is accessible to all users without having to change their 
-PYTHONPATH, but it requires that you be root when you run the ./install command.
+It will install the program into ~/.local.  Both the program and a man page are 
+installed. You do not need root access to install into ~/.local, but in doing so 
+it is only easily accessible by you and you will need to add ~/.local/bin
+to your PATH. Alternatively, you can edit ./install and remove the '--prefix' 
+option.  That will cause EC to be installed so that it is accessible to all 
+users without having to change their PATH, but it requires that you be root when 
+you run the ./install command.
 
 Installing Python from Source
 =============================
@@ -42,7 +42,7 @@ If you do not have a recent version of Python installed on your machine, you can
 install a copy even if you do not have root access.
 
 These instructions assume that the source will be placed in ~/packages and the 
-binaries will be placed in ~/local. You will need to adapt the instructions 
+binaries will be placed in ~/.local. You will need to adapt the instructions 
 accordingly if you want to place the files in different places. You should also 
 adapt the instructions so as the get the latest available versions for python 
 and setuptools.
@@ -52,24 +52,25 @@ Getting python ...
     $ cd ~/packages
     $ mkdir python
     $ cd python
-    $ wget http://www.python.org/ftp/python/2.7.2/Python-2.7.2.tgz
+    $ wget http://www.python.org/ftp/python/2.7.2/Python-3.2.3.tgz
 
 Making python ...
-    $ tar zxf Python-2.7.2.tgz
-    $ cd Python-2.7.2
-    $ ./configure --prefix=$HOME/local
+    $ tar zxf Python-3.2.3.tgz
+    $ cd Python-3.2.3
+    $ ./configure --prefix=$HOME/.local
     $ make
     $ make install
     $ cd ..
 
-To use this version of python, you should put it on your path and also add 
-~/local/lib64/python and ~/local/lib/python to your PYTHONPATH.
+To use this version of python, you should put ~/.local/bin on your path. It must 
+be early on your path so that by default you get this version of python (run 
+'which python' to confirm).
 
 Then you should install setuptools
     $ wget "http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz"
     $ tar zxf setuptools-0.6c11.tar.gz
     $ cd setuptools-0.6c11
-    $ python setup.py install --home=$HOME/local
+    $ python setup.py install --prefix=$HOME/.local
     $ cd ..
 
 From here you can easily install many of the your favorite modules.
