@@ -21,7 +21,7 @@ $ ./test
 To install:
 $ ./install
 
-Be sure to add ~/.local/bin to your PATH.
+This installs ec in ~/.local. Be sure to add ~/.local/bin to your PATH.  
 
 To read the EC manual:
 $ man ec

@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# need to remove build directory from a previous install to assure a clean
-# install
+# remove build directory from a previous install to assure a clean install
 rm -rf build
 
-python setup.py install --prefix=~/.local
+python setup.py install --user
