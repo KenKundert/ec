@@ -4,7 +4,6 @@ set nonomatch
 rm -f ec.1 ec.rst ec.pdf
 rm -rf *.pyc *.pyo .*.sum
 rm -rf build .coverage .coverage-html 
-rm -f expected result
 foreach i (*/clean)
     if ($i == "*/clean") break
     #echo $i
@@ -15,5 +14,3 @@ foreach i (*/Makefile)
     #echo $i
     (cd $i:h; make clean)
 end
-rm -f distribute-*
-rm -rf docutils* *.egg-info

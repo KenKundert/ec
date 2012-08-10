@@ -28,7 +28,8 @@ Once you have your copy of ec, test it with
     $ ./test
 All tests should pass. Then you can install it using
     $ ./install
-It will install the program into ~/.local.  Both the program and a man page are 
+It will install the program into ~/.local (this occasionally fails due to a time
+out, if this happens simply try again).  Both the program and a man page are 
 installed. You do not need root access to install into ~/.local, but in doing so 
 it is only easily accessible by you and you will need to add ~/.local/bin
 to your PATH. Alternatively, you can edit ./install and remove the '--user' 
