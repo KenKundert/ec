@@ -695,19 +695,25 @@ for action in actions:
         actionText += text
 
 # Generate restructured text {{{1
-rst = dedent(document[1:-1]).format(
-    date=date if date else Date.today()
-  , version=version
-  , integers=dedent(integerSection)
-  , complexNumbers=dedent(complexNumberSection)
-  , constantsTable=constantsTable
-  , actions='\n'.join(actionText)
-)
-with open('ec.rst', 'w') as outputFile:
-    outputFile.write(rst)
+def write(manFileName, rstFileName=None):
+    rst = dedent(document[1:-1]).format(
+        date=date if date else Date.today()
+      , version=version
+      , integers=dedent(integerSection)
+      , complexNumbers=dedent(complexNumberSection)
+      , constantsTable=constantsTable
+      , actions='\n'.join(actionText)
+    )
+    # generate reStructuredText file (only used for debugging)
+    if rstFileName:
+        with open(rstFileName, 'w') as outputFile:
+            outputFile.write(rst)
 
-# Generate man page {{{1
-with open('ec.1', 'w') as outputFile:
-    outputFile.write(publish_string(rst, writer=manpage.Writer()))
+    # Generate man page
+    with open(manFileName, 'w') as outputFile:
+        outputFile.write(publish_string(rst, writer=manpage.Writer()))
+
+if __name__ == '__main__':
+    write('ec.1', 'ec.rst')
 
 # vim: set sw=4 sts=4 tw=80 formatoptions=ntcqwa12 et spell: 
