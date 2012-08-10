@@ -93,5 +93,6 @@ you can install it locally as follows:
 At this point it will likely complain about the destination directory not
 existing. Create it with:
     $ mkdir -p <dir>
+    $ python ez_setup.py --prefix=$HOME/.local
 Finally, you install docutils with:
     $ easy_install --prefix=$HOME/.local docutils
