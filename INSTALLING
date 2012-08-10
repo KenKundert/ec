@@ -28,14 +28,16 @@ Once you have your copy of ec, test it with
     $ ./test
 All tests should pass. Then you can install it using
     $ ./install
-It will install the program into ~/.local (this occasionally fails due to a time
-out, if this happens simply try again).  Both the program and a man page are 
-installed. You do not need root access to install into ~/.local, but in doing so 
-it is only easily accessible by you and you will need to add ~/.local/bin
-to your PATH. Alternatively, you can edit ./install and remove the '--user' 
-option.  That will cause EC to be installed so that it is accessible to all 
-users without having to change their PATH, but it requires that you be root when 
-you run the ./install command.
+It will install the program into ~/.local. This occasionally fails due to a time
+out, if this happens simply try again.  If it fails because docutils is
+missing, follow the instructions for installing docutils given below.
+
+Both the program and a man page are installed. You do not need root access to
+install into ~/.local, but in doing so it is only easily accessible by you and
+you will need to add ~/.local/bin to your PATH. Alternatively, you can edit
+./install and remove the '--user' option.  That will cause EC to be installed so
+that it is accessible to all users without having to change their PATH, but it
+requires that you be root when you run the ./install command.
 
 Installing Python from Source
 =============================
@@ -74,6 +76,22 @@ Then you should install setuptools
     $ python setup.py install --prefix=$HOME/.local
     $ cd ..
 
-From here you can easily install many of the your favorite modules.
-Specifically, you should install docutils.
+Installing Docutils
+===================
+If you have root access and you are using the system version of python, then you
+can install docutils simply with
+    # yum install python-docutils
+
+If you are using the version of python you installed from source, then you
+already have easy_install, and so getting docutils is accomplished with
     $ easy_install docutils
+
+If you are using the system version of python and do not have root access, then
+you can install it locally as follows:
+    $ wget http://peak.telecommunity.com/dist/ez_setup.py
+    $ python ez_setup.py --prefix=$HOME/.local
+At this point it will likely complain about the destination directory not
+existing. Create it with:
+    $ mkdir -p <dir>
+Finally, you install docutils with:
+    $ easy_install --prefix=$HOME/.local docutils
