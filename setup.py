@@ -34,5 +34,5 @@ setup(
       'Operating System :: POSIX :: Linux',
       'Programming Language :: Python :: 2.6',
       'Topic :: Scientific/Engineering',
-    ],
+    ]
 )
