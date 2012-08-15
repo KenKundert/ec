@@ -51,10 +51,8 @@ adapt the instructions so as the get the latest available versions for python
 and setuptools.
 
 Getting python ...
-    $ mkdir ~/packages
-    $ cd ~/packages
-    $ mkdir python
-    $ cd python
+    $ mkdir -p ~/packages/python
+    $ cd ~/packages/python
     $ wget http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
 
 Making python ...
