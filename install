@@ -1,4 +1,6 @@
 #!/bin/sh
+# Installs ec
+# Be sure to add ~/.local/bin into your path.
 
 # remove build directory from a previous install to assure a clean install
 rm -rf build

@@ -209,18 +209,25 @@ class Display:
             real = self.format((num.real, units))
             imag = self.format((num.imag, units))
             zero = self.format((0, units))
+            one = self.format((1, units))
+            units = ' '+units if units else ''
+
             # suppress the imaginary if it would display as zero
             if imag == zero:
                 return real
-            elif real == zero:
-                return "j" + imag
             elif imag[0] == '-':
-                if imag[1:] == zero:
+                imag = imag[1:] if imag[1:] != one else units
+                if imag == zero:
                     return real
-                else:
-                    return "%s - j%s" % (real, imag[1:])
+                if real == zero:
+                    return '-j' + imag
+                return "%s - j%s" % (real, imag)
             else:
+                imag = imag if imag != one else units
+                if real == zero:
+                    return 'j' + imag
                 return "%s + j%s" % (real, imag)
+
         if self.formatterTakesUnits:
             return self.formatter(num, units, self.digits)
         else:
@@ -328,6 +335,81 @@ class Action:
             return self.aliases
         except AttributeError:
             return set()
+
+    def addTest(self, stimulus
+      , result = None, units = None, text = None
+      , error = None, messages = None, warnings = None
+    ):
+        '''
+        Add a regression test.
+
+        stimulus:
+            A string that contains the test. It will be fed into the calculator.
+            The calculator is initially configured in its default state (trig
+            mode, output format and precision).
+        result:
+            The numerical value expected to be in the x register after the
+            stimulus has been executed. The test passes if this number is very
+            close to the final result (within a relative tolerance of 1e-9 or an
+            absolute tolerance of 1e-13). Ignored if None or not given.
+        units:
+            The units of the value expected to be in the x register at the
+            conclusion of the test. Ignored if None or not given.
+        text:
+            A string that is expected to be the same as that produce by
+            formatting the value in the x register at the conclusion of the
+            test. Ignored if None or not given.
+        error:
+            A string that is expected match the error message generated during
+            the execution of the stimulus. If None or not given, no error
+            messages are expected.
+        messages:
+            A string or list of strings that are expected match the messages
+            generated during the execution of the stimulus. If None or not
+            given, no messages are expected. If True, then a message is expected
+            but no constraint is placed on the content of the message.
+        warnings:
+            A string or list of strings that are expected match the warning
+            messages generated during the execution of the stimulus. If None or
+            not given, no messages are expected.
+        '''
+
+        test = {'stimulus': stimulus}
+        if result != None:
+            test['result'] = result
+        if units != None:
+            test['units'] = units
+        if text != None:
+            test['text'] = text
+        if error != None:
+            test['error'] = error
+        if messages != None:
+            test['messages'] = [messages] if type(messages) == str else messages
+        if warnings != None:
+            test['warnings'] = warnings if type(warnings) == list else [warnings]
+
+        if hasattr(self, 'tests'):
+            self.tests += [test]
+        else:
+            self.tests = [test]
+
+        # assure that the action is contained within the stimulus (otherwise
+        # this test is likely placed on the wrong action)
+        misplacedTest = 'misplaced test: action=%s, stimulus=%s' % (
+            self.getName(), stimulus
+        )
+        components = Calculator.split(stimulus)
+        if hasattr(self, 'key'):
+            found = self.key in components
+            if not found and hasattr(self, 'aliases'):
+                found = set(self.aliases).intersection(set(components))
+        elif hasattr(self, 'regex'):
+            found = False
+            for each in components:
+                if self.regex.match(each):
+                    found = True
+                    break
+        assert found, misplacedTest
 
 # Command (pop 0, push 0, match name) {{{2
 class Command(Action):
@@ -487,7 +569,7 @@ class UnaryOp(Action):
         else:
             x = self.action(x)
         if callable(self.units):
-            units = self.units(calc, [xUnits])
+            units = self.units(calc, (xUnits,))
         else:
             units = self.units
         stack.push((x, units))
@@ -519,7 +601,9 @@ class BinaryOp(Action):
         additional argument to *action*. Otherwise, only the operands are passed
         to *action*.
     units (optional):
-        The units of the value being pushed onto the stack.
+        The units of the result. May either be a string or a function that
+        returns a string. The function takes the calculator object and a tuple
+        containing the units of the x and y registers as arguments.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
         affected by this action.
@@ -554,7 +638,7 @@ class BinaryOp(Action):
         else:
             result = self.action(y, x)
         if callable(self.units):
-            units = self.units(calc, [xUnits, yUnits])
+            units = self.units(calc, (xUnits, yUnits))
         else:
             units = self.units
         stack.push((result, units))
@@ -588,11 +672,13 @@ class BinaryIoOp(Action):
     xUnits (optional):
         The units of the *x* value being pushed onto the stack. May either be a
         string or a function that returns a string. The function takes the
-        calculator object as an argument.
+        calculator object and a tuple containing the units of the x and y
+        registers as arguments.
     yUnits (optional):
         The units of the *y* value being pushed onto the stack. May either be a
         string or a function that returns a string. The function takes the
-        calculator object as an argument.
+        calculator object and a tuple containing the units of the x and y
+        registers as arguments.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
         affected by this action.
@@ -629,11 +715,11 @@ class BinaryIoOp(Action):
         else:
             result = self.action(y, x)
         if callable(self.xUnits):
-            xUnits = self.xUnits(calc)
+            xUnits = self.xUnits(calc, (xUnits, yUnits))
         else:
             xUnits = self.xUnits
         if callable(self.yUnits):
-            yUnits = self.yUnits(calc)
+            yUnits = self.yUnits(calc, (xUnits, yUnits))
         else:
             yUnits = self.yUnits
         stack.push((result[1], yUnits))
@@ -667,7 +753,10 @@ class Dup(Action):
         additional argument to *action*. Otherwise, only the operand is passed
         to *action*.
     units (optional):
-        The units of the value being pushed onto the stack.
+        The units of the value being pushed onto the stack. May either be a
+        string or a function that returns a string. The function takes the
+        calculator object and a tuple containing the units of the x register as
+        arguments.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
         affected by this action.
@@ -704,7 +793,7 @@ class Dup(Action):
                 x = self.action(x)
             if self.units:
                 if callable(self.units):
-                    xUnits = self.units(calc, [xUnits])
+                    xUnits = self.units(calc, (xUnits,))
                 else:
                     xUnits = self.units
         stack.push((x, xUnits))
@@ -874,35 +963,34 @@ class Help(Action):
                     else:
                         aliases = ''
                     if action.description:
-                        print fill(
+                        calc.printMessage(fill(
                             stripFormatting(
                                 action.description % (action.__dict__)
                             )
                           , subsequent_indent='    '
-                        )
+                        ))
                     else:
-                        print found + ':'
+                        calc.printMessage(found + ':')
                     if summary:
-                        print
-                        print self.formatHelpText(summary)
+                        calc.printMessage()
+                        calc.printMessage(self.formatHelpText(summary))
                     if synopsis or aliases:
-                        print
+                        calc.printMessage()
                     if synopsis:
-                        print 'stack: %s' % synopsis
+                        calc.printMessage('stack: %s' % synopsis)
                     if aliases:
-                        print aliases
+                        calc.printMessage(aliases)
                     return
-            print "%s: not found." % topic
-            print
+            calc.printWarning("%s: not found.\n" % topic)
 
         # present the user with the list of available help topics
         topics = [action.getName() for action in calc.actions if action.getName()]
         colWidth = max([len(topic) for topic in topics]) + 3
         topics.sort()
-        print "For summary of all topics, use 'help'."
-        print "For help on a particular topic, use '?topic'."
-        print
-        print "Available topics:"
+        calc.printMessage("For summary of all topics, use 'help'.")
+        calc.printMessage("For help on a particular topic, use '?topic'.")
+        calc.printMessage()
+        calc.printMessage("Available topics:")
         numCols = 78//colWidth
         numRows = (len(topics) + numCols - 1)//numCols
         cols = []
@@ -911,10 +999,13 @@ class Help(Action):
         for i in range(len(cols[0])):
             for j in range(numCols):
                 try:
-                    print "{0:{width}s}".format(cols[j][i], width=colWidth),
+                    calc.printMessage(
+                        "{0:{width}s}".format(cols[j][i], width=colWidth)
+                      , style='fragment'
+                    )
                 except IndexError:
                     pass
-            print
+            calc.printMessage()
         return
 
     def formatHelpText(self, text):
@@ -1095,8 +1186,6 @@ class Print(Action):
             args = components[1::2]
             formattedArgs = []
             for arg in args:
-                if arg[0] == '{' and arg[-1] == '}':
-                    arg = arg[1:-1]
                 try:
                     try:
                         arg = calc.stack.stack[int(arg)]
@@ -1145,7 +1234,12 @@ class Calculator:
         restore the stack if there are any errors. This is generally use with
         user interactive sessions.
     messagePrinter (optional):
-        Function that takes a string an prints it for the user.
+        Function that takes a string an prints it for the user. A string is
+        passed as a second argument. It can take three possible values: 'line'
+        indicates a newline should be added to the end of the message,
+        'fragment' indicates that a newline should not be added, and 'page'
+        indicates that the message is expected to be long and so a pager should
+        be used when displaying the message.
     warningPrinter (optional):
         Function that takes a string an prints it for the user as a warning.
     '''
@@ -1226,7 +1320,8 @@ class Calculator:
         self.clear()
 
     # split input into commands {{{2
-    def split(self, given):
+    @classmethod
+    def split(cls, given):
         '''
         Split a command string into tokens.
 
@@ -1282,16 +1377,18 @@ class Calculator:
                     else:
                         raise CalculatorError("%s: unrecognized" % cmd)
             return self.stack.peek()
-        except (ValueError, OverflowError, ZeroDivisionError, TypeError), err:
+        except (ValueError, OverflowError, TypeError), err:
             if (
                 isinstance(err, TypeError) and
-                err.message == "can't convert complex to float"
+                str(err).startswith("can't convert complex to float")
             ):
                 raise CalculatorError(
                     "Function does not support a complex argument."
                 )
             else:
-                raise CalculatorError(err.message)
+                raise CalculatorError(str(err))
+        except (ZeroDivisionError), err:
+            raise CalculatorError("division by zero")
 
     # utility methods {{{2
     def clear(self):
@@ -1361,14 +1458,20 @@ class Calculator:
     def pop(self):
         self.stack.pop()
 
-    def printMessage(self, message):
+    def printMessage(self, message='', style='line'):
         '''
         Prints a message to the user.
         '''
         if self.messagePrinter:
-            self.messagePrinter(message)
+            self.messagePrinter(message, style)
         else:
-            print message
+            if style == 'page':
+                pager(message)
+            elif style == 'line':
+                print message
+            else:
+                assert style == 'fragment'
+                print message,
 
     def printWarning(self, warning):
         '''
@@ -1404,15 +1507,17 @@ class Calculator:
                       , initial_indent='    '
                       , subsequent_indent='        '
                     )
-        pager('\n'.join(lines) + '\n')
+        calc.printMessage('\n'.join(lines) + '\n', style='page')
 
     def aboutMsg(calc):
         '''
         Print administrative information about EC.
         '''
-        print "EC was written by Ken Kundert."
-        print "Email your comments and questions to ec@shalmirane.com."
-        print "To get the source, use 'git clone git@github.com:KenKundert/ec.git'."
+        calc.printMessage(dedent("""\
+            EC was written by Ken Kundert.
+            Email your comments and questions to ec@shalmirane.com.
+            To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
+        """))
 
     def quit(calc):
         '''

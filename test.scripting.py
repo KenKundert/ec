@@ -52,9 +52,6 @@ feedback factor = 16
 loopgain = 1.0197K
 '''
     }
-  , {   'stimulus': '-v regress.ec < /dev/null > /dev/null'
-      , 'output': ''
-    }
 ]
 
 # Run tests {{{1
