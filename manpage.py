@@ -4,9 +4,8 @@
 from actions import (
     actionsToUse as actions
   , Constant, documentIntegers, documentVerilogIntegers, documentComplexNumbers
-  , date, version
 )
-from datetime import date as Date
+from calculator import versionDate, versionNumber
 from docutils.core import publish_string
 from docutils.writers import manpage
 from textwrap import dedent
@@ -22,7 +21,7 @@ document = r"""{
     engineering calculator
     ----------------------
 
-    :Author: Ken Kundert <ec@shalmirane.com>
+    :Author: Ken Kundert <ec@nurdletech.com>
     :Date: {date}
     :Version: {version}
     :Manual section: 1
@@ -697,8 +696,8 @@ for action in actions:
 # Generate restructured text {{{1
 def write(manFileName, rstFileName=None):
     rst = dedent(document[1:-1]).format(
-        date=date if date else Date.today()
-      , version=version
+        date=versionDate
+      , version=versionNumber
       , integers=dedent(integerSection)
       , complexNumbers=dedent(complexNumberSection)
       , constantsTable=constantsTable

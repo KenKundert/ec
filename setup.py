@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 import os
+from calculator import versionNumber
 
 # Create/update manpage before installing
 import manpage
@@ -13,11 +14,11 @@ def contents(fname):
 
 setup(
     name='ec'
-  , version='1.0'
+  , version=versionNumber
   , description='engineering calculator'
   , long_description=contents('README')
   , author="Ken Kundert"
-  , author_email='ec@shalmirane.com'
+  , author_email='ec@nurdletech.com'
   , url='http://www.nurdletech.com/ec.html'
   , download_url='https://github.com/KenKundert/ec/downloads'
   , scripts=['ec']

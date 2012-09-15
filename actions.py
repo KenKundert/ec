@@ -3068,10 +3068,10 @@ engineeringConstantActions = [
 physicsConstantActions = [
     planckConstant,
     planckConstantReduced,
-    planckLength,
-    planckMass,
-    planckTemperature,
-    planckTime,
+#    planckLength,
+#    planckMass,
+#    planckTemperature,
+#    planckTime,
     boltzmann,
     elementaryCharge,
     massOfElectron,
@@ -3112,6 +3112,11 @@ numberActions = [
     verilogOctalNumber,
     verilogBinaryNumber,
 ]
+realNumberActions = [
+    numbers,
+    engineeringNumber,
+    scientificNumber,
+]
 
 # Number Formats {{{2
 numberFormatActions = [
@@ -3126,6 +3131,12 @@ numberFormatActions = [
     setVerilogDecimalFormat,
     setVerilogOctalFormat,
     setVerilogBinaryFormat,
+]
+realNumberFormatActions = [
+    numberFormats,
+    setEngineeringFormat,
+    setScientificFormat,
+    setFixedFormat,
 ]
 
 # Variables {{{2
@@ -3199,11 +3210,10 @@ physicsActions = (
     trigFunctionActions +
     complexVectorFunctionActions +
     hyperbolicFunctionActions +
-    decibelFunctionActions +
     commonConstantActions +
     physicsConstantActions +
-    numberActions +
-    numberFormatActions +
+    realNumberActions +
+    realNumberFormatActions +
     variableActions +
     stackActions +
     miscellaneousActions
@@ -3214,54 +3224,57 @@ chemistryActions = (
     arithmeticOperatorActions +
     logPowerExponentialActions +
     trigFunctionActions +
-    complexVectorFunctionActions +
-    hyperbolicFunctionActions +
-    decibelFunctionActions +
     commonConstantActions +
     chemistryConstantActions +
-    numberActions +
-    numberFormatActions +
+    realNumberActions +
+    realNumberFormatActions +
     variableActions +
     stackActions +
     miscellaneousActions
 )
 
-# Choose action list {{{2
+# Configure Calculator {{{1
 # To modify the personality of the calculator, chose the set of actions to use
 # and any predefined variables needed here. You can also adjust the list of
 # actions by commenting out undesired ones in the lists above.
-actionsToUse = engineeringActions
-predefinedVariables = {'Rref': (50, 'Ohms')}
+actionsToUse = allActions
+if (
+    voltageToDbm in actionsToUse or
+    dbmToVoltage in actionsToUse or
+    currentToDbm in actionsToUse or
+    dbmToCurrent in actionsToUse
+):
+    predefinedVariables = {'Rref': (50, 'Ohms')}
+else:
+    predefinedVariables = {}
 
 # The following variables are imported into the calculator and affect its
 # default behavior.
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
 
-# The following variables control the generation of the documentation (the man
-# page).
+# The following variables control the generation of the documentation
+# (the man page).
 documentComplexNumbers = (
     imaginaryUnit in actionsToUse or
     imaginaryTwoPi in actionsToUse
 )
 documentVerilogIntegers = (
-    verilogHexadecimalNumber or
-    verilogDecimalNumber or
-    verilogOctalNumber or
-    verilogBinaryNumber or
-    setVerilogHexadecimalFormat or
-    setVerilogDecimalFormat or
-    setVerilogOctalFormat or
-    setVerilogBinaryFormat
+    verilogHexadecimalNumber in actionsToUse or
+    verilogDecimalNumber in actionsToUse or
+    verilogOctalNumber in actionsToUse or
+    verilogBinaryNumber in actionsToUse or
+    setVerilogHexadecimalFormat in actionsToUse or
+    setVerilogDecimalFormat in actionsToUse or
+    setVerilogOctalFormat in actionsToUse or
+    setVerilogBinaryFormat in actionsToUse
 )
 documentIntegers = (
-    documentVerilogIntegers or
-    hexadecimalNumber or
-    octalNumber or
-    binaryNumber or
-    setHexadecimalFormat or
-    setOctalFormat or
-    setBinaryFormat
+    documentVerilogIntegers in actionsToUse or
+    hexadecimalNumber in actionsToUse or
+    octalNumber in actionsToUse or
+    binaryNumber in actionsToUse or
+    setHexadecimalFormat in actionsToUse or
+    setOctalFormat in actionsToUse or
+    setBinaryFormat in actionsToUse
 )
-date = None # if this is set to none, the date that ./install is run is used
-version = '1.0.0'

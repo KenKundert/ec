@@ -14,6 +14,10 @@ from copy import copy
 from textwrap import wrap, fill, dedent
 from pydoc import pager
 
+# Set the version information {{{1
+versionNumber = '1.0.1'
+versionDate = '2012-09-14'
+
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')
 boldRegex = re.compile(r'@\{(\w+)\}')
@@ -1514,10 +1518,13 @@ class Calculator:
         Print administrative information about EC.
         '''
         calc.printMessage(dedent("""\
+            EC: Engineering Calculator
+            Version %s (%s).
+
             EC was written by Ken Kundert.
-            Email your comments and questions to ec@shalmirane.com.
+            Email your comments and questions to ec@nurdletech.com.
             To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
-        """))
+        """ % (versionNumber, versionDate)))
 
     def quit(calc):
         '''

@@ -115,6 +115,3 @@ man page:
     documentComplexNumbers: Set this to true if your list of actions includes
         the ability to create and operate on complex numbers. It adds the
         section on complex numbers to the man page.
-    version: The version number for the calculator.
-    date: The date of the last change to the calculator. Set this to None if you 
-        want to use the date the calculator was last installed.
