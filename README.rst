@@ -15,7 +15,7 @@ can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
 slightly less capable version of ec.
 
 More information on both ec and ec0 can be found at `NurdleTech 
-<http://www.nurdletech.com/ec.html>`_ 
+<http://www.nurdletech.com/ec.html>`_ .
 
 To get the source code::
 
@@ -33,7 +33,8 @@ To install::
 
    $ ./install
 
-This installs ec in ``~/.local``. Be sure to add ``~/.local/bin`` to your PATH.  
+This installs *ec* in ``~/.local``. Be sure to add ``~/.local/bin`` to your 
+PATH.  
 
 To read the EC manual::
 
@@ -217,5 +218,5 @@ You can quit the program using::
 
 (or *:q* or *^C*).
 
-Enjoy,
--Ken
+| Enjoy,
+|    -Ken

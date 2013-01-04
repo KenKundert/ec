@@ -2,15 +2,15 @@
 
 set nonomatch
 rm -f ec.1 ec.rst ec.pdf
-rm -rf *.pyc *.pyo .*.sum
-rm -rf build .coverage .coverage-html 
+rm -f *.pyc *.pyo .test*.sum
+rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html 
 foreach i (*/clean)
     if ($i == "*/clean") break
-    #echo $i
+    #echo cleaning $i
     (cd $i:h; ./clean)
 end
 foreach i (*/Makefile)
     if ($i == "*/Makefile") break
-    #echo $i
+    #echo cleaning $i
     (cd $i:h; make clean)
 end
