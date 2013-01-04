@@ -15,7 +15,7 @@ can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
 slightly less capable version of ec.
 
 More information on both ec and ec0 can be found at `NurdleTech 
-<http://www.nurdletech.com/ec.html>`_ .
+<http://www.nurdletech.com/ec.html>`_.
 
 To get the source code::
 
