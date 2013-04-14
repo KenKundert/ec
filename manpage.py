@@ -557,12 +557,12 @@ complexNumberSection = r"""{
     register. For example,
 
        |   **0**: 1 j +
-       |   **1 + j1**: mag
+       |   **1 + j**: mag
        |   **1.4142**: pop
-       |   **1 + j1**: ph
+       |   **1 + j**: ph
        |   **45 degs**: stack
-       |      *y*: 45 degs
-       |      *x*: 1 + j1
+       |      *y*: 1 + j
+       |      *x*: 45 degs
        |   **45 degs**:
 
     Only a small number of functions actually support complex numbers; currently

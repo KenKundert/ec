@@ -2,7 +2,9 @@
 
 set nonomatch
 rm -f ec.1 ec.rst ec.pdf
-rm -f *.pyc *.pyo .test*.sum
+
+# the rest is common to all python directories
+rm -f *.pyc *.pyo .test*.sum expected result
 rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html 
 foreach i (*/clean)
     if ($i == "*/clean") break
