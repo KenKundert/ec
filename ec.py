@@ -86,7 +86,7 @@ else:
 
 # Define utility functions {{{1
 def printWarning(message):
-    print "%s: %s" % (warning('Warning'), message)
+    print("%s: %s" % (warning('Warning'), message))
 
 def evaluateLine(calc, line, prompt):
     try:
@@ -94,9 +94,9 @@ def evaluateLine(calc, line, prompt):
             calc.split(line)
         )
         prompt = calc.format(result)
-    except CalculatorError, err:
+    except CalculatorError as err:
         if interactiveSession:
-            print error(err.message)
+            print(error(err.message))
             prompt = calc.restoreStack()
         else:
             sys.exit(error(err.message))
@@ -122,10 +122,10 @@ for each in rcFiles + startUpFile:
             for lineno, line in enumerate(pFile):
                 prompt = evaluateLine(calc, line, prompt)
                 if verbose:
-                    print "%s %s: %s ==> %s" % (
+                    print("%s %s: %s ==> %s" % (
                         cmdFile, lineno, line.strip(), prompt
-                    )
-    except IOError, err:
+                    ))
+    except IOError as err:
         if err.errno != 2 or each not in rcFiles:
             sys.exit('%s%s: %s: %s' % (
                 each
@@ -146,15 +146,15 @@ for arg in args:
                     loc = '%s.%s: ' % (cmdFile, lineno+1)
                     prompt = evaluateLine(calc, line, prompt)
                     if verbose:
-                        print "%s %s: %s ==> %s" % (
+                        print("%s %s: %s ==> %s" % (
                             cmdFile, lineno, line.strip(), prompt
-                        )
+                        ))
         else:
             loc = ''
             prompt = evaluateLine(calc, arg, prompt)
             if verbose:
-                print "%s ==> %s" % (line, prompt)
-    except IOError, err:
+                print("%s ==> %s" % (line, prompt))
+    except IOError as err:
         if err.errno != 2:
             sys.exit('%s: %s' % (err.filename, err.strerror))
 
@@ -162,11 +162,17 @@ for arg in args:
 if (interactiveSession):
     while(True):
         try:
-            entered = raw_input('%s: ' % highlight(prompt))
+            entered = raw_input('%s: ' % highlight(prompt)) # python 2
         except (EOFError, KeyboardInterrupt):
-            print
+            print()
             sys.exit(1)
+        except NameError:
+            try:
+                entered = input('%s: ' % highlight(prompt)) # python 3
+            except (EOFError, KeyboardInterrupt):
+                print()
+                sys.exit(1)
         prompt = evaluateLine(calc, entered, prompt)
 elif printXuponTermination:
-    print prompt
+    print(prompt)
 sys.exit(0)

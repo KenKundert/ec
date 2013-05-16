@@ -77,40 +77,38 @@ for index, case in enumerate(testCases):
     stimulus = 'python ec.py ' + case['stimulus']
     expectedResult = case['output']
     if printTests:
-        print status('Trying %d:' % index), stimulus
+        print(status('Trying %d:' % index), stimulus)
 
     calc.clear()
     pipe = Popen(stimulus, shell=True, bufsize=-1, stdout=PIPE)
     pipe.wait()
-    result = pipe.stdout.read()
+    result = pipe.stdout.read().decode()
     if pipe.returncode != 0:
         failures += 1
-        print fail('Failure detected (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  : invalid return code:'), pipe.returncode
+        print(fail('Failure detected (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  : invalid return code:'), pipe.returncode)
     elif expectedResult != result:
         failures += 1
-        print fail('Failure detected (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), '\n' + result
-        print info('    Expected:'), '\n' + expectedResult
+        print(fail('Failure detected (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), '\n' + result)
+        print(info('    Expected:'), '\n' + expectedResult)
 
     elif printResults:
-        print succeed('    Result:'), result
+        print(succeed('    Result:'), result)
         for message in messages:
-            print succeed('    Message received:'), message
+            print(succeed('    Message received:'), message)
         for warning in warnings:
-            print succeed('    Warning received:'), warning
+            print(succeed('    Warning received:'), warning)
 
 # Print test summary {{{1
 numTests = len(testCases)
 assert testsRun == numTests
 if printSummary:
-    if failures:
-        print fail('FAIL:'),
-    else:
-        print succeed('PASS:'),
-    print '%s tests run, %s failures detected.' % (testsRun, failures)
+    print('%s: %s tests run, %s failures detected.' % (
+        fail('FAIL') if failures else succeed('PASS'), testsRun, failures
+    ))
 
 writeSummary(testsRun, failures)
 sys.exit(testsRun != numTests)

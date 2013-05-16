@@ -98,7 +98,7 @@ def cmdLineOpts():
         fast, printSummary, printTests, printResults, colorize, parent = runtests.cmdLineOpts()
     """
     if coverage and not parent:
-            print "coverage analysis not performed on %s." % progName
+        print("coverage analysis not performed on %s." % progName)
     return (fast, printSummary, printTests, printResults, colorize, parent)
 
 # writeSummary {{{1
@@ -129,7 +129,8 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
         run. If the test is a local python file, then it should be named
         <testKey>.<test>.py. If it is a directory, it should be named <test>.
     pythonCmd is the full python command to be used to run the test files. This
-        can be used to specify optization flags to python.
+        can be used to specify optimization flags to python or the desired
+        python version.
     pythonPath is the python path to be set when running the test files.
     testKey is used for two things. First, it is appended to the name of each
         test file. The idea is that each test file would be paired up with the
@@ -174,18 +175,18 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
             )
             error = _invoke(cmd)
         else:
-            print exception(
+            print(exception(
                 '%s: cannot find test %s, skipping.' % (
                     progName, name
                 )
-            )
+            ))
             numSuites += 1
             numSuiteFailures += 1
             continue
         if error:
             if not coverage:
                 # return status of coverage seems broken (sigh)
-                print fail('Failures detected in %s tests.' % name)
+                print(fail('Failures detected in %s tests.' % name))
                 failures = True
         try:
             with open(summaryFileName) as f:
@@ -202,7 +203,7 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
                     )
                 )
             )
-        except IOError, err:
+        except IOError as err:
             if error:
                 numSuites += 1
                 numSuiteFailures += 1
@@ -216,18 +217,18 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
                 )
 
     if printSummary and not parent and len(args) > 1:
-        preamble = info('Composite results:')
+        preamble = info('Composite results')
         synopsis = '%s of %s test suites failed, %s of %s tests failed.' % (
             numSuiteFailures, numSuites, numTestFailures, numTests
         )
         if numSuiteFailures or numTestFailures:
-            print preamble, fail("FAIL: %s" % synopsis)
+            print("%s: %s" % (preamble, fail("FAIL: %s" % synopsis)))
         else:
-            print preamble, succeed("PASS: %s" % synopsis)
+            print("%s: %s" % (preamble, succeed("PASS: %s" % synopsis)))
 
     try:
         writeSummary(numTests, numTestFailures, numSuites, numSuiteFailures)
-    except IOError, err:
+    except IOError as err:
         sys.exit(
             exception(
                 "%s: summary file '%s': %s." % (
@@ -236,7 +237,7 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
             )
         )
 
-    sys.exit(1 if failures else 0)
+    sys.exit(bool(failures))
 
 # utilities {{{1
 # _childOpts {{{2
@@ -261,7 +262,7 @@ def _childOpts(test):
 def _invoke(cmd):
     try:
         return os.system(cmd)
-    except OSError, err:
+    except OSError as err:
         sys.exit(
             exception(
                 '\n'.join([
@@ -279,7 +280,7 @@ def _deleteYamlFile(filename):
     if os.path.isfile(filename):
         try:
             os.remove(filename)
-        except IOError, err:
+        except IOError as err:
             sys.exit(
                 exception(
                     "%s: summary file '%s': %s." % (
