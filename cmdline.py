@@ -244,7 +244,7 @@ class _Generic:
             opt = self.optionLongNames[name[2:]]
             args = opt._processArguments(clp, name)
             if opt.key in self.optionsGiven:
-                print "%s: option '%s' specified again, ignored." % (clp.invokedAs, name)
+                print("%s: option '%s' specified again, ignored." % (clp.invokedAs, name))
             else:
                 self.optionsGiven.update({opt.key: args})
             if opt.action:
@@ -255,7 +255,7 @@ class _Generic:
                 opt = self.optionShortNames[each]
                 args = opt._processArguments(clp, '-'+each)
                 if opt.key in self.optionsGiven:
-                    print "%s: option '%s' specified again, ignored." % (clp.invokedAs, name)
+                    print("%s: option '%s' specified again, ignored." % (clp.invokedAs, name))
                 else:
                     self.optionsGiven.update({opt.key: args})
                 if opt.action:
@@ -647,10 +647,10 @@ class CommandLineProcessor(_Argument):
             titleDecor = self.helpTitleDecoration
             if obj.title:
                 if len(titleDecor) >= 2 and titleDecor[1]:
-                    print titleDecor[1]*len(obj.title)
-                print obj.title
+                    print(titleDecor[1]*len(obj.title))
+                print(obj.title)
                 if len(titleDecor) >= 1 and titleDecor[0]:
-                    print titleDecor[0]*len(obj.title)
+                    print(titleDecor[0]*len(obj.title))
 
             if obj.desc:
                 out = []
@@ -659,12 +659,12 @@ class CommandLineProcessor(_Argument):
                     if len(line) == 0 or line[-1] != ' ':
                         # last character is not a space
                         # print accumulated line and start a new one
-                        print textwrap.fill(
+                        print(textwrap.fill(
                             ''.join(out)
                           , width=self.helpPageWidth
-                        )
+                        ))
                         out = []
-                print textwrap.fill(''.join(out), width=self.helpPageWidth)
+                print(textwrap.fill(''.join(out), width=self.helpPageWidth))
 
         wrapper = textwrap.TextWrapper(
             width=self.helpPageWidth
@@ -679,12 +679,12 @@ class CommandLineProcessor(_Argument):
             # description, and if a list is given, then each item in list is
             # wrapped separately.
             if width > self.helpColWidth:
-                print '    %s' % (tokens)
-                print wrapper.fill('    %s  %s' % (self.helpColWidth*' ', optDesc))
+                print('    %s' % (tokens))
+                print(wrapper.fill('    %s  %s' % (self.helpColWidth*' ', optDesc)))
             else:
-                print wrapper.fill(
+                print(wrapper.fill(
                     '    %*s  %s' % (-self.helpColWidth, tokens, optDesc)
-                )
+                ))
 
         def printOptions(optionDefs, sort):
             if sort:
@@ -726,31 +726,31 @@ class CommandLineProcessor(_Argument):
                             items += ['[<arguments>]']
                         else:
                             items += ['<arguments>']
-                    print "Usage: %s\n" % ' '.join(items)
+                    print("Usage: %s\n" % ' '.join(items))
 
                     if len(cmd.names) > 1:
-                        print "Aliases: %s\n" % ', '.join(cmd.names)
+                        print("Aliases: %s\n" % ', '.join(cmd.names))
 
                     if len(cmd.optionDefs) > 0:
-                        print "Command Options:"
+                        print("Command Options:")
                         printOptions(cmd.optionDefs, sort)
-                        print
+                        print('')
 
                     if len(self.optionDefs) > 0 and self.helpKey:
-                        print textwrap.fill(
+                        print(textwrap.fill(
                             ' '.join([
                                 "Use '%s %s'" % (self.invokedAs, self.helpKey)
                               , 'for information on the global options.'
                             ])
                           , width=self.helpPageWidth
-                        )
+                        ))
         else:
             printTitleAndDescription(self, self)
 
             items = [self.invokedAs]
             if len(self.optionDefs) > 0:
                 items += ['[options]']
-            if self.maxArgs > 0 or self.maxArgs == None:
+            if self.maxArgs is None or self.maxArgs > 0:
                 if self.argDesc:
                     items += [self.argDesc]
                 elif self.minArgs == 0:
@@ -759,10 +759,10 @@ class CommandLineProcessor(_Argument):
                     items += ['<arguments>']
             if len(self.commandDefs) > 0:
                 items += ['<command ...>']
-            print "Usage: %s" % ' '.join(items)
+            print("Usage: %s" % ' '.join(items))
 
             if len(self.commandDefs) > 0:
-                print "\nCommands:"
+                print("\nCommands:")
                 if sort:
                     commandNames = sorted(self.commandNames)
                 else:
@@ -771,19 +771,19 @@ class CommandLineProcessor(_Argument):
                     cmd = self.commandDefs[cmdName]
                     printSummary(cmd.names, cmd.argDesc, cmd.sum)
                 if self.helpKey:
-                    print
-                    print textwrap.fill(
+                    print('')
+                    print(textwrap.fill(
                         ' '.join([
                             "Use '%s %s <cmd>'" % (self.invokedAs, self.helpKey)
                           , 'for more detailed information on a specific command.'
                         ])
                       , width=self.helpPageWidth
-                    )
+                    ))
 
             if len(self.optionDefs) > 0:
-                print "\nOptions:"
+                print("\nOptions:")
                 printOptions(self.optionDefs, sort)
-                print
+                print('')
         if self.helpShouldExit:
             sys.exit()
 
@@ -827,9 +827,9 @@ class Option(_Argument):
     def names(self):
         """
         Return names as a list.
-        
+
         Useful for generating messages.  For example:
-            print "Must not use %s on a full moon." % (' or '.join(opt.names())
+            print("Must not use %s on a full moon." % (' or '.join(opt.names()))
         """
         return [
             nm

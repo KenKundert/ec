@@ -129,7 +129,7 @@ class Colors:
                 self.colors[_capitalize(color)] = '\033[1;3%dm' % index
                 self.colors[color] = '\033[0;3%dm' % index
             self.colors['none'] = '\033[0m'
-            for alias, color in self.aliases.iteritems():
+            for alias, color in self.aliases.items():
                 self.colors[alias] = self.colors[color]
         else:
             for color in _BaseColors:

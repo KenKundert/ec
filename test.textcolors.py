@@ -4,6 +4,7 @@
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors, stripColors, _BaseColors, _colorRegex
+import sys
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
@@ -102,22 +103,21 @@ for wantColor in [None, True, False]:
             case = Case % (clr, clr)
             name = Name % (clr)
             if printTests:
-                print status('Trying %s:' % (name))
+                print(status('Trying %s:' % (name)))
             result = eval(case)
             if result != expected:
-                print color('error', "ERROR:"),
-                print "%s ==> %s; expected: %s" % (case, result, expected)
+                print("%s: %s ==> %s; expected: %s" % (
+                    color('error', "ERROR"), case, result, expected
+                ))
                 failures += 1
 
 # Print test summary {{{1
 numTests = 3 * len(testColors) * len(testCases)
 assert testsRun == numTests
 if printSummary:
-    if failures:
-        print fail('FAIL:'),
-    else:
-        print succeed('PASS:'),
-    print '%s tests run, %s failures detected.' % (testsRun, failures)
+    print('%s: %s tests run, %s failures detected.' % (
+        fail('FAIL') if failures else succeed('PASS'), testsRun, failures
+    ))
 
 writeSummary(testsRun, failures)
-exit(testsRun != numTests)
+sys.exit(testsRun != numTests)
