@@ -6,6 +6,7 @@
 
 # Imports {{{1
 from __future__ import division
+from __future__ import print_function
 import math
 import re
 import engfmt
@@ -114,7 +115,7 @@ class Stack:
         """
         length = len(self.stack)
         labels = ['x:', 'y:'] + (length-2)*['  ']
-        for label, value in reversed(zip(labels, self.stack)):
+        for label, value in reversed(list(zip(labels, self.stack))):
             self.parent.printMessage(
                 '  %s %s' % (label, self.parent.format(value))
             )
@@ -139,7 +140,7 @@ class Heap:
         parent: the calculator (must provide the methods printMessage() and
             printWarning() that take one string and delivers it to the user).
         initialState: a dictionary of values used to initialize the heap.
-        reserved: a dictionary of named actions (individual actions are deleted
+        reserved: a list of named actions (individual actions are deleted
             if a heap value is created with the same name if *removeAction* is
             true). In this way variable names (heap values) override built-in
             command and function names.
@@ -149,7 +150,7 @@ class Heap:
         """
         self.parent = parent
         self.initialState = initialState if initialState != None else {}
-        self.reserved = reserved
+        self.reserved = list(reserved)
         self.heap = copy(self.initialState)
         self.removeAction = removeAction
 
@@ -1381,7 +1382,7 @@ class Calculator:
                     else:
                         raise CalculatorError("%s: unrecognized" % cmd)
             return self.stack.peek()
-        except (ValueError, OverflowError, TypeError), err:
+        except (ValueError, OverflowError, TypeError) as err:
             if (
                 isinstance(err, TypeError) and
                 str(err).startswith("can't convert complex to float")
@@ -1391,7 +1392,7 @@ class Calculator:
                 )
             else:
                 raise CalculatorError(str(err))
-        except (ZeroDivisionError), err:
+        except ZeroDivisionError as err:
             raise CalculatorError("division by zero")
 
     # utility methods {{{2
@@ -1472,10 +1473,10 @@ class Calculator:
             if style == 'page':
                 pager(message)
             elif style == 'line':
-                print message
+                print(message)
             else:
                 assert style == 'fragment'
-                print message,
+                print(message, end=' ')
 
     def printWarning(self, warning):
         '''
@@ -1484,7 +1485,7 @@ class Calculator:
         if self.warningPrinter:
             self.warningPrinter(warning)
         else:
-            print "Warning: %s" % (warning)
+            print("Warning: %s" % (warning))
 
     def displayHelp(calc):
         '''

@@ -6,6 +6,7 @@
 
 # Imports {{{1
 from __future__ import division
+import sys
 import operator
 import math
 import cmath
@@ -479,10 +480,18 @@ power.addTest(
   , units=''
   , text='2'
 )
-power.addTest(
-    stimulus='-8 1 3/ ytox'
-  , error='negative number cannot be raised to a fractional power'
-)
+if int(sys.version[0]) < 3:
+    power.addTest(
+        stimulus='-8 1 3/ ytox'
+      , error='negative number cannot be raised to a fractional power'
+    )
+else:
+    power.addTest(
+        stimulus='-8 1 3/ ytox'
+      , result=1+1j*cmath.sqrt(3)
+      , units=''
+      , text='1 + j1.7321'
+    )
 
 # exponential {{{3
 exponential = UnaryOp(

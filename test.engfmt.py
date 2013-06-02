@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Imports {{{1
 import sys
@@ -325,27 +325,27 @@ for index, case in enumerate(testCases):
     expectedResultIsNumber = case[5]
     testsRun += 4
     if printTests:
-        print status('Trying %d:' % index), stimulus
+        print(status('Trying %d:' % index), stimulus)
 
     resultWithoutUnits = fromEngFmt(stimulus, stripUnits=True)
     if resultWithoutUnits != expectedResultWithoutUnits:
         failures += 1
-        print fail('Failure detected in fromEngFmt(stripUnits) (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), resultWithoutUnits
-        print info('    Expected:'), expectedResultWithoutUnits
+        print(fail('Failure detected in fromEngFmt(stripUnits) (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), resultWithoutUnits)
+        print(info('    Expected:'), expectedResultWithoutUnits)
     elif printResults:
-        print succeed('    From engineering format result (without units):'), resultWithoutUnits
+        print(succeed('    From engineering format result (without units):'), resultWithoutUnits)
 
     resultWithUnits = fromEngFmt(stimulus, stripUnits=False)
     if resultWithUnits != expectedResultWithUnits:
         failures += 1
-        print fail('Failure detected in fromEngFmt (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), resultWithUnits
-        print info('    Expected:'), expectedResultWithUnits
+        print(fail('Failure detected in fromEngFmt (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), resultWithUnits)
+        print(info('    Expected:'), expectedResultWithUnits)
     elif printResults:
-        print succeed('    From engineering format result (with units):'), resultWithUnits
+        print(succeed('    From engineering format result (with units):'), resultWithUnits)
 
     result = toNumber(stimulus)
     if result != None:
@@ -353,66 +353,66 @@ for index, case in enumerate(testCases):
         result = toEngFmt(number, units)
     if result != expectedResult:
         failures += 1
-        print fail('Failure detected in toNumber (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), result
-        print info('    Expected:'), expectedResult
+        print(fail('Failure detected in toNumber (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), result)
+        print(info('    Expected:'), expectedResult)
     elif printResults:
-        print succeed('    From and to engineering format result::'), result
+        print(succeed('    From and to engineering format result::'), result)
 
     result = stripUnits(stimulus)
     if result != expectedResultUnitsStripped:
         failures += 1
-        print fail('Failure detected in stripUnits (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), result
-        print info('    Expected:'), expectedResultUnitsStripped
+        print(fail('Failure detected in stripUnits (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), result)
+        print(info('    Expected:'), expectedResultUnitsStripped)
     elif printResults:
-        print succeed('    Strip Units Result:'), result
+        print(succeed('    Strip Units Result:'), result)
 
     result = isNumber(stimulus)
     if result != expectedResultIsNumber:
         failures += 1
-        print fail('Failure detected in isNumber (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), result
-        print info('    Expected:'), expectedResultIsNumber
+        print(fail('Failure detected in isNumber (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), result)
+        print(info('    Expected:'), expectedResultIsNumber)
     elif printResults:
-        print succeed('    Is Number Result:'), result
+        print(succeed('    Is Number Result:'), result)
 
 for index, case in enumerate(toEngTestCases):
     stimulus = case[0]
     expectedResult = case[1]
     testsRun += 1
     if printTests:
-        print status('Trying allToEngFmt %d:' % index), stimulus
+        print(status('Trying allToEngFmt %d:' % index), stimulus)
 
     result = allToEngFmt(stimulus)
     if result != expectedResult:
         failures += 1
-        print fail('Failure detected in allToEngFmt() (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), result
-        print info('    Expected:'), expectedResult
+        print(fail('Failure detected in allToEngFmt() (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), result)
+        print(info('    Expected:'), expectedResult)
     elif printResults:
-        print succeed('    Result:'), result
+        print(succeed('    Result:'), result)
 
 for index, case in enumerate(fromEngTestCases):
     stimulus = case[0]
     expectedResult = case[1]
     testsRun += 1
     if printTests:
-        print status('Trying allFromEngFmt %d:' % index), stimulus
+        print(status('Trying allFromEngFmt %d:' % index), stimulus)
 
     result = allFromEngFmt(stimulus)
     if result != expectedResult:
         failures += 1
-        print fail('Failure detected in allToEngFmt() (%s):' % failures)
-        print info('    Given:'), stimulus
-        print info('    Result  :'), result
-        print info('    Expected:'), expectedResult
+        print(fail('Failure detected in allToEngFmt() (%s):' % failures))
+        print(info('    Given:'), stimulus)
+        print(info('    Result  :'), result)
+        print(info('    Expected:'), expectedResult)
     elif printResults:
-        print succeed('    Result:'), result
+        print(succeed('    Result:'), result)
 
 # Print summary {{{1
 assert testsRun == (
@@ -421,11 +421,9 @@ assert testsRun == (
   + len(fromEngTestCases)
 )
 if printSummary:
-    if failures:
-        print fail('FAIL:'),
-    else:
-        print succeed('PASS:'),
-    print '%s tests run, %s failures detected.' % (testsRun, failures)
+    print('%s: %s tests run, %s failures detected.' % (
+        fail('FAIL') if failures else succeed('PASS'), testsRun, failures
+    ))
 
 writeSummary(testsRun, failures)
 sys.exit(failures != 0)

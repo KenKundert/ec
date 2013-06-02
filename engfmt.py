@@ -14,7 +14,6 @@ Examples:
         1e-6
 """
 
-from string import atof, atoi
 import re as RE
 
 # define regular expressions use to identify numbers of various forms
@@ -63,14 +62,14 @@ def setDefaultPrecision(prec):
     _DefaultPrecision = prec
 
 _Spacer = ''
-def setSpacer(char=''):
+def setSpacer(spacer=''):
     """Set the spacer character for toEngFmt().
        Can make this a space if you prefer a space between number and
        scalefactor/units, but if you add the space, the numbers you generate
        using toEngFmt() will not be recognized by fromEngFmt().
     """
     global _Spacer
-    _Spacer = char
+    _Spacer = spacer
 
 def isNaN(val):
     """Tests for not a number."""
@@ -105,14 +104,14 @@ def toEngFmt(num, units="", prec=-1):
     # convert into scientific notation with proper precision
     sNum = "%.*e" % (prec, num)
     sMant, sExp = sNum.split("e")
-    exp = atoi(sExp)
+    exp = int(sExp)
 
     # define scale factors (eliminate the ones nobody recognizes)
     big = "KMGT"     #big = "KMGTPEZY"
     small = "munpfa" #small = "munpfazy"
 
     # find scale factor
-    index = exp / 3
+    index = exp // 3
     shift = exp % 3
     sf = "e%d" % (exp - shift)
     if index == 0:
@@ -127,11 +126,11 @@ def toEngFmt(num, units="", prec=-1):
 
     # move decimal point as needed
     if shift == 0:
-        num = atof(sMant)
+        num = float(sMant)
     elif (shift == 1):
-        num = 10*atof(sMant)
+        num = 10*float(sMant)
     else:
-        num = 100*atof(sMant)
+        num = 100*float(sMant)
     sMant = "%.*f" % (prec-shift, num)
 
     #remove trailing zeros (except if sMant does not contain a .)
@@ -351,7 +350,7 @@ def allToEngFmt(str):
             # something unexpected went wrong, but this is unessential, so
             # recover and move on.
             if __debug__:
-                print "EXCEPTION: mis-translation of number"
+                print('EXCEPTION: mis-translation of number')
         out += str[prevEnd:beginMatch] + newNumber
         prevEnd = match.end(3)
     out += str[prevEnd:]

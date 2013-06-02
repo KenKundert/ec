@@ -16,7 +16,7 @@ setup(
     name='ec'
   , version=versionNumber
   , description='engineering calculator'
-  , long_description=contents('README')
+  , long_description=contents('README.rst')
   , author="Ken Kundert"
   , author_email='ec@nurdletech.com'
   , url='http://www.nurdletech.com/ec.html'

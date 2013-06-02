@@ -5,17 +5,22 @@ This calculator is noteworthy in that it employs a stack model of computation
 (Reverse Polish Notation), it supports numbers with SI scale factors and units, 
 and uses a text-only user interface.
 
-Requires Python version 2.6, including the docutils package. On Redhat systems,
-you can get these dependencies by running as root::
+Requires Python version 2.6 or later or version of Python 3.3 or later, 
+including the docutils package.  On Redhat systems, you can get these 
+dependencies by running as root::
 
    # yum install python python-docutils
 
-If you do not have root access or Python 2.6 is not available through yum, you
+or
+
+   # yum install python3 python3-docutils
+
+If you do not have root access or Python is not available through yum, you
 can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
 slightly less capable version of ec.
 
 More information on both ec and ec0 can be found at `NurdleTech 
-<http://www.nurdletech.com/ec.html>`_.
+<http://www.nurdletech.com/ec.html>`_ .
 
 To get the source code::
 
