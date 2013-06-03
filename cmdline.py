@@ -750,7 +750,7 @@ class CommandLineProcessor(_Argument):
             items = [self.invokedAs]
             if len(self.optionDefs) > 0:
                 items += ['[options]']
-            if self.maxArgs > 0 or self.maxArgs == None:
+            if self.maxArgs is None or self.maxArgs > 0:
                 if self.argDesc:
                     items += [self.argDesc]
                 elif self.minArgs == 0:
