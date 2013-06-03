@@ -112,13 +112,22 @@ def writeSummary(tests, testFailures, suites = 1, suiteFailures = None):
         suiteFailures = 1 if testFailures else 0
     assert tests >= testFailures
     assert suites >= suiteFailures
-    with open('.%s.sum' % name, 'w') as f:
-        dumpSummary({
-            'tests': tests
-          , 'testFailures': testFailures
-          , 'suites': suites
-          , 'suiteFailures': suiteFailures
-        }, f)
+    try:
+        with open('.%s.sum' % name, 'w') as f:
+            dumpSummary({
+                'tests': tests
+              , 'testFailures': testFailures
+              , 'suites': suites
+              , 'suiteFailures': suiteFailures
+            }, f)
+    except IOError as err:
+        sys.exit(
+            exception(
+                "%s: summary file '%s': %s." % (
+                    progName, err.filename, err.strerror
+                )
+            )
+        )
 
 # runTests {{{1
 def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
