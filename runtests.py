@@ -42,7 +42,7 @@ try:
 except ImportError:
     from pickle import load as loadSummary, dump as dumpSummary
 from textcolors import Colors
-from cmdline import commandLineProcessor
+import argparse
 
 # define useful colors  {{{2
 colors = Colors()
@@ -52,44 +52,46 @@ fail = colors.colorizer('red')
 succeed = colors.colorizer('green')
 exception = colors.colorizer('Red')
 
-# configure the command line processor {{{2
-clp = commandLineProcessor()
-clp.setDescription('Run Tests', 'Utility for recursively running self tests')
-clp.setNumArgs((0,), '[test ...]')
-clp.setHelpParams(key='-h', colWidth=14)
-opt = clp.addOption(key='fast', shortName='f', longName='fast')
-opt.setSummary('take any shortcuts possible to speed testing')
-opt = clp.addOption(key='nosummary', shortName='s', longName='nosummary')
-opt.setSummary('do not print the summary of test results')
-opt = clp.addOption(key='tests', shortName='t', longName='tests')
-opt.setSummary('print the test values')
-opt = clp.addOption(key='results', shortName='r', longName='results')
-opt.setSummary('print the test results')
-opt = clp.addOption(key='nocolor', shortName='c', longName='nocolor')
-opt.setSummary('do not use color to highlight the results')
-opt = clp.addOption(key='coverage', longName='coverage')
-opt.setSummary('run coverage analysis')
-opt = clp.addOption(key='help', shortName='h', longName='help', action=clp.printHelp)
-opt.setSummary('print usage information and exit')
-opt = clp.addOption(key='parent', longName='parent')
-opt.setNumArgs(1)
+# configure command line processor
+progName = os.path.split(sys.argv[0])[1]
+cmdline_parser = argparse.ArgumentParser(
+    add_help=False, description="Utility for recursively running tests.")
+cmdline_parser.add_argument(
+    'tests', nargs='*', default=None, help="test name", metavar='<test>')
+cmdline_parser.add_argument(
+    '-f', '--fast', action='store_true',
+    help="take any shortcuts possible to speed testing")
+cmdline_parser.add_argument(
+    '-s', '--nosummary', action='store_false',
+    help="do not print the summary of test results")
+cmdline_parser.add_argument(
+    '-t', '--test-values', action='store_true', help="print the test values")
+cmdline_parser.add_argument(
+    '-r', '--results', action='store_true', help="print the test results")
+cmdline_parser.add_argument(
+    '-c', '--nocolor', action='store_false',
+    help="do not use color to highlight test results")
+cmdline_parser.add_argument(
+    '--coverage', action='store_true', help="run coverage analysis")
+cmdline_parser.add_argument(
+    '-h', '--help', action='store_true', help="print usage information and exit")
+cmdline_parser.add_argument('--parent', nargs='?', default=None)
 
 # process the command line {{{2
-clp.process()
-
-# get the command line options and arguments
-opts = clp.getOptions()
-args = clp.getArguments()
-progName = clp.progName()
+cmdline_args = cmdline_parser.parse_args()
+if cmdline_args.help:
+    cmdline_parser.print_help()
+    sys.exit()
 
 # copy options into global variables
-fast = 'fast' in opts
-printResults = 'results' in opts
-printTests = 'tests' in opts or printResults
-printSummary = 'nosummary' not in opts or printTests
-colorize = 'nocolor' not in opts
-coverage = 'coverage' in opts
-parent = opts.get('parent', [None])[0]
+fast = cmdline_args.fast
+printResults = cmdline_args.results
+printTests = cmdline_args.test_values or printResults
+printSummary = cmdline_args.nosummary or printTests
+colorize = cmdline_args.nocolor
+coverage = cmdline_args.coverage
+parent = cmdline_args.parent
+args = cmdline_args.tests
 
 # cmdLineOpts {{{1
 def cmdLineOpts():
