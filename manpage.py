@@ -711,7 +711,7 @@ def write(manFileName, rstFileName=None):
 
     # Generate man page
     with open(manFileName, 'w') as outputFile:
-        outputFile.write(publish_string(rst, writer=manpage.Writer()))
+        outputFile.write(publish_string(rst, writer=manpage.Writer()).decode())
 
 if __name__ == '__main__':
     write('ec.1', 'ec.rst')
