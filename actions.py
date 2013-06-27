@@ -2037,9 +2037,14 @@ freeSpaceCharacteristicImpedance.addTest(
 numbers = Category("Numbers")
 
 # real number in engineering notation {{{3
+# accepts numbers both with and without SI scale factors. If an SI scale factor
+# is present, then attached trailing units can also be given. It is also
+# possible to include commas in the number anywhere a digit can be given. It is
+# a little crude in that it allows commas in the mantissa and adjacent to the
+# decimal point, but other than that it works reasonably well.
 engineeringNumber = Number(
-    pattern=r'\A(\$?([-+]?[0-9]*\.?[0-9]+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
-  , action=lambda matches: toNumber(matches[0])
+    pattern=r'\A(\$?([-+]?([0-9],?)*\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
+  , action=lambda matches: toNumber(matches[0].replace(',', ''))
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
   , synopsis='... => #{num}, ...'
@@ -2086,6 +2091,36 @@ engineeringNumber.addTest(
   , result=2e5
   , units='Ohms'
   , text='200 KOhms'
+)
+engineeringNumber.addTest(
+    stimulus='1000'
+  , result=1000.0
+  , units=''
+  , text='1K'
+)
+engineeringNumber.addTest(
+    stimulus='$1,000,000'
+  , result=1e6
+  , units='$'
+  , text='$1M'
+)
+engineeringNumber.addTest(
+    stimulus='$1,000K'
+  , result=1e6
+  , units='$'
+  , text='$1M'
+)
+engineeringNumber.addTest(
+    stimulus='$1,000,000.00'
+  , result=1e6
+  , units='$'
+  , text='$1M'
+)
+engineeringNumber.addTest(
+    stimulus='1,000.00K'
+  , result=1e6
+  , units=''
+  , text='1M'
 )
 
 # real number in scientific notation {{{3
