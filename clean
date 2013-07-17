@@ -1,10 +1,10 @@
 #!/bin/csh -f
 
 set nonomatch
-rm -f ec.1 ec.rst ec.pdf
+rm -f ec.1 ec.rst ec.pdf install.out
 
 # the rest is common to all python directories
-rm -f *.pyc *.pyo .test*.sum expected result
+rm -f *.pyc *.pyo .test*.sum expected result install.out
 rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html 
 foreach i (*/clean)
     if ($i == "*/clean") break
