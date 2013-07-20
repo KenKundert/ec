@@ -113,11 +113,11 @@ for wantColor in [None, True, False]:
 
 # Print test summary {{{1
 numTests = 3 * len(testColors) * len(testCases)
-assert testsRun == numTests
+assert testsRun == numTests, "%s of %s tests run" % (testsRun, numTests)
 if printSummary:
     print('%s: %s tests run, %s failures detected.' % (
         fail('FAIL') if failures else succeed('PASS'), testsRun, failures
     ))
 
 writeSummary(testsRun, failures)
-sys.exit(testsRun != numTests)
+sys.exit(int(bool(failures)))

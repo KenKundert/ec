@@ -915,7 +915,8 @@ for index, case in enumerate(testCases):
             print succeed('    Error:'), error
 
 # Generate summary {{{1
-assert testsRun == len(testCases)
+numTests = len(testCases)
+assert testsRun == numTests, "%s of %s tests run" % (testsRun, numTests)
 if printSummary:
     if failures:
         print fail('FAIL:'),
@@ -925,4 +926,4 @@ if printSummary:
 
 # Write summary to Yaml file
 writeSummary(testsRun, failures)
-exit(int(bool(failures)))
+sys.exit(int(bool(failures)))
