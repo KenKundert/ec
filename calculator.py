@@ -130,7 +130,7 @@ class Heap:
         self
       , parent = None
       , initialState = None
-      , reserved = None
+      , reserved = []
       , removeAction = None
     ):
         """
@@ -1487,7 +1487,7 @@ class Calculator:
         else:
             print("Warning: %s" % (warning))
 
-    def displayHelp(calc):
+    def displayHelp(calc):  # pylint: disable=no-self-argument
         '''
         Print a single line summary of all available actions.
         '''
@@ -1514,7 +1514,7 @@ class Calculator:
                     )
         calc.printMessage('\n'.join(lines) + '\n', style='page')
 
-    def aboutMsg(calc):
+    def aboutMsg(calc):  # pylint: disable=no-self-argument
         '''
         Print administrative information about EC.
         '''
@@ -1527,7 +1527,7 @@ class Calculator:
             To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
         """ % (versionNumber, versionDate)))
 
-    def quit(calc):
+    def quit(calc):  # pylint: disable=no-self-argument
         '''
         Quit about EC.
         '''
