@@ -49,6 +49,7 @@ returns that string in the color given with the colorizer method was created.
 '''
 
 import re
+import os, sys
 _colorRegex = re.compile('<[a-zA-Z_]+>')
 _colorCodeRegex = re.compile('\033' + r'\[[01](;\d\d)?m')
 
@@ -62,6 +63,17 @@ def stripColors(text):
     Strip the color codes from a string.
     """
     return _colorCodeRegex.sub('', text)
+
+def isTTY(stream=sys.stdout):
+    """
+    Is stream connected to a TTY.
+
+    One generally does not want to colorize a stream such as stdout or
+    stderr if it being redirected to a file. This function returns True if
+    passed a stream that is connected to a TTY. Can be used to turn off
+    colors for streams that do not go to a TTY.
+    """
+    return os.isatty(stream.fileno())
 
 class Colors:
     def __init__(self, wantColors = True):

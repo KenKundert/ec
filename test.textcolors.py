@@ -57,7 +57,7 @@ testColors = [
   , ('warning', colorResultTemplate % (0, 3))
   , ('okay',    colorResultTemplate % (1, 2))
   , ('passes',  colorResultTemplate % (0, 2))
-  , ('narrate',  colorResultTemplate % (0, 6))
+  , ('narrate', colorResultTemplate % (0, 6))
   , ('info',    colorResultTemplate % (1, 5))
   , ('none',    noColorResultTemplate)
 ]

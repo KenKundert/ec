@@ -41,7 +41,7 @@ try:
     from yaml import load as loadSummary, dump as dumpSummary
 except ImportError:
     from pickle import load as loadSummary, dump as dumpSummary
-from textcolors import Colors
+from textcolors import Colors, isTTY
 import argparse
 
 # define useful colors  {{{2
@@ -157,7 +157,7 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
         pythonCmd = '%s /usr/bin/coverage run -a --branch' % pythonCmd
     pythonPath = ('PYTHONPATH=%s; ' % pythonPath) if pythonPath else ''
 
-    colors.colorize(colorize)
+    colors.colorize(colorize and isTTY())
     global args
     if len(args) == 0:
         args = tests
