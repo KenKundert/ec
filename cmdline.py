@@ -309,7 +309,7 @@ class _Argument(_Generic):
         if name:
             name += ': '
         args = []
-        while len(args) < self.maxArgs or self.maxArgs == None:
+        while self.maxArgs == None or len(args) < self.maxArgs:
             # if maxArgs == None, there is no limit to the number of arguments.
 #            if len(args) < self.minArgs:
 #                # in this special case, argument may begin with a -
