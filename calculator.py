@@ -14,6 +14,7 @@ engfmt.setSpacer(' ')
 from copy import copy
 from textwrap import wrap, fill, dedent
 from pydoc import pager
+import sys
 
 # Set the version information {{{1
 versionNumber = '1.0.2'
@@ -1529,6 +1530,6 @@ class Calculator:
 
     def quit(calc):  # pylint: disable=no-self-argument
         '''
-        Quit about EC.
+        Quit EC.
         '''
-        exit()
+        sys.exit(0)

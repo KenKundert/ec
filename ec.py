@@ -180,13 +180,13 @@ if (interactiveSession):
             entered = raw_input('%s: ' % highlight(prompt)) # python 2
         except (EOFError, KeyboardInterrupt):
             print()
-            sys.exit(1)
+            sys.exit(0)
         except NameError:
             try:
                 entered = input('%s: ' % highlight(prompt)) # python 3
             except (EOFError, KeyboardInterrupt):
                 print()
-                sys.exit(1)
+                sys.exit(0)
         prompt = evaluateLine(calc, entered, prompt)
 elif printXuponTermination:
     print(prompt)
