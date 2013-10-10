@@ -36,4 +36,5 @@ setup(
       'Programming Language :: Python :: 2.6',
       'Topic :: Scientific/Engineering',
     ]
+  , license='GPLv3'
 )
