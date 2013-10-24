@@ -8,6 +8,12 @@
 #     if the number of suites run is not right. This might be annoying to
 #     maintain as if you add a test suite at the deepest level, all test files
 #     above it would need to be modified.
+# Provide a quiet option. Make it default when running hierarically.
+# Provide the equivalent to the av summarize command, so that once a quiet run
+#     is complete, the summarize command can generate the output as if quiet
+#     were not specified, and both the test and the result is available in the
+#     summary file so that I can run summary with either -r or -t.
+# This could be a warm up to implementing hierarchical testing in AV.
 
 # Description {{{1
 """
@@ -36,9 +42,9 @@ summary files should contain a dictionary with keys: 'tests', 'failures'.
 # preliminaries {{{1
 # imports {{{2
 import os, sys
-# use yaml if available, otherwise use pickle
+# use json if available, otherwise use pickle
 try:
-    from yaml import load as loadSummary, dump as dumpSummary
+    from json import load as loadSummary, dump as dumpSummary
 except ImportError:
     from pickle import load as loadSummary, dump as dumpSummary
 from textcolors import Colors, isTTY
