@@ -3,6 +3,7 @@
 # Test Command Line Processor
 
 # Imports {{{1
+from __future__ import print_function
 import sys
 from textcolors import Colors
 from runtests import cmdLineOpts, writeSummary
@@ -724,7 +725,7 @@ def cmdCfunc(key, opts, args):
 
 def optLCVfunc(key, args):
     assert key == 'lcv'
-    print 'This is LCV option:', args,
+    print('This is LCV option:', args, end='')
 
 class Error(Exception):
     def __init__(self, progName, msg, helpKey):
@@ -839,7 +840,7 @@ for index, case in enumerate(testCases):
 
     # apply stimulus to command line processor
     if printTests:
-        print status('Trying %d:' % index), ' '.join(stimulus)
+        print(status('Trying %d:' % index), ' '.join(stimulus))
     try:
         # redirect stdout & stderr to strings so I can capture and compare them
         sys.stdout = StringIO()
@@ -866,29 +867,29 @@ for index, case in enumerate(testCases):
             or stdout != expectedStdout
         ):
             failures += 1
-            print fail('Failure detected (%s):' % failures)
-            print info('    Given:'), stimulus
+            print(fail('Failure detected (%s):' % failures))
+            print(info('    Given:'), stimulus)
             if options != expectedOptions:
-                print info('    Options  :'), options
-                print info('    Expected :'), expectedOptions
+                print(info('    Options  :'), options)
+                print(info('    Expected :'), expectedOptions)
             if arguments != expectedArguments:
-                print info('    Arguments:'), arguments
-                print info('    Expected :'), expectedArguments
+                print(info('    Arguments:'), arguments)
+                print(info('    Expected :'), expectedArguments)
             if commandsInfo != expectedCommands:
-                print info('    Commands :'), commandsInfo
-                print info('    Expected :'), expectedCommands
+                print(info('    Commands :'), commandsInfo)
+                print(info('    Expected :'), expectedCommands)
             if prereqs != expectedPrereqs:
-                print info('    Prereqs  :'), prereqs
-                print info('    Expected :'), expectedPrereqs
+                print(info('    Prereqs  :'), prereqs)
+                print(info('    Expected :'), expectedPrereqs)
             if stdout != expectedStdout:
-                print info('    Response :'), stdout
-                print info('    Expected :'), expectedStdout
+                print(info('    Response :'), stdout)
+                print(info('    Expected :'), expectedStdout)
         elif printResults:
-            print succeed('    Options  :'), options
-            print succeed('    Arguments:'), arguments
-            print succeed('    Commands :'), commands
-            print succeed('    Prereqs  :'), prereqs
-            print succeed('    Stdout   :'), stdout
+            print(succeed('    Options  :'), options)
+            print(succeed('    Arguments:'), arguments)
+            print(succeed('    Commands :'), commands)
+            print(succeed('    Prereqs  :'), prereqs)
+            print(succeed('    Stdout   :'), stdout)
     except Error, err:
         # reattach true stdout & stderr streams
         response = sys.stdout.getvalue()
@@ -902,27 +903,27 @@ for index, case in enumerate(testCases):
         error = '%s%s.' % (src, err.msg)
         if not expectedError:
             failures += 1
-            print fail('Error detected (%s):' % failures)
-            print info('    Given:'), stimulus
-            print info('    Error:'), error
+            print(fail('Error detected (%s):' % failures))
+            print(info('    Given:'), stimulus)
+            print(info('    Error:'), error)
         elif error != expectedError:
             failures += 1
-            print fail('Failure detected (%s):' % failures)
-            print info('    Given:'), stimulus
-            print info('    Error    :'), error
-            print info('    Expected :'), expectedError
+            print(fail('Failure detected (%s):' % failures))
+            print(info('    Given:'), stimulus)
+            print(info('    Error    :'), error)
+            print(info('    Expected :'), expectedError)
         elif printResults:
-            print succeed('    Error:'), error
+            print(succeed('    Error:'), error)
 
 # Generate summary {{{1
 numTests = len(testCases)
 assert testsRun == numTests, "%s of %s tests run" % (testsRun, numTests)
 if printSummary:
     if failures:
-        print fail('FAIL:'),
+        print(fail('FAIL:'), end=' ')
     else:
-        print succeed('PASS:'),
-    print '%s tests run, %s failures detected.' % (testsRun, failures)
+        print(succeed('PASS:'), end=' ')
+    print('%s tests run, %s failures detected.' % (testsRun, failures))
 
 # Write summary to Yaml file
 writeSummary(testsRun, failures)

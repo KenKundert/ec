@@ -152,6 +152,7 @@ each of which has three attributes: 'key', 'opts', and 'args'.
 
 # Preliminaries {{{1
 # Imports {{{2
+from __future__ import print_function
 import sys
 import os.path
 import re
@@ -478,7 +479,7 @@ class CommandLineProcessor(_Argument):
     # are any command line arguments left?
     def _tokensLeft(self):
         return len(self.args)
-        
+
     # get the next command line argument
     def _nextToken(self):
         return self.args.pop(0)
