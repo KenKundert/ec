@@ -1,18 +1,28 @@
-#!/bin/csh -f
+#!/bin/sh
 
 set nonomatch
-rm -f ec.1 ec.rst ec.pdf install.out
+rm -f ec.1 ec.rst ec.pdf
+rm -rf generated_settings
+rm -rf test_settings/master.gpg test_settings/master2.gpg
 
 # the rest is common to all python directories
 rm -f *.pyc *.pyo .test*.sum expected result install.out
-rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html 
-foreach i (*/clean)
-    if ($i == "*/clean") break
-    #echo cleaning $i
-    (cd $i:h; ./clean)
-end
-foreach i (*/Makefile)
-    if ($i == "*/Makefile") break
-    #echo cleaning $i
-    (cd $i:h; make clean)
-end
+rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html htmlcov
+for i in */clean
+do
+    if [ $i == "*/clean" ]
+    then
+        break
+    fi
+    #echo $i
+    ( cd ${i%/*}; ./clean )
+done
+for i in */Makefile
+do
+    if [ $i == "*/Makefile" ]
+    then
+        break
+    fi
+    #echo $i
+    ( cd ${i%/*}; make clean )
+done

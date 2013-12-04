@@ -1,0 +1,24 @@
+running install
+running build
+running build_py
+creating build
+creating build/lib
+copying ec.py -> build/lib
+copying calculator.py -> build/lib
+copying actions.py -> build/lib
+copying engfmt.py -> build/lib
+copying cmdline.py -> build/lib
+copying textcolors.py -> build/lib
+running build_scripts
+creating build/scripts-3.3
+copying and adjusting ec -> build/scripts-3.3
+changing mode of build/scripts-3.3/ec from 644 to 755
+running install_lib
+running install_scripts
+copying build/scripts-3.3/ec -> /home/ken/.local/bin
+changing mode of /home/ken/.local/bin/ec to 755
+running install_data
+copying ec.1 -> /home/ken/.local/man/man1
+running install_egg_info
+Removing /home/ken/.local/lib/python3.3/site-packages/ec-1.0.2-py3.3.egg-info
+Writing /home/ken/.local/lib/python3.3/site-packages/ec-1.0.2-py3.3.egg-info
