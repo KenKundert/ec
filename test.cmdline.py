@@ -890,7 +890,7 @@ for index, case in enumerate(testCases):
             print(succeed('    Commands :'), commands)
             print(succeed('    Prereqs  :'), prereqs)
             print(succeed('    Stdout   :'), stdout)
-    except Error, err:
+    except Error as err:
         # reattach true stdout & stderr streams
         response = sys.stdout.getvalue()
         sys.stdout.close()
