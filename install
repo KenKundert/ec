@@ -6,7 +6,7 @@
 # Be sure to add ~/.local/bin into your path.
 
 # Set python to the version of python you wish to use (ex. python2 or python3)
-python=python3
+python=python
 
 # run pylint to find egregious errors
 # this is optional, you can delete this line if you don't have pylint

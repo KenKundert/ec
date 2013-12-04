@@ -1,5 +1,4 @@
-#!/bin/env python
-from distutils.core import setup
+from setuptools import setup
 import os
 from calculator import versionNumber
 
