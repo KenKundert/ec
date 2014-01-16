@@ -15,6 +15,10 @@ or
 
    # yum install python3 python3-docutils
 
+On Arch Linux you would use::
+
+   # pacman -S python python-docutils
+
 If you do not have root access or Python is not available through yum, you
 can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
 slightly less capable version of ec.
