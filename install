@@ -14,7 +14,7 @@ python=python
 pylint -E --disable=no-member actions calculator ec manpage
 
 # Determine the version of python we are using
-vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info.major, sys.version_info.minor))')
+vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
 echo "Installing $cmd to ~/.home/bin (Python$vers)."
 
 # remove build directories from a previous install to assure a clean install
