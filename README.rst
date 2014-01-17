@@ -9,15 +9,14 @@ Requires Python version 2.6 or later or version of Python 3.3 or later,
 including the docutils package.  On Redhat systems, you can get these 
 dependencies by running as root::
 
-   # yum install python python-docutils
+   # yum install python python-setuptools python-docutils
 
 or
 
-   # yum install python3 python3-docutils
+   # yum install python3 python3-setuptools python3-docutils
 
-On Arch Linux you would use::
-
-   # pacman -S python python-docutils
+Use ``pacman -S`` rather than ``yum install`` on Arch Linux or ``apt-get`` 
+ratehr than ``yum`` on Ubuntu.
 
 If you do not have root access or Python is not available through yum, you
 can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
@@ -33,6 +32,12 @@ To get the source code::
 Once cloned, you can get the latest updates using::
 
    $ git pull
+
+Alternatively, you can download a zip file from::
+
+   https://github.com/KenKundert/ec/archive/master.zip
+
+If you go this route, you will have to unzip the file using the unzip command.
 
 To run the regression tests::
 
