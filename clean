@@ -1,16 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set nonomatch
-rm -f ec.1 ec.rst ec.pdf
+rm -f ec.1 ec.1.rst ec.1.pdf
 rm -rf generated_settings
-rm -rf test_settings/master.gpg test_settings/master2.gpg
 
 # the rest is common to all python directories
 rm -f *.pyc *.pyo .test*.sum expected result install.out
 rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html htmlcov
 for i in */clean
 do
-    if [ $i == "*/clean" ]
+    if [[ "$i" == '*/clean' ]]
     then
         break
     fi
@@ -19,7 +18,7 @@ do
 done
 for i in */Makefile
 do
-    if [ $i == "*/Makefile" ]
+    if [[ "$i" == '*/Makefile' ]]
     then
         break
     fi

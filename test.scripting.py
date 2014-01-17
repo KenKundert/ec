@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Test PyCalc
+# Test ec
 # Imports {{{1
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors

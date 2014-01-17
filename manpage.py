@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 # Convert the restructured text version of the manpage to a nroff manpage file.
 
 from actions import (

@@ -1,25 +1,26 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Installs ec
 #
 # Requires 2.7 or Python3.3. Also requires the following packages
 #     # yum install python python-docutils
 # Be sure to add ~/.local/bin into your path.
+cmd=ec
 
 # Set python to the version of python you wish to use (ex. python2 or python3)
 python=python
 
 # run pylint to find egregious errors
 # this is optional, you can delete this line if you don't have pylint
-#pylint -E --disable=no-member actions calculator ec manpage
+pylint -E --disable=no-member actions calculator ec manpage
 
 # Determine the version of python we are using
-vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
-echo "Installing ec to ~/.home/bin (Python$vers)."
+vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info.major, sys.version_info.minor))')
+echo "Installing $cmd to ~/.home/bin (Python$vers)."
 
 # remove build directories from a previous install to assure a clean install
-rm -rf build dist ec.egg-info install.out
+rm -rf build dist $cmd.egg-info install.out
 
-# install ec
+# install $cmd
 python$vers setup.py install --quiet --user >& install.out
 if [ $? != 0 ] ; then
     echo "Problems found, aborting (see install.out)"
@@ -30,9 +31,9 @@ fi
 for sect in 1
 do
     mkdir -p ~/.local/man/man$sect
-    rm -f ~/.local/man/man$sect/ec.$sect
-    ln -s ~/.local/lib/python$vers/site-packages/ec-*.egg/man/man$sect/ec.$sect ~/.local/man/man$sect
+    rm -f ~/.local/man/man$sect/$cmd.$sect
+    ln -s ~/.local/lib/python$vers/site-packages/$cmd-*.egg/man/man$sect/$cmd.$sect ~/.local/man/man$sect
 done
 
 # remove build directories, because I like a clean directory
-rm -rf build dist ec.egg-info
+rm -rf build dist $cmd.egg-info
