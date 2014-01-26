@@ -597,7 +597,9 @@ for action in actions:
         #    desc = description
         if action.units:
             description = '%s (%s)' % (description, action.units)
-        constants += [(action.key, description)]
+        pair = (action.key, description)
+        if pair not in constants:
+            constants += [pair]
         keyWidth = max(keyWidth, len(action.key))
         descWidth = max(descWidth, len(description))
 
