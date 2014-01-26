@@ -33,6 +33,19 @@ document = r"""{
     ========
     **ec** [*options*] [*scripts* ...]
 
+    OPTIONS
+    =======
+    -i, --interactive    Open an interactive session.
+    -x, --printx         Print value of x register upon termination, ignored
+                         with interactive sessions.
+    -s <file>, --startup <file>
+                         Run commands from file to initialize calculator before
+                         any script or interactive session is run, stack is
+                         cleared after it is run.
+    -c, --nocolor        Do not use colors in the output.
+    -v, --verbose        Narrate the execution of any scripts.
+    -h, --help           Print the usage and exit.
+
     DESCRIPTION
     ===========
     **ec** is a stack-based (RPN) engineering calculator with a text-based user 
@@ -49,19 +62,6 @@ document = r"""{
 
     The contents of *~/.ecrc*, *./.ecrc*, and the start up file will be run upon 
     start up if they exist, and then the stack is cleared.
-
-    OPTIONS
-    =======
-    -i, --interactive    Open an interactive session.
-    -x, --printx         Print value of x register upon termination, ignored
-                         with interactive sessions.
-    -s <file>, --startup <file>
-                         Run commands from file to initialize calculator before
-                         any script or interactive session is run, stack is
-                         cleared after it is run.
-    -c, --nocolor        Do not use colors in the output.
-    -v, --verbose        Narrate the execution of any scripts.
-    -h, --help           Print the usage and exit.
 
     STACK
     =====
