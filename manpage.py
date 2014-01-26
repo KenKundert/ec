@@ -11,6 +11,14 @@ from docutils.writers import manpage
 from textwrap import dedent
 import re
 
+# Remove duplicates from action list
+sansDups = []
+for action in actions:
+    if action not in sansDups:
+        sansDups.append(action)
+actions = sansDups
+
+
 # Document {{{1
 document = r"""{
     ====

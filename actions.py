@@ -957,7 +957,7 @@ absoluteValue = Dup(
   , lambda x: abs(x)
   , description="%(key)s: magnitude"
   , units=lambda calc, units: units[0]
-  , synopsis='#{x}, ... => abs(#{x}), ...'
+  , synopsis='#{x}, ... => abs(#{x}), #{x}, ...'
   , summary="""
         The absolute value of the number in the #{x} register is pushed onto the
         stack if it is real. If the value is complex, the magnitude is pushed
@@ -1006,11 +1006,15 @@ argument = Dup(
   , description="%(key)s: phase"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
-  , synopsis='#{x}, ... => arg(#{x}), ...'
+  , synopsis='#{x}, ... => arg(#{x}), #{x}, ...'
   , summary="""
         The argument of the number in the #{x} register is pushed onto the
         stack if it is complex. If the value is real, zero is pushed
         onto the stack.
+
+        Unlike most other functions, this one does not replace the value of its
+        argument on the stack. Its value is simply pushed onto the stack without
+        first popping off the argument.
     """
   , aliases=['ph']
 )
