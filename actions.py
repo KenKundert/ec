@@ -2231,7 +2231,7 @@ binaryNumber = Number(
     pattern=r"\A([-+]?)0[bB]([01]+)\Z"
   , action=lambda matches: (int(matches[0]+matches[1], base=2), '')
   , name='binnum'
-  , description="0b<#{N}>: a number in octal"
+  , description="0b<#{N}>: a number in binary"
   , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is an
