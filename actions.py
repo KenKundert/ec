@@ -1054,7 +1054,7 @@ hypotenuse = BinaryOp(
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point
-        (#{x},#{y}).
+        (#{x}, #{y}).
     """
   , aliases=['len']
 )
@@ -1129,8 +1129,8 @@ rectangularToPolar = BinaryIoOp(
   , summary="""
         The values in the #{x} and #{y} registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point 
-        (#{x},#{y}) and with the angle of the vector from the origin to the point 
-        (#{x},#{y}).
+        (#{x}, #{y}) and with the angle of the vector from the origin to the 
+        point (#{x}, #{y}).
     """
 )
 rectangularToPolar.addTest(
