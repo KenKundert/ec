@@ -5,7 +5,7 @@
 # An RPN calculator that supports numbers with SI scale factors and units.
 
 # Imports {{{1
-from __future__ import division
+from __future__ import division, print_function
 import sys
 import operator
 import math
@@ -2046,9 +2046,24 @@ numbers = Category("Numbers")
 # possible to include commas in the number anywhere a digit can be given. It is
 # a little crude in that it allows commas in the mantissa and adjacent to the
 # decimal point, but other than that it works reasonably well.
+def siNumber(matches):
+    currency = matches[0]
+    sign = matches[1]
+    imag = matches[2] == 'j'
+    unsignedNum = matches[3].replace(',', '')
+    num =  toNumber(sign+unsignedNum)
+    if imag:
+       num = (1j * num[0], num[1])
+    if currency:
+        if num[1]:
+            print("Too many units ($ and %s)." % num[1])
+        else:
+            num = (num[0], currency)
+    return num
+
 engineeringNumber = Number(
-    pattern=r'\A(\$?([-+]?([0-9],?)*\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
-  , action=lambda matches: toNumber(matches[0].replace(',', ''))
+    pattern=r'\A(\$?)([-+]?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
+  , action=siNumber
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
   , synopsis='... => #{num}, ...'
@@ -2126,11 +2141,135 @@ engineeringNumber.addTest(
   , units=''
   , text='1M'
 )
+engineeringNumber.addTest(
+    stimulus='$1,000.00K'
+  , result=1e6
+  , units='$'
+  , text='$1M'
+)
+engineeringNumber.addTest(
+    stimulus='$1,000.00'
+  , result=1e3
+  , units='$'
+  , text='$1K'
+)
+engineeringNumber.addTest(
+    stimulus='$1,000'
+  , result=1e3
+  , units='$'
+  , text='$1K'
+)
+engineeringNumber.addTest(
+    stimulus='$1000'
+  , result=1e3
+  , units='$'
+  , text='$1K'
+)
+engineeringNumber.addTest(
+    stimulus='$+1000'
+  , result=1e3
+  , units='$'
+  , text='$1K'
+)
+engineeringNumber.addTest(
+    stimulus='$-1000'
+  , result=-1e3
+  , units='$'
+  , text='$-1K'
+)
+engineeringNumber.addTest(
+    stimulus='j1,000.00KOhms'
+  , result=1j * 1e6
+  , units='Ohms'
+  , text='j1 MOhms'
+)
+engineeringNumber.addTest(
+    stimulus='j1,000.00K'
+  , result=1j * 1e6
+  , units=''
+  , text='j1M'
+)
+engineeringNumber.addTest(
+    stimulus='j1,000.00'
+  , result=1j * 1e3
+  , units=''
+  , text='j1K'
+)
+engineeringNumber.addTest(
+    stimulus='j1,000'
+  , result=1j * 1e3
+  , units=''
+  , text='j1K'
+)
+engineeringNumber.addTest(
+    stimulus='j1000'
+  , result=1j * 1e3
+  , units=''
+  , text='j1K'
+)
+engineeringNumber.addTest(
+    stimulus='j1'
+  , result=1j
+  , units=''
+  , text='j'
+)
+engineeringNumber.addTest(
+    stimulus='j1.5'
+  , result=1.5j
+  , units=''
+  , text='j1.5'
+)
+engineeringNumber.addTest(
+    stimulus='+j1'
+  , result=1j
+  , units=''
+  , text='j'
+)
+engineeringNumber.addTest(
+    stimulus='-j1'
+  , result=-1j
+  , units=''
+  , text='-0 - j'
+)
+engineeringNumber.addTest(
+    stimulus='$j1'
+  , result=1j
+  , units='$'
+  , text='j $'
+)
+engineeringNumber.addTest(
+    stimulus='$+j1'
+  , result=1j
+  , units='$'
+  , text='j $'
+)
+engineeringNumber.addTest(
+    stimulus='$-j1'
+  , result=-1j
+  , units='$'
+  , text='$-0 + j$-1'
+)
+
+def sciNumber(matches):
+    currency = matches[0]
+    sign = matches[1]
+    imag = matches[2] == 'j'
+    unsignedNum = matches[3].replace(',', '')
+    units = matches[4]
+    num =  toNumber(sign+unsignedNum+units)
+    if imag:
+       num = (1j * num[0], num[1])
+    if currency:
+        if num[1]:
+            print("Too many units ($ and %s)." % num[1])
+        else:
+            num = (num[0], currency)
+    return num
 
 # real number in scientific notation {{{3
 scientificNumber = Number(
-    pattern=r'\A(\$?)([-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
-  , action=lambda matches: (float(matches[1]), matches[2] if matches[2] else matches[0])
+    pattern=r'\A(\$?)([-+]?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
+  , action=sciNumber
   , name='scinum'
   , description="<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation"
   , synopsis='... => #{num}, ...'
@@ -2182,6 +2321,48 @@ scientificNumber.addTest(
   , result=-2e-3
   , units='$'
   , text='$-2m'
+)
+scientificNumber.addTest(
+    stimulus='j1e6Ohms'
+  , result=1j * 1e6
+  , units='Ohms'
+  , text='j1 MOhms'
+)
+scientificNumber.addTest(
+    stimulus='j1000e3'
+  , result=1j * 1e6
+  , units=''
+  , text='j1M'
+)
+scientificNumber.addTest(
+    stimulus='+j1.5e-6Ohms'
+  , result=1.5e-6j
+  , units='Ohms'
+  , text='j1.5 uOhms'
+)
+scientificNumber.addTest(
+    stimulus='-j1.5e-6'
+  , result=-1.5e-6j
+  , units=''
+  , text='-0 - j1.5u'
+)
+scientificNumber.addTest(
+    stimulus='$j1.5e-6'
+  , result=1.5e-6j
+  , units='$'
+  , text='j$1.5u'
+)
+scientificNumber.addTest(
+    stimulus='$+j1.5e-6'
+  , result=1.5e-6j
+  , units='$'
+  , text='j$1.5u'
+)
+scientificNumber.addTest(
+    stimulus='$-j1.5e-6'
+  , result=-1.5e-6j
+  , units='$'
+  , text='$-0 + j$-1.5u'
 )
 
 # hexadecimal number {{{3

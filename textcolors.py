@@ -48,6 +48,7 @@ returns that string in the color given with the colorizer method was created.
     if failure: print fails('FAIL')
 '''
 
+from __future__ import division, print_function
 import re
 import os, sys
 _colorRegex = re.compile('<[a-zA-Z_]+>')
@@ -167,6 +168,16 @@ class Colors:
         argument colored using the color specified with the function was created.
         """
         return lambda text: self(color, text)
+
+    def printer(self, color):
+        """
+        Color printer
+
+        Returns a function that when called prints a string to stdout in the 
+        specified color.
+        """
+        return lambda text: print(self(color, text))
+
 
 def _capitalize(arg):
     return arg[0].upper() + arg[1:]

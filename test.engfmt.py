@@ -78,6 +78,13 @@ testCases = [
       , '10'            # stripUnits() result
       , True            # isNumber() result
     ),
+    (   '$10.00'        # input
+      , '10.00'         # fromEngFmt() result with units stripped
+      , ('10.00', '$')  # fromEngFmt() result without units stripped
+      , '$10'           # toNumber() -> toEngFmt() result
+      , '10.00'         # stripUnits() result
+      , True            # isNumber() result
+    ),
     (   '$10e9'         # input
       , '10e9'          # fromEngFmt() result with units stripped
       , ('10e9', '$')   # fromEngFmt() result without units stripped
@@ -166,7 +173,14 @@ testCases = [
       , None            # fromEngFmt() result with units stripped
       , None            # fromEngFmt() result without units stripped
       , None            # toNumber() -> toEngFmt() result
-      , None            # stripUnits() result
+      , '10'            # stripUnits() result
+      , False           # isNumber() result
+    ),
+    (   '10.0s'
+      , None            # fromEngFmt() result with units stripped
+      , None            # fromEngFmt() result without units stripped
+      , None            # toNumber() -> toEngFmt() result
+      , '10.0'          # stripUnits() result
       , False           # isNumber() result
     ),
     (   '10n'           # input

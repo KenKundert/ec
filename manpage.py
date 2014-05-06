@@ -574,6 +574,12 @@ complexNumberSection = r"""{
        |      *x*: 45 degs
        |   **45 degs**:
 
+    You can also add the imaginary unit to real number constants. For example,
+
+       |   **0**: j10M
+       |   **j10M**: -j1u *
+       |   **10**:
+
     Only a small number of functions actually support complex numbers; currently
     only *exp* and *sqrt*. However, most of the basic arithmetic operators
     support complex numbers.

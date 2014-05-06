@@ -21,10 +21,14 @@ _NumWithScaleFactorAndTrailingUnits = \
     RE.compile(r'\A([-+]?[0-9]*\.?[0-9]+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?\Z')
 _NumWithExpAndTrailingUnits = \
     RE.compile(r'\A([-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z')
+_SimpleNumWithTrailingUnits = \
+    RE.compile(r'\A([-+]?[0-9]*\.?[0-9]+)([a-zA-Z_]*)\Z')
 _NumWithScaleFactorAndLeadingUnits = \
     RE.compile(r'\A(\$)([-+]?[0-9]*\.?[0-9]+)([YZEPTGMKk_munpfazy])?\Z')
 _NumWithExpAndLeadingUnits = \
     RE.compile(r'\A(\$)([-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+)\Z')
+_SimpleNumWithLeadingUnits = \
+    RE.compile(r'\A(\$)([-+]?[0-9]*\.?[0-9]+)\Z')
 _NanWithTrailingUnits = \
     RE.compile(r'\A([-+]?(inf|nan))\b ?([a-zA-Z_]*)\Z', RE.IGNORECASE)
 _NanWithLeadingUnits = \
@@ -288,6 +292,10 @@ def stripUnits(str):
     if match:
         number, units = match.groups()
         return number
+    match = _SimpleNumWithTrailingUnits.match(str)
+    if match:
+        number, units = match.groups()
+        return number
     match = _NumWithScaleFactorAndLeadingUnits.match(str)
     if match:
         units, number, scaleFactor = match.groups()
@@ -296,6 +304,10 @@ def stripUnits(str):
         else:
             return number
     match = _NumWithExpAndLeadingUnits.match(str)
+    if match:
+        units, number = match.groups()
+        return number
+    match = _SimpleNumWithLeadingUnits.match(str)
     if match:
         units, number = match.groups()
         return number
