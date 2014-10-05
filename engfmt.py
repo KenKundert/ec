@@ -66,14 +66,16 @@ def setDefaultPrecision(prec):
     _DefaultPrecision = prec
 
 _Spacer = ''
-def setSpacer(spacer=''):
+_OutputUnitySF = False
+def setSpacer(spacer='', output_unity_sf=False):
     """Set the spacer character for toEngFmt().
        Can make this a space if you prefer a space between number and
        scalefactor/units, but if you add the space, the numbers you generate
        using toEngFmt() will not be recognized by fromEngFmt().
     """
-    global _Spacer
+    global _Spacer, _OutputUnitySF
     _Spacer = spacer
+    _OutputUnitySF = output_unity_sf
 
 def isNaN(val):
     """Tests for not a number."""
@@ -119,7 +121,10 @@ def toEngFmt(num, units="", prec=-1):
     shift = exp % 3
     sf = "e%d" % (exp - shift)
     if index == 0:
-        sf = ""
+        if units and units != "$" and _OutputUnitySF:
+            sf = "_"
+        else:
+            sf = ""
     elif (index > 0):
         if index <= len(big):
             sf = big[index-1]

@@ -50,7 +50,7 @@ addition.addTest(
     stimulus='100mV 25mV+'
   , result=100e-3 + 25e-3
   , units='V'
-  , text='125 mV'
+  , text='125mV'
 )
 addition.addTest(
     stimulus='$100M $25M+'
@@ -95,7 +95,7 @@ subtraction.addTest(
     stimulus='100mV 25mV-'
   , result=100e-3 - 25e-3
   , units='V'
-  , text='75 mV'
+  , text='75mV'
 )
 subtraction.addTest(
     stimulus='$100M $25M-'
@@ -138,7 +138,7 @@ multiplication.addTest(
     stimulus='25MHz 2pi * "rads/s"'
   , result=2 * math.pi * 25e6
   , units='rads/s'
-  , text='157.08 Mrads/s'
+  , text='157.08Mrads/s'
 )
 multiplication.addTest(
     stimulus='1 j *'
@@ -279,7 +279,7 @@ parallel.addTest(
     stimulus='10kOhm 10kOhm ||'
   , result=(1e4/(1e4+1e4))*1e4
   , units='Ohm'
-  , text='5 KOhm'
+  , text='5KOhm'
 )
 parallel.addTest(
     stimulus='50_Ohm 50 ||'
@@ -309,7 +309,7 @@ negation.addTest(
     stimulus='330pF chs'
   , result=-330e-12
   , units='F'
-  , text='-330 pF'
+  , text='-330pF'
 )
 
 # reciprocal {{{3
@@ -374,7 +374,7 @@ ceiling.addTest(
     stimulus='7.5_Hz ceil'
   , result=math.ceil(7.5)
   , units='Hz'
-  , text='8 Hz'
+  , text='8_Hz'
 )
 ceiling.addTest(
     stimulus='j ceil'
@@ -410,7 +410,7 @@ floor.addTest(
     stimulus='7.5_Hz floor'
   , result=math.floor(7.5)
   , units='Hz'
-  , text='7 Hz'
+  , text='7_Hz'
 )
 floor.addTest(
     stimulus='j floor'
@@ -835,19 +835,19 @@ arcSine.addTest(
     stimulus='1 asin'
   , result=90
   , units='degs'
-  , text='90 degs'
+  , text='90_degs'
 )
 arcSine.addTest(
     stimulus='rads 1 sin asin'
   , result=1
   , units='rads'
-  , text='1 rads'
+  , text='1_rads'
 )
 arcSine.addTest(
     stimulus='degs -1 asin'
   , result=-90
   , units='degs'
-  , text='-90 degs'
+  , text='-90_degs'
 )
 arcSine.addTest(
     stimulus='degs 2 asin'
@@ -870,19 +870,19 @@ arcCosine.addTest(
     stimulus='0 acos'
   , result=90
   , units='degs'
-  , text='90 degs'
+  , text='90_degs'
 )
 arcCosine.addTest(
     stimulus='rads 1 acos'
   , result=0
   , units='rads'
-  , text='0 rads'
+  , text='0_rads'
 )
 arcCosine.addTest(
     stimulus='degs 45 cos acos'
   , result=45
   , units='degs'
-  , text='45 degs'
+  , text='45_degs'
 )
 arcCosine.addTest(
     stimulus='degs 2 acos'
@@ -905,19 +905,19 @@ arcTangent.addTest(
     stimulus='0 atan'
   , result=0
   , units='degs'
-  , text='0 degs'
+  , text='0_degs'
 )
 arcTangent.addTest(
     stimulus='rads 0 atan'
   , result=0
   , units='rads'
-  , text='0 rads'
+  , text='0_rads'
 )
 arcTangent.addTest(
     stimulus='degs 45 tan atan'
   , result=45
   , units='degs'
-  , text='45 degs'
+  , text='45_degs'
 )
 
 # radians {{{3
@@ -979,7 +979,7 @@ absoluteValue.addTest(
     stimulus='-1MHz abs'
   , result=1e6
   , units='Hz'
-  , text='1 MHz'
+  , text='1MHz'
 )
 absoluteValue.addTest(
     stimulus='j chs mag'
@@ -991,7 +991,7 @@ absoluteValue.addTest(
     stimulus='1 j + "V" mag pop'
   , result=1+1j
   , units='V'
-  , text='1 V + j V'
+  , text='1_V + j_V'
 )
 
 # argument {{{3
@@ -1022,25 +1022,25 @@ argument.addTest(
     stimulus='1 j + arg'
   , result=45
   , units='degs'
-  , text='45 degs'
+  , text='45_degs'
 )
 argument.addTest(
     stimulus='rads 1 j - ph'
   , result=-math.pi/4
   , units='rads'
-  , text='-785.4 mrads'
+  , text='-785.4mrads'
 )
 argument.addTest(
     stimulus='1 j + "V" ph pop'
   , result=1+1j
   , units='V'
-  , text='1 V + j V'
+  , text='1_V + j_V'
 )
 argument.addTest(
     stimulus='1 j + "m/s" arg pop'
   , result=1+1j
   , units='m/s'
-  , text='1 m/s + j m/s'
+  , text='1_m/s + j_m/s'
 )
 
 # hypotenuse {{{3
@@ -1068,7 +1068,7 @@ hypotenuse.addTest(
     stimulus='3mm 4mm len'
   , result=5e-3
   , units='m'
-  , text='5 mm'
+  , text='5mm'
 )
 
 # arc tangent 2 {{{3
@@ -1089,31 +1089,31 @@ arcTangent2.addTest(
     stimulus='3 3 atan2'
   , result=45
   , units='degs'
-  , text='45 degs'
+  , text='45_degs'
 )
 arcTangent2.addTest(
     stimulus='rads -3 3 angle'
   , result=-math.pi/4
   , units='rads'
-  , text='-785.4 mrads'
+  , text='-785.4mrads'
 )
 arcTangent2.addTest(
     stimulus='-3 -3 atan2'
   , result=-135
   , units='degs'
-  , text='-135 degs'
+  , text='-135_degs'
 )
 arcTangent2.addTest(
     stimulus='3 -3 angle'
   , result=135
   , units='degs'
-  , text='135 degs'
+  , text='135_degs'
 )
 arcTangent2.addTest(
     stimulus='rads 0 0 atan2'
   , result=0
   , units='rads'
-  , text='0 rads'
+  , text='0_rads'
 )
 
 # rectangular to polar {{{3
@@ -1143,19 +1143,19 @@ rectangularToPolar.addTest(
     stimulus='3kOhm -4kOhm rtop'
   , result=5e3
   , units='Ohm'
-  , text='5 KOhm'
+  , text='5KOhm'
 )
 rectangularToPolar.addTest(
     stimulus='4MOhm 4MOhm rtop swap'
   , result=45
   , units='degs'
-  , text='45 degs'
+  , text='45_degs'
 )
 rectangularToPolar.addTest(
     stimulus='rads 4MOhm 4MOhm rtop swap'
   , result=math.pi/4
   , units='rads'
-  , text='785.4 mrads'
+  , text='785.4mrads'
 )
 
 # polar to rectangular {{{3
@@ -1180,25 +1180,25 @@ polarToRectangular.addTest(
     stimulus='45 2 sqrt "V" ptor'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 polarToRectangular.addTest(
     stimulus='45 2 sqrt "V" ptor swap'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 polarToRectangular.addTest(
     stimulus='rads pi 4/ 2 sqrt "V" ptor'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 polarToRectangular.addTest(
     stimulus='rads pi 4/ 2 sqrt "V" ptor swap'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 
 # Hyperbolic Functions {{{2
@@ -1496,19 +1496,19 @@ dbmToVoltage.addTest(
     stimulus='10 dbmv'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 dbmToVoltage.addTest(
     stimulus='-10 dbmv'
   , result=0.1
   , units='V'
-  , text='100 mV'
+  , text='100mV'
 )
 dbmToVoltage.addTest(
     stimulus='5 "Ohms" =Rref 20 dbmv'
   , result=1
   , units='V'
-  , text='1 V'
+  , text='1_V'
 )
 
 # current to dBm {{{3
@@ -1565,19 +1565,19 @@ dbmToCurrent.addTest(
     stimulus='10 dbmi'
   , result=20e-3
   , units='A'
-  , text='20 mA'
+  , text='20mA'
 )
 dbmToCurrent.addTest(
     stimulus='-10 dbmi'
   , result=2e-3
   , units='A'
-  , text='2 mA'
+  , text='2mA'
 )
 dbmToCurrent.addTest(
     stimulus='5 "Ohms" =Rref -20 dbmi'
   , result=2e-3
   , units='A'
-  , text='2 mA'
+  , text='2mA'
 )
 
 # Constants {{{2
@@ -1599,7 +1599,7 @@ pi.addTest(
     stimulus='pi'
   , result=math.pi
   , units='rads'
-  , text='3.1416 rads'
+  , text='3.1416_rads'
 )
 
 # 2 pi {{{3
@@ -1618,7 +1618,7 @@ twoPi.addTest(
     stimulus='2pi'
   , result=2*math.pi
   , units='rads'
-  , text='6.2832 rads'
+  , text='6.2832_rads'
 )
 
 # sqrt 2 {{{3
@@ -1673,7 +1673,7 @@ imaginaryTwoPi.addTest(
     stimulus='j2pi'
   , result=2j*math.pi
   , units='rads'
-  , text='j6.2832 rads'
+  , text='j6.2832_rads'
 )
 
 # planck constant {{{3
@@ -1692,7 +1692,7 @@ planckConstant.addTest(
     stimulus='h'
   , result=6.62606957e-34
   , units='J-s'
-  , text='662.61e-36 J-s'
+  , text='662.61e-36J-s'
 )
 
 # reduced plank constant {{{3
@@ -1711,7 +1711,7 @@ planckConstantReduced.addTest(
     stimulus='hbar'
   , result=1.054571726e-34
   , units='J-s'
-  , text='105.46e-36 J-s'
+  , text='105.46e-36J-s'
 )
 
 # planck length {{{3
@@ -1730,7 +1730,7 @@ planckLength.addTest(
     stimulus='lP'
   , result=1.616199e-35
   , units='m'
-  , text='16.162e-36 m'
+  , text='16.162e-36m'
 )
 
 # planck mass {{{3
@@ -1749,7 +1749,7 @@ planckMass.addTest(
     stimulus='mP'
   , result=2.17651e-5
   , units='g'
-  , text='21.765 ug'
+  , text='21.765ug'
 )
 
 # planck temperature {{{3
@@ -1768,7 +1768,7 @@ planckTemperature.addTest(
     stimulus='TP'
   , result=1.416833e32
   , units='K'
-  , text='141.68e30 K'
+  , text='141.68e30_K'
 )
 
 # planck time {{{3
@@ -1787,7 +1787,7 @@ planckTime.addTest(
     stimulus='tP'
   , result=5.39106e-44
   , units='s'
-  , text='53.911e-45 s'
+  , text='53.911e-45s'
 )
 
 # boltzmann constant {{{3
@@ -1806,7 +1806,7 @@ boltzmann.addTest(
     stimulus='k'
   , result=1.3806488e-23
   , units='J/K'
-  , text='13.806e-24 J/K'
+  , text='13.806e-24J/K'
 )
 
 # elementary charge {{{3
@@ -1825,7 +1825,7 @@ elementaryCharge.addTest(
     stimulus='q'
   , result=1.602176565e-19
   , units='C'
-  , text='160.22e-21 C'
+  , text='160.22e-21C'
 )
 
 # mass of electron {{{3
@@ -1844,7 +1844,7 @@ massOfElectron.addTest(
     stimulus='me'
   , result=9.10938291e-28
   , units='g'
-  , text='910.94e-30 g'
+  , text='910.94e-30g'
 )
 
 # mass of proton {{{3
@@ -1863,7 +1863,7 @@ massOfProton.addTest(
     stimulus='mp'
   , result=1.672621777e-24
   , units='g'
-  , text='1.6726e-24 g'
+  , text='1.6726e-24g'
 )
 
 # speed of light {{{3
@@ -1882,7 +1882,7 @@ speedOfLight.addTest(
     stimulus='c'
   , result=2.99792458e8
   , units='m/s'
-  , text='299.79 Mm/s'
+  , text='299.79Mm/s'
 )
 
 # gravitational constant {{{3
@@ -1901,7 +1901,7 @@ gravitationalConstant.addTest(
     stimulus='G'
   , result=6.6746e-11
   , units='m^3/(kg-s^2)'
-  , text='66.746 pm^3/(kg-s^2)'
+  , text='66.746pm^3/(kg-s^2)'
 )
 
 # acceleration of gravity {{{3
@@ -1920,7 +1920,7 @@ standardAccelerationOfGravity.addTest(
     stimulus='g'
   , result=9.80665
   , units='m/s^2'
-  , text='9.8066 m/s^2'
+  , text='9.8066_m/s^2'
 )
 
 # avogadro constant {{{3
@@ -1939,7 +1939,7 @@ avogadroConstant.addTest(
     stimulus='NA'
   , result=6.02214129e23
   , units='/mol'
-  , text='602.21e21 /mol'
+  , text='602.21e21/mol'
 )
 
 # gas constant {{{3
@@ -1958,7 +1958,7 @@ molarGasConstant.addTest(
     stimulus='R'
   , result=8.3144621
   , units='J/(mol-K)'
-  , text='8.3145 J/(mol-K)'
+  , text='8.3145_J/(mol-K)'
 )
 
 # zero celsius {{{3
@@ -1977,7 +1977,7 @@ zeroCelsius.addTest(
     stimulus='0C'
   , result=273.15
   , units='K'
-  , text='273.15 K'
+  , text='273.15_K'
 )
 
 # free space permittivity {{{3
@@ -1996,7 +1996,7 @@ freeSpacePermittivity.addTest(
     stimulus='eps0'
   , result=8.854187817e-12
   , units='F/m'
-  , text='8.8542 pF/m'
+  , text='8.8542pF/m'
 )
 
 # free space permeability {{{3
@@ -2015,7 +2015,7 @@ freeSpacePermeability.addTest(
     stimulus='mu0'
   , result=4e-7*math.pi
   , units='N/A^2'
-  , text='1.2566 uN/A^2'
+  , text='1.2566uN/A^2'
 )
 
 # free space characteristic impedance {{{3
@@ -2034,7 +2034,7 @@ freeSpaceCharacteristicImpedance.addTest(
     stimulus='Z0'
   , result=376.730313461
   , units='Ohms'
-  , text='376.73 Ohms'
+  , text='376.73_Ohms'
 )
 
 # Numbers {{{2
@@ -2091,7 +2091,7 @@ engineeringNumber.addTest(
     stimulus='-1.1GHz'
   , result=-1.1e9
   , units='Hz'
-  , text='-1.1 GHz'
+  , text='-1.1GHz'
 )
 engineeringNumber.addTest(
     stimulus='$100k'
@@ -2109,7 +2109,7 @@ engineeringNumber.addTest(
     stimulus='.2MOhms'
   , result=2e5
   , units='Ohms'
-  , text='200 KOhms'
+  , text='200KOhms'
 )
 engineeringNumber.addTest(
     stimulus='1000'
@@ -2181,7 +2181,7 @@ engineeringNumber.addTest(
     stimulus='j1,000.00KOhms'
   , result=1j * 1e6
   , units='Ohms'
-  , text='j1 MOhms'
+  , text='j1MOhms'
 )
 engineeringNumber.addTest(
     stimulus='j1,000.00K'
@@ -2235,13 +2235,13 @@ engineeringNumber.addTest(
     stimulus='$j1'
   , result=1j
   , units='$'
-  , text='j $'
+  , text='j_$'
 )
 engineeringNumber.addTest(
     stimulus='$+j1'
   , result=1j
   , units='$'
-  , text='j $'
+  , text='j_$'
 )
 engineeringNumber.addTest(
     stimulus='$-j1'
@@ -2302,7 +2302,7 @@ scientificNumber.addTest(
     stimulus='.5e-12F'
   , result=5e-13
   , units='F'
-  , text='500 fF'
+  , text='500fF'
 )
 scientificNumber.addTest(
     stimulus='$500e6'
@@ -2326,7 +2326,7 @@ scientificNumber.addTest(
     stimulus='j1e6Ohms'
   , result=1j * 1e6
   , units='Ohms'
-  , text='j1 MOhms'
+  , text='j1MOhms'
 )
 scientificNumber.addTest(
     stimulus='j1000e3'
@@ -2338,7 +2338,7 @@ scientificNumber.addTest(
     stimulus='+j1.5e-6Ohms'
   , result=1.5e-6j
   , units='Ohms'
-  , text='j1.5 uOhms'
+  , text='j1.5uOhms'
 )
 scientificNumber.addTest(
     stimulus='-j1.5e-6'
@@ -2538,13 +2538,13 @@ setFixedFormat.addTest(
     stimulus="pi fix"
   , result=math.pi
   , units='rads'
-  , text="3.1416 rads"
+  , text="3.1416rads"
 )
 setFixedFormat.addTest(
     stimulus="pi fix8"
   , result=math.pi
   , units='rads'
-  , text="3.14159265 rads"
+  , text="3.14159265rads"
 )
 setFixedFormat.addTest(
     stimulus="$100 fix2"
@@ -2577,7 +2577,7 @@ setEngineeringFormat.addTest(
     stimulus='pi 1e3 * "rads" eng8'
   , result=1e3*math.pi
   , units='rads'
-  , text="3.14159265 Krads"
+  , text="3.14159265Krads"
 )
 
 # scientific format {{{3
@@ -2603,7 +2603,7 @@ setScientificFormat.addTest(
     stimulus='pi 1e3 * "rads" sci8'
   , result=1e3*math.pi
   , units='rads'
-  , text="3.14159265e+03 rads"
+  , text="3.14159265e+03rads"
 )
 setScientificFormat.addTest(
     stimulus='1e-10 sci8'
@@ -2867,7 +2867,7 @@ storeToVariable.addTest(
     stimulus='1pF =c pop c'
   , result=1e-12
   , units='F'
-  , text='1 pF'
+  , text='1pF'
   , warnings=['c: variable has overridden built-in.']
 )
 
@@ -2885,7 +2885,7 @@ recallFromVariable.addTest(
     stimulus='1MHz =freq 2pi * "rads" =omega 10us =time clstack freq'
   , result=1e6
   , units='Hz'
-  , text='1 MHz'
+  , text='1MHz'
 )
 recallFromVariable.addTest(
     stimulus='freq'
@@ -2908,11 +2908,11 @@ listVariables.addTest(
     stimulus='1MHz =freq 10us =time vars'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10us'
   , messages=[
-        '  Rref: 50 Ohms'
-      , '  freq: 1 MHz'
-      , '  time: 10 us'
+        '  Rref: 50_Ohms'
+      , '  freq: 1MHz'
+      , '  time: 10us'
     ]
 )
 
@@ -2933,7 +2933,7 @@ swapXandY.addTest(
     stimulus='1MHz 10us swap'
   , result=1e6
   , units='Hz'
-  , text='1 MHz'
+  , text='1MHz'
 )
 
 # dup {{{3
@@ -2951,13 +2951,13 @@ duplicateX.addTest(
     stimulus='1MHz 10us dup'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10us'
 )
 duplicateX.addTest(
     stimulus='1MHz 10us dup swap'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10us'
 )
 
 # pop {{{3
@@ -2975,7 +2975,7 @@ popX.addTest(
     stimulus='1MHz 10us pop'
   , result=1e6
   , units='Hz'
-  , text='1 MHz'
+  , text='1MHz'
 )
 popX.addTest(
     stimulus='pi eps0 q pop pop pop pop'
@@ -2999,9 +2999,9 @@ listStack.addTest(
   , units=''
   , text='36'
   , messages=[
-        '     1 MHz'
-      , '     10 us'
-      , '  y: 160.22e-21 C'
+        '     1MHz'
+      , '     10us'
+      , '  y: 160.22e-21C'
       , '  x: 36'
     ]
 )
@@ -3100,14 +3100,14 @@ printText.addTest(
   , result=0
   , units=''
   , text='0'
-  , messages=  ["I have 50 Ohms, you have $50"]
+  , messages=["I have 50_Ohms, you have $50"]
 )
 printText.addTest(
     stimulus='`I have ${Rref}, you have $$50`'
   , result=0
   , units=''
   , text='0'
-  , messages=  ["I have 50 Ohms, you have $50"]
+  , messages=["I have 50_Ohms, you have $50"]
 )
 printText.addTest(
     stimulus='`I have $Q, you have $$50`'
@@ -3138,7 +3138,7 @@ setUnits.addTest(
     stimulus='100M "V/s"'
   , result=1e8
   , units='V/s'
-  , text='100 MV/s'
+  , text='100MV/s'
 )
 
 printAbout = Command(

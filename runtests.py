@@ -61,6 +61,9 @@ fail = colors.colorizer('red')
 succeed = colors.colorizer('green')
 exception = colors.colorizer('Red')
 
+# default python
+defaultPython = "python{0}.{1}".format(*sys.version_info)
+
 # command line processor {{{2
 class CommandLine():
     def __init__(self):
@@ -127,6 +130,8 @@ def cmdLineOpts():
     get command line options using something like:
         fast, printSummary, printTests, printResults, colorize, parent = runtests.cmdLineOpts()
     """
+    global defaultPython
+
     clp.process()
 
     if clp.coverage and not clp.parent:
@@ -191,7 +196,10 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
     """
     clp.process()
 
-    pythonCmd = pythonCmd if pythonCmd else 'python'
+    pythonCmd = pythonCmd if pythonCmd else defaultPython
+    if clp.printTests:
+        print("Using %s." % pythonCmd)
+
     if clp.coverage:
         pythonCmd = '%s /usr/bin/coverage run -a --branch' % pythonCmd
     pythonPath = ('PYTHONPATH=%s; ' % pythonPath) if pythonPath else ''
@@ -220,7 +228,7 @@ def runTests(tests, pythonCmd=None, pythonPath=None, testKey='test'):
         elif os.path.isdir(test):
             summaryFileName = './%s/.%s.sum' % (test, testKey)
             _deleteYamlFile(summaryFileName)
-            cmd = 'cd %s; ./%s %s' % (test, testKey, _childOpts(test))
+            cmd = 'cd %s; %s %s %s' % (test, pythonCmd, testKey, _childOpts(test))
             error = _invoke(cmd)
         else:
             print(exception(

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Test ec
 # Imports {{{1
@@ -21,6 +21,8 @@ succeed = colors.colorizer('green')
 fail = colors.colorizer('red')
 info = colors.colorizer('magenta')
 status = colors.colorizer('cyan')
+
+python = 'python%s' % sys.version[0]
 
 # Test cases {{{1
 testCases = [
@@ -74,7 +76,7 @@ for index, case in enumerate(testCases):
     messages = []
     warnings = []
     testsRun += 1
-    stimulus = 'python ec.py ' + case['stimulus']
+    stimulus = ' '.join([python, 'ec.py', case['stimulus']])
     expectedResult = case['output']
     if printTests:
         print(status('Trying %d:' % index), stimulus)

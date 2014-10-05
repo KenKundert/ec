@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Test EC
 # Imports {{{1
@@ -151,8 +151,11 @@ for index, case in enumerate(testCases):
 
         elif printResults:
             print("%s: %s" % (succeed('    Result'), result))
-            for message in messages:
-                print("%s: %s" % (succeed('    Message received'), message))
+            try:
+                for message in messages:
+                    print("%s: %s" % (succeed('    Message received'), message))
+            except TypeError:
+                pass  # occurs if messages is True
             for warning in warnings:
                 print("%s: %s" % (succeed('    Warning received'), warning))
     except CalculatorError as err:

@@ -181,3 +181,10 @@ class Colors:
 
 def _capitalize(arg):
     return arg[0].upper() + arg[1:]
+
+if __name__ == "__main__":
+    colors =  Colors()
+    for color in _BaseColors:
+        Color = color.title()
+        offset = (16 - 2*len(color))* ' '
+        print("%s:" % color, offset, colors(color, color), colors(Color, Color))
