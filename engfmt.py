@@ -66,16 +66,21 @@ def setDefaultPrecision(prec):
     _DefaultPrecision = prec
 
 _Spacer = ''
-_OutputUnitySF = False
-def setSpacer(spacer='', output_unity_sf=False):
+_UnitySF = ''
+_OutputCapitalK = True
+def setSpacer(spacer=None, unity_sf=None, capital_k=None):
     """Set the spacer character for toEngFmt().
        Can make this a space if you prefer a space between number and
        scalefactor/units, but if you add the space, the numbers you generate
        using toEngFmt() will not be recognized by fromEngFmt().
     """
-    global _Spacer, _OutputUnitySF
-    _Spacer = spacer
-    _OutputUnitySF = output_unity_sf
+    global _Spacer, _OutputUnitySF, _OutputCapitalK
+    if spacer is not None:
+        _Spacer = spacer
+    if unity_sf is not None:
+        _UnitySF = unity_sf
+    if capital_k is not None:
+        _OutputCapitalK = capital_k
 
 def isNaN(val):
     """Tests for not a number."""
@@ -113,7 +118,11 @@ def toEngFmt(num, units="", prec=-1):
     exp = int(sExp)
 
     # define scale factors (eliminate the ones nobody recognizes)
-    big = "KMGT"     #big = "KMGTPEZY"
+    big = "kMGT"     #big = "kMGTPEZY"
+        # use k rather than K, because K looks like a temperature when used alone
+        # but user can override
+    if _OutputCapitalK:
+        big = big.upper()
     small = "munpfa" #small = "munpfazy"
 
     # find scale factor
@@ -121,8 +130,8 @@ def toEngFmt(num, units="", prec=-1):
     shift = exp % 3
     sf = "e%d" % (exp - shift)
     if index == 0:
-        if units and units != "$" and _OutputUnitySF:
-            sf = "_"
+        if units and units != "$" and _UnitySF:
+            sf = _UnitySF
         else:
             sf = ""
     elif (index > 0):
