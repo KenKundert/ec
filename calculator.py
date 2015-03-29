@@ -9,8 +9,6 @@ from __future__ import division
 from __future__ import print_function
 import math
 import re
-import engfmt
-engfmt.setSpacer(spacer='', output_unity_sf=True)
 from copy import copy
 from textwrap import wrap, fill, dedent
 from pydoc import pager
@@ -216,7 +214,7 @@ class Display:
             imag = self.format((num.imag, units))
             zero = self.format((0, units))
             one = self.format((1, units))
-            units = '_'+units if units else ''
+            units = ' '+units if units else ''
 
             # suppress the imaginary if it would display as zero
             if imag == zero:

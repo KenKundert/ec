@@ -2,6 +2,7 @@
 
 # Test ec
 # Imports {{{1
+from __future__ import print_function
 from runtests import cmdLineOpts, writeSummary
 from textcolors import Colors
 from calculator import Calculator, Display, CalculatorError
@@ -30,28 +31,28 @@ testCases = [
       , 'output': '''\
 openloop gain = 63.732
 feedback factor = 16
-loopgain = 1.0197K
+loopgain = 1.0197k
 '''
     }
   , {   'stimulus': "'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz' lg.ec"
       , 'output': '''\
 openloop gain = 63.732
 feedback factor = 16
-loopgain = 1.0197K
+loopgain = 1.0197k
 '''
     }
   , {   'stimulus': "'88.3u =Kdet' '9.07G =Kvco' '2 =M' '8 =N' '2 =F' '1KHz' lg.ec"
       , 'output': '''\
 openloop gain = 63.732
 feedback factor = 16
-loopgain = 1.0197K
+loopgain = 1.0197k
 '''
     }
   , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `openloop gain = $a\nfeedback factor = $f\nloopgain = $T`'"""
       , 'output': '''\
 openloop gain = 63.732
 feedback factor = 16
-loopgain = 1.0197K
+loopgain = 1.0197k
 '''
     }
 ]
@@ -95,7 +96,13 @@ for index, case in enumerate(testCases):
         print(fail('Failure detected (%s):' % failures))
         print(info('    Given:'), stimulus)
         print(info('    Result  :'), '\n' + result)
-        print(info('    Expected:'), '\n' + expectedResult)
+        print(info('    Expected:'))
+        for r, e in zip(result, expectedResult):
+            if r == e:
+                print(e, end='')
+            else:
+                print(fail(e), end='')
+        print()
 
     elif printResults:
         print(succeed('    Result:'), result)
