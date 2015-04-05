@@ -204,7 +204,7 @@ class _Item:
         """
         sum = [self.key]
         #try:
-        #    for key, val in self.opts.iteritems():
+        #    for key, val in self.opts.items():
         #        sum += [key] + val
         #except AttributeError:
         #    pass
