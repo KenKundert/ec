@@ -230,7 +230,7 @@ You can quit the program using::
 
    0: quit
 
-(or *:q* or *^C*).
+(or *:q* or *^D*).
 
 | Enjoy,
 |    -Ken
