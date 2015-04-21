@@ -16,7 +16,7 @@ or
    # yum install python3 python3-setuptools python3-docutils
 
 Use ``pacman -S`` rather than ``yum install`` on Arch Linux or ``apt-get`` 
-ratehr than ``yum`` on Ubuntu.
+rather than ``yum`` on Ubuntu.
 
 If you do not have root access or Python is not available through yum, you
 can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
