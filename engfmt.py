@@ -351,7 +351,7 @@ def stripUnits(str):
 # only map the ones with scale factors.
 
 #_EmbeddedNumberWithScaleFactor = RE.compile(r'([-+]?[0-9]*\.?[0-9]+)([YZEPTGMKk_munpfazy])([a-zA-Z_]*)([^-+0-9a-zA-Z.]|\Z)')
-_EmbeddedNumberWithScaleFactor = RE.compile(r'([-+]?[0-9]*\.?[0-9]+)([YZEPTGMKk_munpfazy])([a-zA-Z_]*)([^-+0-9]|\Z)')
+_EmbeddedNumberWithScaleFactor = RE.compile(r'(?<=[^a-zA-Z_])([-+]?[0-9]*\.?[0-9]+)([YZEPTGMKk_munpfazy])([a-zA-Z_]*)([^-+0-9]|\Z)')
     # I replaced the first version of numberWithScaleFactor4 because it did not
     # recognize "1mA." (1mA at the end of a sentence).  I did not really
     # understand why letters, and periods could not follow a number, so I
