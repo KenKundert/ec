@@ -7,18 +7,14 @@ from engfmt import (
   , toNumber, isNumber, stripUnits
   , allToEngFmt, allFromEngFmt
 )
-from runtests import cmdLineOpts, writeSummary
-from textcolors import Colors
+from runtests import (
+    cmdLineOpts, writeSummary, succeed, fail, info, status,
+)
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
 testsRun = 0
 failures = 0
-colors = Colors(colorize)
-succeed = colors.colorizer('green')
-fail = colors.colorizer('red')
-info = colors.colorizer('magenta')
-status = colors.colorizer('cyan')
 
 # Test cases {{{1
 testCases = [

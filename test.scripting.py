@@ -3,8 +3,7 @@
 # Test ec
 # Imports {{{1
 from __future__ import print_function
-from runtests import cmdLineOpts, writeSummary
-from textcolors import Colors
+from runtests import cmdLineOpts, writeSummary, succeed, fail, info, status
 from calculator import Calculator, Display, CalculatorError
 from actions import allActions, defaultFormat, defaultDigits
 import math, sys
@@ -16,12 +15,6 @@ testsRun = 0
 failures = 0
 reltol=1e-9
 abstol = 1e-12
-
-colors = Colors(colorize)
-succeed = colors.colorizer('green')
-fail = colors.colorizer('red')
-info = colors.colorizer('magenta')
-status = colors.colorizer('cyan')
 
 python = 'python%s' % sys.version[0]
 

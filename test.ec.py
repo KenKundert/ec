@@ -2,8 +2,7 @@
 
 # Test EC
 # Imports {{{1
-from runtests import cmdLineOpts, writeSummary
-from textcolors import Colors
+from runtests import cmdLineOpts, writeSummary, succeed, fail, info, status
 from calculator import Calculator, Display, CalculatorError
 from actions import (
     allActions, predefinedVariables, defaultFormat, defaultDigits, detailedHelp
@@ -16,12 +15,6 @@ testsRun = 0
 failures = 0
 reltol=1e-9
 abstol = 1e-13
-
-colors = Colors(colorize)
-succeed = colors.colorizer('green')
-fail = colors.colorizer('red')
-info = colors.colorizer('magenta')
-status = colors.colorizer('cyan')
 
 # Test cases {{{1
 testCases = []
