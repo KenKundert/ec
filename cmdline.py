@@ -392,7 +392,7 @@ class CommandLineProcessor(_Argument):
         implements the command.  If None the function will not be called.
         'prereqs' is a list of strings that is used to indication which
         initializations are required for this command.
-        
+
         When using the _Item
         The action function is expected to take at least three arguments.  First
         is 'key', a string that contains the primary name of the command.  The
