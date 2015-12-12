@@ -2,7 +2,9 @@
 
 # Test EC
 # Imports {{{1
-from runtests import cmdLineOpts, writeSummary, succeed, fail, info, status
+from runtests import (
+    cmdLineOpts, writeSummary, succeed, fail, info, status
+)
 from calculator import Calculator, Display, CalculatorError
 from actions import (
     allActions, predefinedVariables, defaultFormat, defaultDigits, detailedHelp
