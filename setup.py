@@ -18,8 +18,8 @@ setup(
   , long_description=contents('README.rst')
   , author="Ken Kundert"
   , author_email='ec@nurdletech.com'
-  , url='http://www.nurdletech.com/ec.html'
-  , download_url='https://github.com/KenKundert/ec/downloads'
+  , url='http://nurdletech.com/linux-utilities/ec'
+  , download_url='https://github.com/kenkundert/ec/tarball/master'
   , scripts=['ec']
   , py_modules=['ec', 'calculator', 'actions', 'engfmt', 'cmdline', 'textcolors']
   , data_files=[
