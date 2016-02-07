@@ -8,8 +8,9 @@ from engfmt import (
   , allToEngFmt, allFromEngFmt
 )
 from runtests import (
-    cmdLineOpts, writeSummary, succeed, fail, info, status,
+    cmdLineOpts, writeSummary, succeed, fail, info, status
 )
+assert __debug__
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
