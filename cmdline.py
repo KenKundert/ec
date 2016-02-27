@@ -166,18 +166,17 @@ _ActiveCLP = None
 
 # Exceptions {{{2
 class _Error(Exception):
-    def __init__(self, msg):
+    def __init__(self, text, culprit=None):
         clp = commandLineProcessor()
         progName = clp.progName()
+        src = ': '.join([n for n in [progName, culprit] if n])
+        msg = ('%s: %s' % (src, text) if src else text) + '.'
         if clp.errorHandler:
-            raise clp.errorHandler(progName, msg, clp.helpKey)
-        src = '%s: ' % progName if progName else ''
-        msg = '%s%s.' % (src, msg)
+            raise clp.errorHandler(progName, msg, text, culprit, clp.helpKey)
         self.msg = msg
         if clp.helpKey:
-            msg += "\nUse '%s %s' for help on the use of this command." % (
-                progName, clp.helpKey
-            )
+            cmd = ' '.join([e for e in [progName, clp.helpKey, culprit] if e])
+            msg += "\nUse '%s' for help on the use of this command." % cmd
         sys.stderr.write(msg + '\n')
         # is it a mild unix convention that command line errors cause an exit
         # with status code 2.
@@ -307,8 +306,6 @@ class _Argument(_Generic):
         self.argForm = expected
 
     def _processArguments(self, clp, name = ''):
-        if name:
-            name += ': '
         args = []
         while self.maxArgs == None or len(args) < self.maxArgs:
             # if maxArgs == None, there is no limit to the number of arguments.
@@ -328,15 +325,15 @@ class _Argument(_Generic):
                     clp._nextToken()
                 break
         if len(args) < self.minArgs:
-            raise _Error("%stoo few arguments, expected at least %d" % (name, self.minArgs))
+            raise _Error("too few arguments, expected at least %d" % (self.minArgs), name)
         if self.argFilter:
             for each in args:
                 if not self.argFilter.match(each):
-                    msg = "%sargument '%s' has the wrong form" % (name, each)
+                    msg = "argument '%s' has the wrong form" % (each)
                     if self.argForm:
-                        raise _Error("%s, expected %s" % (msg, self.argForm))
+                        raise _Error("%s, expected %s" % (msg, self.argForm), name)
                     else:
-                        raise _Error(msg)
+                        raise _Error(msg, name)
 
         return args
 
@@ -915,7 +912,7 @@ class Command(_Argument):
             try:
                 self._processOption(self.clp, arg)
             except KeyError:
-                raise _Error("%s: unknown option for command '%s'" % (arg, name))
+                raise _Error("unknown option '%s'" % arg, name)
 
         # then, process the arguments to the command
         args = self._processArguments(clp, name)
