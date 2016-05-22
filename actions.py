@@ -339,7 +339,7 @@ reciprocal.addTest(
 )
 reciprocal.addTest(
     stimulus='0 recip'
-  , error='division by zero'
+  , error='division by zero.'
 )
 reciprocal.addTest(
     stimulus='j recip'

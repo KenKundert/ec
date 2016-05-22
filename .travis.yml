@@ -1,0 +1,17 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "nightly"
+install:
+  - pip install .
+script: 
+  - ./test
+deploy:
+    provider: pypi
+    on:
+        tags: true
+
+

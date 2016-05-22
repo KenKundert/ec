@@ -46,7 +46,7 @@ testCases += detailedHelp.tests
 # action here
 testCases += [
     {   'stimulus': '-failure'
-      , 'error': "-failure: unrecognized"
+      , 'error': "-failure: unrecognized."
     }
 ]
 
