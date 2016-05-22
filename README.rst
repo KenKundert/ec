@@ -17,7 +17,8 @@ with::
 .. image:: https://travis-ci.org/KenKundert/ec.svg?branch=master
     :target: https://travis-ci.org/KenKundert/ec
 
-Alternatively, you can use ec0, a slightly less capable version of ec.
+Alternatively, you can use ec0, a slightly less capable version of ec that 
+supports older versions of python.
 
 More information on both ec and ec0 can be found at `NurdleTech 
 <http://www.nurdletech.com/ec.html>`_ .
