@@ -26,7 +26,8 @@ More information on both ec and ec0 can be found at `NurdleTech
 Installing from Source
 ----------------------
 
-To get the source code::
+Pip does not have the ability to install man pages. If you would like the man 
+page, you will need to install from source.  To get the source code::
 
    $ git clone git://github.com/KenKundert/ec.git
 
@@ -49,7 +50,7 @@ To install::
    $ ./install
 
 This installs *ec* in ``~/.local``. Be sure to add ``~/.local/bin`` to your 
-PATH.
+PATH. It all installs the man page in ``~/.local/man``
 
 To read the EC manual::
 
@@ -76,15 +77,23 @@ To add two numbers::
    0: 4 5 +
    9:
 
-The prompt displays the value of the x-register.
+The prompt displays the value of the x-register. This command first pushes 
+4 onto the stack, then it pushes 5 on the stack, and finally runs the addition 
+operator, which pulls 4 and 5 off the stack and then push the sum, 9, back onto 
+the stack.
 
 You can string together an arbitrarily long calculation on a single line::
 
    0: 4 5 + 6 7 + *
    117:
 
-Or, you can string a long calculation over multiple lines (this calculates the 
-value of two parallel 100 ohm resistors)::
+This command demonstrates the power of using a stack for calculations. It first 
+computes the sum and places the results on the stack. That result stays on the 
+stack while the sum of 6 and 7 is computed, and finally it is used, and 
+consumed, in the final multiplication.
+
+Alternately, you can string a long calculation over multiple lines (this 
+calculates the value of two parallel 100 ohm resistors)::
 
    0: 100
    100: 100
