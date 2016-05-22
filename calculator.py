@@ -11,6 +11,7 @@ import math
 import re
 from copy import copy
 from textwrap import wrap, fill, dedent
+from inform import display, warn
 from pydoc import pager
 import sys
 
@@ -220,7 +221,7 @@ class Display:
             if imag == zero:
                 return real
             elif imag[0] == '-':
-                imag = imag[1:] if imag[1:] != one else units
+                imag = imag[1:] if imag[1:] != one else units.strip()
                 if imag == zero:
                     return real
                 if real == zero:
@@ -1379,7 +1380,7 @@ class Calculator:
                             action._execute(match.groups(), self)
                             break
                     else:
-                        raise CalculatorError("%s: unrecognized" % cmd)
+                        raise CalculatorError("%s: unrecognized." % cmd)
             return self.stack.peek()
         except (ValueError, OverflowError, TypeError) as err:
             if (
@@ -1392,7 +1393,7 @@ class Calculator:
             else:
                 raise CalculatorError(str(err))
         except ZeroDivisionError as err:
-            raise CalculatorError("division by zero")
+            raise CalculatorError("division by zero.")
 
     # utility methods {{{2
     def clear(self):
@@ -1472,10 +1473,10 @@ class Calculator:
             if style == 'page':
                 pager(message)
             elif style == 'line':
-                print(message)
+                display(message)
             else:
                 assert style == 'fragment'
-                print(message, end=' ')
+                display(message, end=' ')
 
     def printWarning(self, warning):
         '''
@@ -1484,7 +1485,7 @@ class Calculator:
         if self.warningPrinter:
             self.warningPrinter(warning)
         else:
-            print("Warning: %s" % (warning))
+            warn(warning)
 
     def displayHelp(calc):  # pylint: disable=no-self-argument
         '''

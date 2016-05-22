@@ -11,7 +11,7 @@ python=python
 
 # run pylint to find egregious errors
 # this is optional, you can delete this line if you don't have pylint
-pylint -E --disable=no-member actions calculator ec manpage
+#pylint -E --disable=no-member actions calculator ec manpage
 
 # Determine the version of python we are using
 vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')

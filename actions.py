@@ -16,8 +16,9 @@ from calculator import (
     SetFormat, Help, Store, Recall, SetUnits, Print, Dup, Category,
     Calculator
 )
-from engfmt import toNumber, toEngFmt, setSpacer
-setSpacer(spacer=' ', unity_sf='', capital_k=False)
+from engfmt import from_eng_fmt, to_eng_fmt, set_preferences
+from inform import warn
+set_preferences(spacer=' ')
 
 
 # Actions {{{1
@@ -2007,18 +2008,18 @@ freeSpacePermeability = Constant(
     'mu0'
   , lambda: 4e-7*math.pi
   , description="%(key)s: permeability of free space"
-  , units='N/A^2'
+  , units='H/m'
   , synopsis='... => #{mu0}, ...'
   , summary="""
-        The permeability of free space (4e-7*pi N/A^2) is pushed on the
+        The permeability of free space (4e-7*pi H/m) is pushed on the
         stack into the #{x} register.
     """
 )
 freeSpacePermeability.addTest(
     stimulus='mu0'
   , result=4e-7*math.pi
-  , units='N/A^2'
-  , text='1.2566 uN/A^2'
+  , units='H/m'
+  , text='1.2566 uH/m'
 )
 
 # free space characteristic impedance {{{3
@@ -2050,22 +2051,22 @@ numbers = Category("Numbers")
 # a little crude in that it allows commas in the mantissa and adjacent to the
 # decimal point, but other than that it works reasonably well.
 def siNumber(matches):
-    currency = matches[0]
-    sign = matches[1]
+    sign = matches[0]
+    currency = matches[1]
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
-    num =  toNumber(sign+unsignedNum)
+    num = from_eng_fmt(sign+unsignedNum)
     if imag:
        num = (1j * num[0], num[1])
     if currency:
         if num[1]:
-            print("Too many units ($ and %s)." % num[1])
+            warn("Too many units ($ and %s)." % num[1])
         else:
             num = (num[0], currency)
     return num
 
 engineeringNumber = Number(
-    pattern=r'\A(\$?)([-+]?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
+    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
   , action=siNumber
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
@@ -2103,10 +2104,10 @@ engineeringNumber.addTest(
   , text='$100k'
 )
 engineeringNumber.addTest(
-    stimulus='$-20M'
+    stimulus='-$20M'
   , result=-20e6
   , units='$'
-  , text='$-20M'
+  , text='-$20M'
 )
 engineeringNumber.addTest(
     stimulus='.2MOhms'
@@ -2169,16 +2170,16 @@ engineeringNumber.addTest(
   , text='$1k'
 )
 engineeringNumber.addTest(
-    stimulus='$+1000'
+    stimulus='+$1000'
   , result=1e3
   , units='$'
   , text='$1k'
 )
 engineeringNumber.addTest(
-    stimulus='$-1000'
+    stimulus='-$1000'
   , result=-1e3
   , units='$'
-  , text='$-1k'
+  , text='-$1k'
 )
 engineeringNumber.addTest(
     stimulus='j1,000.00KOhms'
@@ -2241,37 +2242,37 @@ engineeringNumber.addTest(
   , text='j $'
 )
 engineeringNumber.addTest(
-    stimulus='$+j1'
+    stimulus='+$j1'
   , result=1j
   , units='$'
   , text='j $'
 )
 engineeringNumber.addTest(
-    stimulus='$-j1'
+    stimulus='-$j1'
   , result=-1j
   , units='$'
-  , text='$-0 + j$-1'
+  , text='-$0 - j$'
 )
 
 def sciNumber(matches):
-    currency = matches[0]
-    sign = matches[1]
+    sign = matches[0]
+    currency = matches[1]
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
     units = matches[4]
-    num =  toNumber(sign+unsignedNum+units)
+    num = from_eng_fmt(sign+unsignedNum+units)
     if imag:
        num = (1j * num[0], num[1])
     if currency:
         if num[1]:
-            print("Too many units ($ and %s)." % num[1])
+            warn("Too many units ($ and %s)." % num[1])
         else:
             num = (num[0], currency)
     return num
 
 # real number in scientific notation {{{3
 scientificNumber = Number(
-    pattern=r'\A(\$?)([-+]?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
+    pattern=r'\A([-+]?)(\$?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
   , action=sciNumber
   , name='scinum'
   , description="<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation"
@@ -2314,16 +2315,16 @@ scientificNumber.addTest(
   , text='$500M'
 )
 scientificNumber.addTest(
-    stimulus='$+20e+03'
+    stimulus='+$20e+03'
   , result=2e4
   , units='$'
   , text='$20k'
 )
 scientificNumber.addTest(
-    stimulus='$-2.0e-3'
+    stimulus='-$2.0e-3'
   , result=-2e-3
   , units='$'
-  , text='$-2m'
+  , text='-$2m'
 )
 scientificNumber.addTest(
     stimulus='j1e6Ohms'
@@ -2356,16 +2357,16 @@ scientificNumber.addTest(
   , text='j$1.5u'
 )
 scientificNumber.addTest(
-    stimulus='$+j1.5e-6'
+    stimulus='+$j1.5e-6'
   , result=1.5e-6j
   , units='$'
   , text='j$1.5u'
 )
 scientificNumber.addTest(
-    stimulus='$-j1.5e-6'
+    stimulus='-$j1.5e-6'
   , result=-1.5e-6j
   , units='$'
-  , text='$-0 + j$-1.5u'
+  , text='-$0 - j$1.5u'
 )
 
 # hexadecimal number {{{3
@@ -2559,7 +2560,7 @@ setFixedFormat.addTest(
 # engineering format {{{3
 setEngineeringFormat = SetFormat(
     pattern=r'\Aeng(\d{1,2})?\Z'
-  , action=lambda num, units, digits: toEngFmt(num, units, prec=digits)
+  , action=lambda num, units, digits: to_eng_fmt(num, units, prec=digits)
   , name='eng'
   , actionTakesUnits=True
   , description="%(name)s[<#{N}>]: use engineering notation"
