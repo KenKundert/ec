@@ -54,7 +54,7 @@ To install::
    $ ./install
 
 This installs *ec* in ``~/.local``. Be sure to add ``~/.local/bin`` to your 
-PATH. It all installs the man page in ``~/.local/man``
+PATH. It also installs the man page in ``~/.local/man``
 
 To read the EC manual::
 
