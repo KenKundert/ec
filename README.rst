@@ -35,11 +35,14 @@ Once cloned, you can get the latest updates using::
 
    $ git pull
 
-Alternatively, you can download a zip file from::
+Alternatively, you can download a zip file from 
+`https://github.com/KenKundert/ec/archive/master.zip`_.  If you go this route, 
+you will have to unzip the file using the unzip command. For example::
 
-   https://github.com/KenKundert/ec/archive/master.zip
-
-If you go this route, you will have to unzip the file using the unzip command.
+   $ wget https://github.com/KenKundert/ec/archive/master.zip
+   $ unzip master.zip
+   $ mv ec-master ec
+   $ cd ec
 
 To run the regression tests::
 
