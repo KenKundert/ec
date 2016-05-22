@@ -5,25 +5,26 @@ This calculator is noteworthy in that it employs a stack model of computation
 (Reverse Polish Notation), it supports numbers with SI scale factors and units, 
 and uses a text-only user interface.
 
-Requires Python version 2.6 or later or version of Python 3.3 or later, 
-including the docutils package.  On Redhat systems, you can get these 
-dependencies by running as root::
 
-   # yum install python python-setuptools python-docutils
+Installing
+----------
 
-or
+Requires Python version 2.7 or later or version of Python 3.3 or later.  Install 
+with::
 
-   # yum install python3 python3-setuptools python3-docutils
+    pip install engineering-calculator
 
-Use ``pacman -S`` rather than ``yum install`` on Arch Linux or ``apt-get`` 
-rather than ``yum`` on Ubuntu.
+.. image:: https://travis-ci.org/KenKundert/ec.svg?branch=master
+    :target: https://travis-ci.org/KenKundert/ec
 
-If you do not have root access or Python is not available through yum, you
-can install it (not as hard as it sounds, see INSTALLING), or you can use ec0, a
-slightly less capable version of ec.
+Alternatively, you can use ec0, a slightly less capable version of ec.
 
 More information on both ec and ec0 can be found at `NurdleTech 
 <http://www.nurdletech.com/ec.html>`_ .
+
+
+Installing from Source
+----------------------
 
 To get the source code::
 
@@ -48,7 +49,7 @@ To install::
    $ ./install
 
 This installs *ec* in ``~/.local``. Be sure to add ``~/.local/bin`` to your 
-PATH.  
+PATH.
 
 To read the EC manual::
 
@@ -59,7 +60,9 @@ To run EC::
    $ ec
    0:
 
-What follows is a brief tour of EC:
+
+A Brief Tour of Engineering Calculator
+--------------------------------------
 
 To perform operations in EC, you first enter the numbers, then the operators.  
 In particular, as you enter the numbers they are pushed onto the stack. The 
