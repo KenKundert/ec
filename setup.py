@@ -1,6 +1,5 @@
 from setuptools import setup
 import os
-from calculator import versionNumber
 
 # Create/update manpage before installing
 import manpage
@@ -13,7 +12,7 @@ def contents(fname):
 
 setup(
     name='engineering-calculator'
-  , version=versionNumber
+  , version="1.1.2"
   , description='engineering calculator'
   , long_description=contents('README.rst')
   , author="Ken Kundert"
