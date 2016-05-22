@@ -34,6 +34,7 @@ page, you will need to install from source.  To get the source code::
 Once cloned, you can get the latest updates using::
 
    $ git pull
+   $ cd ec
 
 Alternatively, you can download a zip file from `github 
 <https://github.com/KenKundert/ec/archive/master.zip>`_.  If you go this route, 
