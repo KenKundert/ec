@@ -35,8 +35,8 @@ Once cloned, you can get the latest updates using::
 
    $ git pull
 
-Alternatively, you can download a zip file from 
-`https://github.com/KenKundert/ec/archive/master.zip`_.  If you go this route, 
+Alternatively, you can download a zip file from `github 
+<https://github.com/KenKundert/ec/archive/master.zip>`_.  If you go this route, 
 you will have to unzip the file using the unzip command. For example::
 
    $ wget https://github.com/KenKundert/ec/archive/master.zip
