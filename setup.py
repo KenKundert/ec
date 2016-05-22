@@ -2,8 +2,13 @@ from setuptools import setup
 import os
 
 # Create/update manpage before installing
-import manpage
-manpage.write('ec.1')
+try:
+    import manpage
+    manpage.write('ec.1')
+except ImportError:
+    # inform is not installed yet, so just use the existing version of the
+    # manpage rather than try to recreate/update it.
+    pass
 
 # Return the contents of a file
 # Path is relative to the location of this setup file.
