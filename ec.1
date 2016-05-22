@@ -1,0 +1,2613 @@
+.\" Man page generated from reStructuredText.
+.
+.TH EC 1 "2016-05-22" "1.1.5" ""
+.SH NAME
+ec \- engineering calculator
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.\" :Copyright: public domain
+.
+.\" :Manual group: Utilities
+.
+.SH SYNOPSIS
+.sp
+\fBec\fP [\fIoptions\fP] [\fIscripts\fP ...]
+.SH OPTIONS
+.INDENT 0.0
+.TP
+.B \-i\fP,\fB  \-\-interactive
+Open an interactive session.
+.TP
+.B \-x\fP,\fB  \-\-printx
+Print value of x register upon termination, ignored
+with interactive sessions.
+.TP
+.BI \-s \ <file>\fP,\fB \ \-\-startup \ <file>
+Run commands from file to initialize calculator before
+any script or interactive session is run, stack is
+cleared after it is run.
+.TP
+.B \-c\fP,\fB  \-\-nocolor
+Do not use colors in the output.
+.TP
+.B \-v\fP,\fB  \-\-verbose
+Narrate the execution of any scripts.
+.TP
+.B \-h\fP,\fB  \-\-help
+Print the usage and exit.
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBec\fP is a stack\-based (RPN) engineering calculator with a text\-based user
+interface that is intended to be used interactively.
+.sp
+If run with no arguments, an interactive session is started.  If arguments
+are present, they are tested to see if they are filenames, and if so, the
+files are opened and the contents are executed as a script.  If they are not
+file names, then the arguments themselves are treated as scripts and
+executed directly. The scripts are run in the order they are specified.  In
+this case an interactive session would not normally be started, but if the
+interactive option is specified, it would be started after all scripts have
+been run.
+.sp
+The contents of \fI~/.ecrc\fP, \fI\&./.ecrc\fP, and the start up file will be run upon
+start up if they exist, and then the stack is cleared.
+.SH STACK
+.sp
+As you enter numbers they are pushed onto a stack.  The most recent member
+of the stack is referred to as the \fIx\fP register and the second most recent
+is the \fIy\fP register.  All other members of the stack are unnamed.  Operators
+consume numbers off the stack to use as operands and then they push the
+results back on the stack.  The operations are performed immediately and
+there is no use of parentheses to group calculations.  Any intermediate
+results are stored on the stack until needed.  For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+4
+6
++
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+In this case 4 gets pushed on to the stack first to become \fIx\fP\&. Then 6 gets
+pushed on to the stack to become \fIx\fP, which makes 4 \fIy\fP\&. Finally, + pulls
+both off the stack, sums them, and then pushes the result of 10 back onto
+the stack.  The stack is left with only one number on it, 10.
+.sp
+After each line \fBec\fP responds by printing the value of the \fIx\fP register.
+Thus the above example would actually look like this:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 4
+\fB4\fP: 6
+\fB6\fP: +
+\fB10\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The benefit of the stack is that it allows you to easily store temporary
+results while you perform your calculation. For example, to evaluate (34 \-
+61)*(23 \- 56) you would use:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 34
+\fB34\fP: 61
+\fB61\fP: \-
+\fB\-27\fP: 23
+\fB23\fP: 56
+\fB56\fP: \-
+\fB\-33\fP: *
+\fB891\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Notice that you entered the numbers as you saw them in the formula you were
+evaluating, and there was no need to enter parentheses, however the
+operators were rearranged in order to express the precedence of the
+operations.
+.sp
+It is not necessary to type enter after each number or operator. You can
+combine them onto one line and just type enter when you would like to see
+the result:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 34 61 \- 23 56 \- *
+\fB891\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Furthermore, it is not necessary to type a space between a number and most
+operators. For example, the above could be entered as:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 34 61\- 23 56\- *
+\fB891\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can print the entire stack using \fIstack\fP, and clear it using \fIclstack\fP\&.
+For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1 2 3 stack
+.in +2
+.in +2
+ 3
+.in -2
+\fIy\fP: 2
+\fIx\fP: 1
+.in -2
+\fB3\fP: clstack
+\fB0\fP: stack
+\fB0\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.SH REAL NUMBERS
+.sp
+Numbers can be entered using normal integer, floating point, and scientific
+notations. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+42
+3.141592
+5,439,749.97
+2.998e8
+13.80651e\-24
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+In addition, you can also use the normal SI scale factors to represent
+either large or small numbers without using scientific notation.
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B Y
+1e24 (yotta)
+.TP
+.B Z
+1e21 (zetta)
+.TP
+.B E
+1e18 (exa)
+.TP
+.B P
+1e15 (peta)
+.TP
+.B T
+1e12 (terra)
+.TP
+.B G
+1e9 (giga)
+.TP
+.B M
+1e6 (mega)
+.TP
+.B k, K
+1e3 (kilo)
+.TP
+.B _
+unity (1)
+.TP
+.B m
+1e\-3 (milli)
+.TP
+.B u
+1e\-6 (micro)
+.TP
+.B n
+1e\-9 (nano)
+.TP
+.B p
+1e\-12 (pico)
+.TP
+.B f
+1e\-15 (fempto)
+.TP
+.B a
+1e\-18 (atto)
+.TP
+.B z
+1e\-21 (zepto)
+.TP
+.B y
+1e\-24 (yocto)
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+For example, 10M represents 1e7 and 8.8p represents 8.8e\-12.
+.sp
+Optionally, numbers can be combined with simple units. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+10KHz
+3.16pF
+2.5_V
+4.7e\-10F
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+In this case the units must be simple identifiers (must not contain special
+characters). For complex units, such as "rads/s", or for numbers that do not
+have scale factors, it is possible to attach units to a number in the \fIx\fP
+register by entering a quoted string.
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 6.626e\-34
+\fB662.6e\-36\fP: "J\-s"
+\fB662.6e\-36 J\-s\fP: 50k "V/V"
+\fB50 KV/V\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The dollar sign ($) is a special unit that is given before the number.
+.INDENT 0.0
+.INDENT 3.5
+.nf
+$100K
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+\fBec\fP takes a conservative approach to units. You can enter them and it
+remembers them, but they do not survive any operation where the resulting
+units would be in doubt.  In this way it displays units when it can, but
+should never display incorrect or misleading units. For example:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 100MHz
+\fB100 MHz\fP: 2pi*
+\fB628.32M\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can display real numbers using one of three available formats, \fIfix\fP,
+\fIsci\fP, or \fIeng\fP\&. These display numbers using fixed point notation (a fixed
+number of digits to the right of the decimal point), scientific notation (a
+mantissa and an exponent), and engineering notation (a mantissa and an SI
+scale factor).  You can optionally give an integer immediately after the
+display mode to indicate the desired precision.  For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1000
+\fB1K\fP: fix2
+\fB1000.00\fP: sci3
+\fB1.000e+03\fP: eng4
+\fB1K\fP: 2pi*
+\fB6.2832K\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Notice that scientific notation always displays the specified number of
+digits whereas engineering notation suppresses zeros at the end of the
+number.
+.sp
+When displaying numbers using engineering notation, \fBec\fP does not use the
+full range of available scale factors under the assumption that the largest
+and smallest would be unfamiliar to most people. For this reason, \fBec\fP
+only uses the most common scale factors when outputting numbers (T, G, M, K,
+m, u, n, p, f, a).
+.SH INTEGERS
+.sp
+You can enter integers in either hexadecimal (base 16), decimal (base 10),
+octal (base 8), or binary (base 2). You can use either programmers notation
+(leading 0) or Verilog notation (leading \(aq) as shown in the examples below:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B 0xFF
+hexadecimal
+.TP
+.B 99
+decimal
+.TP
+.B 0o77
+octal
+.TP
+.B 0b1101
+binary
+.TP
+.B \(aqhFF
+Verilog hexadecimal
+.TP
+.B \(aqd99
+Verilog decimal
+.TP
+.B \(aqo77
+Verilog octal
+.TP
+.B \(aqb1101
+Verilog binary
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Internally, \fBec\fP represents all numbers as double\-precision real numbers.
+To display them as decimal integers, use \fIfix0\fP\&. However, you can display
+the numbers in either base 16 (hexadecimal), base 10 (decimal), base 8
+(octal) or base 2 (binary)  by setting the display mode.  Use either \fIhex\fP,
+\fIfix0\fP, \fIoct\fP, \fIbin\fP, \fIvhex\fP, \fIvdec\fP, \fIvoct\fP, or \fIvbin\fP\&. In each of
+these cases the number is rounded to the closest integer before it is
+displayed. Add an integer after the display mode to control the number of
+digits. For example:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1000
+\fB1K\fP: hex
+\fB0x3b8\fP: hex8
+\fB0x000003b8\fP: hex0
+\fB0x3b8\fP: voct
+\fB\(aqo1750\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.SH COMPLEX NUMBERS
+.sp
+\fBec\fP provides limited support for complex numbers. Two imaginary constants
+are available that can be used to construct complex numbers, \fIj\fP and
+\fIj2pi\fP\&. In addition, two functions are available for converting complex
+numbers to real, \fImag\fP returns the magnitude and \fIph\fP returns the phase.
+They are unusual in that they do not replace the value in the \fIx\fP register
+with the result, instead they simply push either the magnitude of phase into
+the \fIx\fP register, which pushes the original complex number into the \fIy\fP
+register. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1 j +
+\fB1 + j\fP: mag
+\fB1.4142\fP: pop
+\fB1 + j\fP: ph
+\fB45 degs\fP: stack
+.in +2
+\fIy\fP: 1 + j
+\fIx\fP: 45 degs
+.in -2
+\fB45 degs\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can also add the imaginary unit to real number constants. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: j10M
+\fBj10M\fP: \-j1u *
+\fB10\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Only a small number of functions actually support complex numbers; currently
+only \fIexp\fP and \fIsqrt\fP\&. However, most of the basic arithmetic operators
+support complex numbers.
+.SH CONSTANTS
+.sp
+\fBec\fP provides several useful mathematical and physical constants that are
+accessed by specifying them by name. The physical constants are given in MKS
+units. The available constants include:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B pi
+the ratio of a circle\(aqs circumference to its diameter (rads)
+.TP
+.B 2pi
+the ratio of a circle\(aqs circumference to its radius (rads)
+.TP
+.B rt2
+square root of two
+.TP
+.B 0C
+0 Celsius in Kelvin (K)
+.TP
+.B j
+imaginary unit (square root of \-1)
+.TP
+.B j2pi
+j*2*pi (rads)
+.TP
+.B k
+Boltzmann constant (J/K)
+.TP
+.B h
+Planck constant (J\-s)
+.TP
+.B q
+elementary charge (the charge of an electron) (C)
+.TP
+.B c
+speed of light in a vacuum (m/s)
+.TP
+.B eps0
+permittivity of free space (F/m)
+.TP
+.B mu0
+permeability of free space (H/m)
+.TP
+.B Z0
+Characteristic impedance of free space (Ohms)
+.TP
+.B hbar
+Reduced Planck constant (J\-s)
+.TP
+.B me
+mass of an electron (g)
+.TP
+.B mp
+mass of a proton (g)
+.TP
+.B G
+universal gravitational constant (m^3/(kg\-s^2))
+.TP
+.B g
+standard acceleration of gravity (m/s^2)
+.TP
+.B R
+molar gas constant (J/(mol\-K))
+.TP
+.B NA
+Avagadro Number (/mol)
+.TP
+.B rand
+random number between 0 and 1
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+As an example of using the predefined constants, consider computing the
+thermal voltage, kT/q.
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: k 27 0C + * q/
+\fB25.865m\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.SH VARIABLES
+.sp
+You can store the contents of the \fIx\fP register to a variable by using an
+equal sign followed immediately by the name of the variable. To recall it,
+simply use the name. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 100MHz =freq
+\fB100 MHz\fP: 2pi* "rads/s" =omega
+\fB628.32 Mrads/s\fP: 1pF =cin
+\fB1 pF\fP: 1 omega cin* /
+\fB1.5915K\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can display all known variables using \fIvars\fP\&. If you did so immediately
+after entering the lines above, you would see:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB1.5915K\fP: vars
+.in +2
+\fIRref\fP: 50 Ohms
+\fIcin\fP: 1 pF
+\fIfreq\fP: 100 MHz
+\fIomega\fP: 628.32 Mrads/s
+.in -2
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Choosing a variable name that is the same as a one of a built\-in command or
+constant causes the built\-in name to be overridden. Be careful when doing
+this as once a built\-in name is overridden it can no longer be accessed.
+.sp
+Notice that a variable \fIRref\fP exists that you did not create. This is a
+predefined variable that is used in dBm calculations. You are free to change
+its value if you like.
+.SH OPERATORS, FUNCTIONS, NUMBERS AND COMMANDS
+.sp
+In the following descriptions, optional values are given in brackets ([])
+and values given in angle brackets (<>) are not to be taken literally (you
+are expected to choose a suitable value). For example "fix[<\fIN\fP>]" can
+represent "fix" or "fix4", but not "fixN".
+.sp
+For each action that changes the stack a synopsis of those changes is given
+in the form of two lists separated by \fB=>\fP\&. The list on the left
+represents the stack before the action is applied, and the list on the right
+represents the stack after the action was applied. In both of these lists,
+the \fIx\fP register is given first (on the left). Those registers that are
+involved in the action are listed explicitly, and the rest are represented
+by \fB\&...\fP\&. In the before picture, the names of the registers involved in
+the action are simply named. In the after picture, the new values of the
+registers are described. Those values represented by \fB\&...\fP on the right
+side of \fB=>\fP are the same as represented by \fB\&...\fP on the left, though
+they may have moved. For example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => x+y, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This represents addition. In this case the values in the \fIx\fP and \fIy\fP
+registers are summed and placed into the \fIx\fP register. All other values move
+to the left one place.
+.SS Arithmetic Operators
+.sp
+\fB+\fP: addition
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the
+stack and the sum is placed back on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => x+y, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\fP: subtraction
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the
+stack and the difference is placed back on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => x\-y, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB*\fP: multiplication
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the
+stack and the product is placed back on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => x*y, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB/\fP: true division
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+the quotient is placed back on the stack into the \fIx\fP register.  Both
+values are treated as real numbers and the result is a real number. So
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1 2/
+\fB500m\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => y/x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB//\fP: floor division
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the
+stack, the quotient is computed and then converted to an integer using
+the floor operation (it is replaced by the largest integer that is
+smaller than the quotient), and that is placed back on the stack into
+the \fIx\fP register.  So
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1 2//
+\fB0\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => y//x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB%\fP: modulus
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack, the
+quotient is computed and the remainder is placed back on the stack into
+the \fIx\fP register.  So
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 14 3%
+\fB2\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+In this case 2 is the remainder because 3 goes evenly into 14 three
+times, which leaves a remainder of 2.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => y%x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBchs\fP: change sign
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its negative.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => \-x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBrecip\fP: reciprocal
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its reciprocal.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 1/x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBceil\fP: round towards positive infinity
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its value rounded
+towards infinity (replaced with the smallest integer greater than its
+value).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => ceil(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBfloor\fP: round towards negative infinity
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its value rounded
+towards negative infinity (replaced with the largest integer smaller
+than its value).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => floor(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB!\fP: factorial
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its factorial.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => x!, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB%chg\fP: percent change
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+the percent difference between \fIx\fP and \fIy\fP relative to \fIy\fP is pushed
+back into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => 100*(x\-y)/y, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB||\fP: parallel combination
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+replaced with the reciprocal of the sum of their reciprocals.  If the
+values in the \fIx\fP and \fIy\fP registers are both resistances, both
+elastances, or both inductances, then the result is the resistance,
+elastance or inductance of the two in parallel. If the values are
+conductances, capacitances or susceptances, then the result is the
+conductance, capacitance or susceptance of the two in series.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => 1/(1/x+1/y), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Powers, Roots, Exponentials and Logarithms
+.sp
+\fB**\fP: raise y to the power of x
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the
+stack and replaced with the value of \fIy\fP raised to the power of
+\fIx\fP\&.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => y**x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+aliases: pow, ytox
+.UNINDENT
+.UNINDENT
+.sp
+\fBexp\fP: natural exponential
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its exponential.
+Supports a complex argument.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => exp(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: powe
+.UNINDENT
+.UNINDENT
+.sp
+\fBln\fP: natural logarithm
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its natural logarithm.
+Supports a complex argument.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => ln(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: loge
+.UNINDENT
+.UNINDENT
+.sp
+\fBpow10\fP: raise 10 to the power of x
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with 10 raised to \fIx\fP\&.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 10**x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: 10tox
+.UNINDENT
+.UNINDENT
+.sp
+\fBlog\fP: base 10 logarithm
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its common logarithm.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => log(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+aliases: log10, lg
+.UNINDENT
+.UNINDENT
+.sp
+\fBpow2\fP: raise 2 to the power of x
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with 2 raised to \fIx\fP\&.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 2**x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: 2tox
+.UNINDENT
+.UNINDENT
+.sp
+\fBlog2\fP: base 2 logarithm
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its base 2 logarithm.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => log2(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: lb
+.UNINDENT
+.UNINDENT
+.sp
+\fBsqr\fP: square
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its square.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => x**2, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBsqrt\fP: square root
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its square root.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => sqrt(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: rt
+.UNINDENT
+.UNINDENT
+.sp
+\fBcbrt\fP: cube root
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its cube root.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => cbrt(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Trigonometric Functions
+.sp
+\fBsin\fP: trigonometric sine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its sine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => sin(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBcos\fP: trigonometric cosine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its cosine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => cos(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBtan\fP: trigonometric tangent
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its tangent.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => tan(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBasin\fP: trigonometric arc sine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its arc sine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => asin(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBacos\fP: trigonometric arc cosine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its arc cosine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => acos(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBatan\fP: trigonometric arc tangent
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its arc tangent.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => atan(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBrads\fP: use radians
+.INDENT 0.0
+.INDENT 3.5
+Switch the trigonometric mode to radians (functions such as \fIsin\fP,
+\fIcos\fP, \fItan\fP, and \fIptor\fP expect angles to be given in radians;
+functions such as \fIarg\fP, \fIasin\fP, \fIacos\fP, \fIatan\fP, \fIatan2\fP, and
+\fIrtop\fP should produce angles in radians).
+.UNINDENT
+.UNINDENT
+.sp
+\fBdegs\fP: use degrees
+.INDENT 0.0
+.INDENT 3.5
+Switch the trigonometric mode to degrees (functions such as \fIsin\fP,
+\fIcos\fP, \fItan\fP, and \fIptor\fP expect angles to be given in degrees;
+functions such as \fIarg\fP, \fIasin\fP, \fIacos\fP, \fIatan\fP, \fIatan2\fP, and
+\fIrtop\fP should produce angles in degrees).
+.UNINDENT
+.UNINDENT
+.SS Complex and Vector Functions
+.sp
+\fBabs\fP: magnitude
+.INDENT 0.0
+.INDENT 3.5
+The absolute value of the number in the \fIx\fP register is pushed onto the
+stack if it is real. If the value is complex, the magnitude is pushed
+onto the stack.
+.sp
+Unlike most other functions, this one does not replace the value of its
+argument on the stack. Its value is simply pushed onto the stack without
+first popping off the argument.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => abs(x), x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: mag
+.UNINDENT
+.UNINDENT
+.sp
+\fBarg\fP: phase
+.INDENT 0.0
+.INDENT 3.5
+The argument of the number in the \fIx\fP register is pushed onto the
+stack if it is complex. If the value is real, zero is pushed
+onto the stack.
+.sp
+Unlike most other functions, this one does not replace the value of its
+argument on the stack. Its value is simply pushed onto the stack without
+first popping off the argument.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => arg(x), x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: ph
+.UNINDENT
+.UNINDENT
+.sp
+\fBhypot\fP: hypotenuse
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+replaced with the length of the vector from the origin to the point
+(\fIx\fP, \fIy\fP).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => sqrt(x**2+y**2), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: len
+.UNINDENT
+.UNINDENT
+.sp
+\fBatan2\fP: two\-argument arc tangent
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+replaced with the angle of the vector from the origin to the point.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => atan2(y,x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: angle
+.UNINDENT
+.UNINDENT
+.sp
+\fBrtop\fP: convert rectangular to polar coordinates
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+replaced with the length of the vector from the origin to the point
+(\fIx\fP, \fIy\fP) and with the angle of the vector from the origin to the
+point (\fIx\fP, \fIy\fP).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => sqrt(x**2+y**2), atan2(y,x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBptor\fP: convert polar to rectangular coordinates
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are popped from the stack and
+interpreted as the length and angle of a vector and are replaced with
+the coordinates of the end\-point of that vector.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => x*cos(y), x*sin(y), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Hyperbolic Functions
+.sp
+\fBsinh\fP: hyperbolic sine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic sine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => sinh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBcosh\fP: hyperbolic cosine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic cosine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => cosh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBtanh\fP: hyperbolic tangent
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic tangent.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => tanh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBasinh\fP: hyperbolic arc sine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic arc sine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => asinh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBacosh\fP: hyperbolic arc cosine
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic arc
+cosine.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => acosh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBatanh\fP: hyperbolic arc tangent
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its hyperbolic arc
+tangent.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => atanh(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Decibel Functions
+.sp
+\fBdb\fP: convert voltage or current to dB
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is replaced with its value in
+decibels. It is appropriate to apply this form when
+converting voltage or current to decibels.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 20*log(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+aliases: db20, v2db, i2db
+.UNINDENT
+.UNINDENT
+.sp
+\fBadb\fP: convert dB to voltage or current
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is converted from decibels and that value
+is placed back into the \fIx\fP register.  It is appropriate to apply this
+form when converting decibels to voltage or current.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 10**(x/20), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+aliases: db2v, db2i
+.UNINDENT
+.UNINDENT
+.sp
+\fBdb10\fP: convert power to dB
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is converted from decibels and that
+value is placed back into the \fIx\fP register.  It is appropriate to
+apply this form when converting power to decibels.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 10*log(x), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: p2db
+.UNINDENT
+.UNINDENT
+.sp
+\fBadb10\fP: convert dB to power
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is converted from decibels and that value
+is placed back into the \fIx\fP register.  It is appropriate to apply this
+form when converting decibels to voltage or current.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 10**(x/10), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: db2p
+.UNINDENT
+.UNINDENT
+.sp
+\fBvdbm\fP: convert peak voltage to dBm
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is expected to be the peak voltage of a
+sinusoid that is driving a load resistor equal to \fIRref\fP (a predefined
+variable).  It is replaced with the power delivered to the resistor in
+decibels relative to 1 milliwatt.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 30+10*log10((x**2)/(2*Rref)), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: v2dbm
+.UNINDENT
+.UNINDENT
+.sp
+\fBdbmv\fP: dBm to peak voltage
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is expected to be a power in decibels
+relative to one milliwatt. It is replaced with the peak voltage of a
+sinusoid that would be needed to deliver the same power to a load
+resistor equal to \fIRref\fP (a predefined variable).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => sqrt(2*10**(x \- 30)/10)*Rref), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: dbm2v
+.UNINDENT
+.UNINDENT
+.sp
+\fBidbm\fP: peak current to dBm
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is expected to be the peak current of a
+sinusoid that is driving a load resistor equal to \fIRref\fP (a predefined
+variable).  It is replaced with the power delivered to the resistor in
+decibels relative to 1 milliwatt.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => 30+10*log10(((x**2)*Rref/2), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: i2dbm
+.UNINDENT
+.UNINDENT
+.sp
+\fBdbmi\fP: dBm to peak current
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is expected to be a power in decibels
+relative to one milliwatt. It is replaced with the peak current of a
+sinusoid that would be needed to deliver the same power to a load
+resistor equal to \fIRref\fP (a predefined variable).
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => sqrt(2*10**(x \- 30)/10)/Rref), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: dbm2i
+.UNINDENT
+.UNINDENT
+.SS Constants
+.sp
+\fBpi\fP: the ratio of a circle\(aqs circumference to its diameter
+.INDENT 0.0
+.INDENT 3.5
+The value of pi (3.141592...) is pushed on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => pi, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB2pi\fP: the ratio of a circle\(aqs circumference to its radius
+.INDENT 0.0
+.INDENT 3.5
+Two times the value of pi (6.283185...) is pushed on the stack into the
+\fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => 2*pi, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBrt2\fP: square root of two
+.INDENT 0.0
+.INDENT 3.5
+The square root of two (1.4142...) is pushed on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => sqrt(2), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB0C\fP: 0 Celsius in Kelvin
+.INDENT 0.0
+.INDENT 3.5
+Zero celsius in kelvin (273.15 K) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => 0C, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBj\fP: imaginary unit (square root of \-1)
+.INDENT 0.0
+.INDENT 3.5
+The imaginary unit (square root of \-1) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => j, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBj2pi\fP: j*2*pi
+.INDENT 0.0
+.INDENT 3.5
+2 pi times the imaginary unit (j6.283185...) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => j*2*pi, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBk\fP: Boltzmann constant
+.INDENT 0.0
+.INDENT 3.5
+The Boltzmann constant (R/NA) or 1.3806488e\-23 J/K) is pushed on the
+stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => k, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBh\fP: Planck constant
+.INDENT 0.0
+.INDENT 3.5
+The Planck constant (6.62606957e\-34 J\-s) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => h, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBq\fP: elementary charge (the charge of an electron)
+.INDENT 0.0
+.INDENT 3.5
+The elementary charge (the charge of an electron or 1.602176565e\-19 C)
+is pushed on the stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => q, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBc\fP: speed of light in a vacuum
+.INDENT 0.0
+.INDENT 3.5
+The speed of light in a vacuum (2.99792458e8 m/s) is pushed on the stack
+into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => c, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBeps0\fP: permittivity of free space
+.INDENT 0.0
+.INDENT 3.5
+The permittivity of free space (8.854187817e\-12 F/m) is pushed on the
+stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => eps0, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmu0\fP: permeability of free space
+.INDENT 0.0
+.INDENT 3.5
+The permeability of free space (4e\-7*pi H/m) is pushed on the
+stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => mu0, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBZ0\fP: Characteristic impedance of free space
+.INDENT 0.0
+.INDENT 3.5
+The characteristic impedance of free space (376.730313461 Ohms) is
+pushed on the stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => Z0, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBhbar\fP: Reduced Planck constant
+.INDENT 0.0
+.INDENT 3.5
+The reduced Planck constant (1.054571726e\-34 J\-s) is pushed on the stack
+into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => h/(2*pi), ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBme\fP: mass of an electron
+.INDENT 0.0
+.INDENT 3.5
+The mass of an electron (9.10938291e\-28 g) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => me, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmp\fP: mass of a proton
+.INDENT 0.0
+.INDENT 3.5
+The mass of a proton (1.672621777e\-24 g) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => mp, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBG\fP: universal gravitational constant
+.INDENT 0.0
+.INDENT 3.5
+The universal gravitational constant (6.6746e\-11 m^3/(kg\-s^2)) is pushed
+on the stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => G, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBg\fP: standard acceleration of gravity
+.INDENT 0.0
+.INDENT 3.5
+The standard acceleration of gravity on earth (9.80665 m/s^2)) is pushed
+on the stack into the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => g, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBR\fP: molar gas constant
+.INDENT 0.0
+.INDENT 3.5
+The molar gas constant (8.3144621 J/(mol\-K)) is pushed on the stack into
+the \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => R, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBNA\fP: Avagadro Number
+.INDENT 0.0
+.INDENT 3.5
+Avogadro constant (6.02214129e23) is pushed on the stack into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => NA, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Numbers
+.sp
+\fB<N[.M][S[U]]>\fP: a real number
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is the
+integer portion of the mantissa and \fIM\fP is an optional fractional part.
+\fIS\fP is a letter that represents an SI scale factor. \fIU\fP the optional
+units (must not contain special characters).  For example, 10MHz
+represents 1e7 Hz.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB<N[.M]>e<E[U]>\fP: a real number in scientific notation
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is the
+integer portion of the mantissa and \fIM\fP is an optional fractional part.
+\fIE\fP is an integer exponent. \fIU\fP the optional units (must not contain
+special characters).  For example, 2.2e\-8F represents 22nF.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB0x<N>\fP: a hexadecimal number
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 16 (use a\-f to represent digits greater than 9).  For
+example, 0xFF represents the hexadecimal number FF or the decimal number
+255.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB0o<N>\fP: a number in octal
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 8 (it must not contain the digits 8 or 9).  For example,
+0o77 represents the octal number 77 or the decimal number 63.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB0b<N>\fP: a number in binary
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 2 (it may contain only the digits 0 or 1).  For example,
+0b1111 represents the octal number 1111 or the decimal number 15.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\(aqh<N>\fP: a number in Verilog hexadecimal notation
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 16 (use a\-f to represent digits greater than 9).  For
+example, \(aqhFF represents the hexadecimal number FF or the decimal number
+255.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\(aqd<N>\fP: a number in Verilog decimal
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 10.  For example, \(aqd99 represents the decimal number 99.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\(aqo<N>\fP: a number in Verilog octal
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 8 (it must not contain the digits 8 or 9).  For example,
+\(aqo77 represents the octal number 77 or the decimal number 63.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\(aqb<N>\fP: a number in Verilog binary
+.INDENT 0.0
+.INDENT 3.5
+The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
+integer in base 2 (it may contain only the digits 0 or 1).  For example,
+\(aqb1111 represents the binary number 1111 or the decimal number 15.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => num, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Number Formats
+.sp
+\fBeng[<N>]\fP: use engineering notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed with a fixed number of digits of precision and the
+SI scale factors are used to convey the exponent when possible.  If an
+optional whole number \fIN\fP immediately follows \fIeng\fP, the precision is
+set to \fIN\fP digits.
+.UNINDENT
+.UNINDENT
+.sp
+\fBsci[<N>]\fP: use scientific notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed with a fixed number of digits of precision and the
+exponent is given explicitly as an integer.  If an optional whole number
+\fIN\fP immediately follows \fIsci\fP, the precision is set to \fIN\fP digits.
+.UNINDENT
+.UNINDENT
+.sp
+\fBfix[<N>]\fP: use fixed notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed with a fixed number of digits to the right of the
+decimal point. If an optional whole number \fIN\fP immediately follows
+\fIfix\fP, the number of digits to the right of the decimal point is set to
+\fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBhex[<N>]\fP: use hexadecimal notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 16 (a\-f are used to represent digits
+greater than 9) with a fixed number of digits.  If an optional whole
+number \fIN\fP immediately follows \fIhex\fP, the number of digits displayed
+is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBoct[<N>]\fP: use octal notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 8 with a fixed number of digits.  If an
+optional whole number \fIN\fP immediately follows \fIoct\fP, the number of
+digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBbin[<N>]\fP: use binary notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 2 with a fixed number of digits.  If an
+optional whole number \fIN\fP immediately follows \fIbin\fP, the number of
+digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBvhex[<N>]\fP: use Verilog hexadecimal notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 16 in Verilog format (a\-f are used to
+represent digits greater than 9) with a fixed number of digits.  If an
+optional whole number \fIN\fP immediately follows \fIvhex\fP, the number of
+digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBvdec[<N>]\fP: use Verilog decimal notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 10 in Verilog format with a fixed number
+of digits.  If an optional whole number \fIN\fP immediately follows
+\fIvdec\fP, the number of digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBvoct[<N>]\fP: use Verilog octal notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 8 in Verilog format with a fixed number of
+digits.  If an optional whole number \fIN\fP immediately follows \fIvoct\fP,
+the number of digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBvbin[<N>]\fP: use Verilog binary notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed in base 2 in Verilog format with a fixed number of
+digits.  If an optional whole number \fIN\fP immediately follows \fIvbin\fP,
+the number of digits displayed is set to \fIN\fP\&.
+.UNINDENT
+.UNINDENT
+.SS Variable Commands
+.sp
+\fB=<name>\fP: store value into a variable
+.INDENT 0.0
+.INDENT 3.5
+Store the value in the \fIx\fP register into a variable with the given
+name.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB<name>\fP: recall value of a variable
+.INDENT 0.0
+.INDENT 3.5
+Place the value of the variable with the given name into the \fIx\fP
+register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => name, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBvars\fP: print variables
+.INDENT 0.0
+.INDENT 3.5
+List all defined variables and their values.
+.UNINDENT
+.UNINDENT
+.SS Stack Commands
+.sp
+\fBswap\fP: swap x and y
+.INDENT 0.0
+.INDENT 3.5
+The values in the \fIx\fP and \fIy\fP registers are swapped.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, y, ... => y, x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBdup\fP: duplicate \fIx\fP
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is pushed onto the stack again.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => x, x, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: enter
+.UNINDENT
+.UNINDENT
+.sp
+\fBpop\fP: discard x
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP register is pulled from the stack and discarded.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+alias: clrx
+.UNINDENT
+.UNINDENT
+.sp
+\fBstack\fP: print stack
+.INDENT 0.0
+.INDENT 3.5
+Print all the values stored on the stack.
+.UNINDENT
+.UNINDENT
+.sp
+\fBclstack\fP: clear stack
+.INDENT 0.0
+.INDENT 3.5
+Remove all values from the stack.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... =>
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Miscellaneous Commands
+.sp
+\fBrand\fP: random number between 0 and 1
+.INDENT 0.0
+.INDENT 3.5
+A number between 0 and 1 is chosen at random and its value is pushed on
+the stack into \fIx\fP register.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&... => rand, ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\(ga<text>\(ga\fP: print text
+.INDENT 0.0
+.INDENT 3.5
+Print "text" (the contents of the back\-quotes) to the terminal.
+Generally used in scripts to report and annotate results.  Any instances
+of $N or ${N} are replaced by the value of register N, where 0
+represents the \fIx\fP register, 1 represents the \fIy\fP register, etc.  Any
+instances of $Var or ${Var} are replaced by the value of the variable
+\fIVar\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB"<units>"\fP: set the units of the x register
+.INDENT 0.0
+.INDENT 3.5
+The units given are applied to the value in the \fIx\fP register.
+The actual value is unchanged.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... => x "units", ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBabout\fP: print information about this calculator
+.sp
+\fBquit\fP: quit (:q or ^D also works)
+.INDENT 0.0
+.INDENT 3.5
+alias: :q
+.UNINDENT
+.UNINDENT
+.sp
+\fBhelp\fP: print a summary of the available features
+.sp
+\fB?[<topic>]\fP: detailed help on a particular topic
+.INDENT 0.0
+.INDENT 3.5
+A topic, in the form of a symbol or name, may follow the question mark,
+in which case a detailed description will be printed for that topic.
+If no topic is given, a list of available topics is listed.
+.UNINDENT
+.UNINDENT
+.SH HELP
+.sp
+You can use help to get a summary of the various features available in EC
+along with a short summary of each feature. For more detailed information,
+you can use \(aq?\(aq.  If you use \(aq?\(aq you will get a list of all available help
+topics. If you use \(aq?<\fItopic\fP>\(aq where \fItopic\fP us either a symbol or a
+name, you will get a detailed description of that topic.
+.SH INITIALIZATION
+.sp
+At start up \fBec\fP reads and executes commands from files.  It first tries
+\(aq~/.ecrc\(aq and runs any commands it contains if it exists.  It then tries
+\(aq./.ecrc\(aq if it exists.  Finally it runs the startup file specified on the
+command line (with the \fB\-s\fP or \fB\-\-startup\fP option).  It is common to put
+your generic preferences in \(aq~/.exrc\(aq.  For example, if your are a physicist
+with a desire for high precision results, you might use:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+eng6
+h 2pi / "J\-s" =hbar
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+This tells \fBec\fP to use 6 digits of resolution and predefines \fIhbar\fP as a
+constant.  After all of the startup files have been processed, the stack is
+cleared.
+.SH SCRIPTING
+.sp
+Command line arguments are used as scripts. If the argument corresponds to
+an existing file, the file is opened its contents are executed. Otherwise,
+the argument itself is executed (often it needs to be quoted to protect its
+contents from being interpreted by the shell). The arguments are executed in
+the order given. When arguments are given the calculator by default does not
+start an interactive session and does not produce output.  If you wish to
+use an interactive session after scripts have been evaluated, use the \fB\-i\fP
+or \fI\-\-interactive\fP command line options. If you wish to produce output,
+which you certainly will if you are not using the interactive session, you
+must add print commands to your script, which is a double\-quoted string. For
+example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: \(gaHello world!\(ga
+Hello world!
+\fB0\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can add the values of registers and variables to your print statements.
+\fI$N\fP prints out the value of register \fIN\fP, where 0 is the \fIx\fP register,
+1 is the \fIy\fP register, etc. \fI$name\fP will print the value of a variable
+with the given name. Alternatively, you can use \fI${N\fP} and \fI${name\fP} to
+disambiguate the name or number. To print a dollar sign, use \fI$$\fP\&.  To
+print a newline or a tab, use \fI\en\fP and \fI\et\fP\&. For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 100MHz =freq
+\fB100 MHz\fP: 2pi* "rads/s"
+\fB628.32 Mrads/s\fP: \(ga$freq corresponds to $0.\(ga
+100 MHz corresponds to 628.32 Mrads/s.
+\fB628.32 Mrads/s\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+To illustrate the use of a script, assume that a file named \fIlg\fP exists and
+contains a calculation for the loop gain of a PLL,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+=freq
+88.3u "V/per" =Kdet
+9.07G "Hz/V" =Kvco
+2 =M
+8 =N
+2 =F
+freq 2pi* "rads/s" =omega
+Kdet Kvco* omega/ M/ =a
+N F* =f
+a f* =T
+\(gaOpen loop gain = $a\enFeedback factor = $f\enLoop gain = $T\(ga
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Notice that it starts by saving the value in the \fIx\fP register to the
+variable \fIfreq\fP\&. This script would be run as:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+$ ec 1KHz lg
+Open loop gain = 63.732
+Feedback factor = 16
+Loop gain = 1.0197K
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The first argument does not correspond to a file, so it is executed as a
+script.  It simply pushes 1KHz onto the stack. The second argument does
+correspond to a file, so its contents are executed. The script ends with a
+print command, so the results are printed to standard output as the script
+terminates.
+.sp
+Generally if you do not issue a print command in a script, there is no
+output.  However, if you specify the \fB\-x\fP or \fB\-\-printx\fP command line
+option the value of the \fIx\fP register is printed upon termination. An
+example of how this could be useful is:
+.nf
+$ ec \-x 1.52e\-11F
+15.2 pF
+.fi
+.sp
+.sp
+In this example, \fBec\fP is used simply to convert a number into the more
+readable engineering notation.
+.sp
+One issue with command line scripting that you need to be careful of is that
+if an argument is a number with a leading minus sign it will be mistaken to
+be a command line option. To avoid this issue, specify the number without
+the minus sign and follow it with \fIchs\fP\&.  Alternatively, you can embed the
+number in quotes but add a leading space.  For example,
+.nf
+$ ec \-x \-30 dbmv
+ec: \-30 dbmv: unknown option.
+$ ec \-x 30 chs dbmv
+10 mV
+$ ec \-x \(aq \-30\(aq dbmv
+10 mV
+.fi
+.sp
+.SH DIAGNOSTICS
+.sp
+If an error occurs on a line, an error message is printed and the stack is
+restored to the values it had before the line was entered. So it is almost
+as if you never typed the line in at all.  The exception being that any
+variables or modes that are set on the line before the error occurred are
+retained.  For example,
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1KOhms =r
+\fB1 KOhms\fP: 100MHz =freq 1pF = c
+=: unrecognized
+\fB1 KOhms\fP: stack
+.in +2
+\fIx\fP: 1 KOhms
+.in -2
+\fB1 KOhms\fP: vars
+.in +2
+\fIRref\fP: 50 Ohms
+\fIfreq\fP: 100MHz
+\fIr\fP: 1 KOhms
+.in -2
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The error occurred when trying to assign a value to \fIc\fP because a space was
+accidentally left between the equal sign and the variable name.  Notice that
+100MHz was saved to the variable \fIfreq\fP, but the stack was restored to the
+state it had before the offending line was entered.
+.SH SEE ALSO
+.sp
+bc, dc
+.SH AUTHOR
+Ken Kundert <ec@nurdletech.com>
+.\" Generated by docutils manpage writer.
+.
