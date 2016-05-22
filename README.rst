@@ -1,7 +1,7 @@
 ec: An Engineering Calculator
 =============================
 
-This calculator is noteworthy in that it employs a stack model of computation 
+Ths calculator is noteworthy in that it employs a stack model of computation 
 (Reverse Polish Notation), it supports numbers with SI scale factors and units, 
 and uses a text-only user interface.
 
@@ -81,10 +81,10 @@ To add two numbers::
    0: 4 5 +
    9:
 
-The prompt displays the value of the x-register. This command first pushes 
-4 onto the stack, then it pushes 5 on the stack, and finally runs the addition 
-operator, which pulls 4 and 5 off the stack and then push the sum, 9, back onto 
-the stack.
+This command first pushes 4 onto the stack, then it pushes 5 on the stack, and 
+finally runs the addition operator, which pulls 4 and 5 off the stack and then 
+pushes the sum, 9, back onto the stack.  The prompt displays the value of the 
+x-register, which is generally the final result from the previous command.
 
 You can string together an arbitrarily long calculation on a single line::
 
@@ -110,6 +110,56 @@ follow a number or a name. For example::
    0: 4 5* 6 5+ *
    220:
 
+Use *stack* to see the contents of the stack::
+
+   0: 1 2 3 4 5 stack
+        1
+        2
+        3
+     y: 4
+     x: 5
+   5: + stack
+        1
+        2
+     y: 3
+     x: 9
+   9: + stack
+        1
+     y: 2
+     x: 12
+   12: + stack
+     y: 1
+     x: 14
+   14: + stack
+     x: 15
+   14: -1 stack
+     y: 15
+     x: -1
+   -1:
+
+The stack grows without limit as needed. The bottom two values are the values 
+that are generally involved in operations and they are labeled for *x* and *y* 
+as an aid to help you understand and predict the basic operation of various 
+commands. For example::
+
+   0: 8 2 stack
+     y: 8
+     x: 2
+   2: ytox
+   64:
+
+The command name *ytox* is short for 'raise value of *y* register to the value 
+in the *x* register'.
+
+You remove a value from the bottom of the stack with *pop*::
+
+   0: 10 -3 stack
+     y: 10
+     x: -3
+   -3: pop
+   10: stack
+     x: 10
+
 To store a value into a variable, type an equal sign followed by a name. To
 recall it, simply use the name::
 
@@ -131,7 +181,8 @@ Display variables using::
 *Rref* is a special variable that is set by default to 50 Ohms, but you can 
 change its value. It is used in *dBm* calculations.
 
-EC supports units, but in a relatively conservative way. You can enter them
+From the above example you can see that EC supports SI scale factors and units.  
+The support for units is relatively conservative.  You can enter them
 and it remembers them, but they do not survive any operation other than a
 copy. In this way it should never display incorrect or misleading units, however
 it displays units when it can. For example::
