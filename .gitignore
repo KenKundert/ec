@@ -1,6 +1,7 @@
 *.py[co]
 ec.rst
 .*.swp
+bump
 
 # Packages
 *.egg
