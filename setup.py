@@ -17,7 +17,7 @@ def contents(fname):
 
 setup(
     name='engineering-calculator'
-  , version="1.1.6"
+  , version="1.1.7"
   , description='engineering calculator'
   , long_description=contents('README.rst')
   , author="Ken Kundert"
