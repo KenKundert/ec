@@ -22,30 +22,30 @@ python = 'python%s' % sys.version[0]
 testCases = [
     {   'stimulus': '-s lg0.ec 1KHz lg.ec'
       , 'output': '''\
-openloop gain = 63.732
-feedback factor = 16
-loopgain = 1.0197k
+Open loop gain = 63.732
+Feedback factor = 16
+Loop gain = 1.0197k
 '''
     }
   , {   'stimulus': "'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz' lg.ec"
       , 'output': '''\
-openloop gain = 63.732
-feedback factor = 16
-loopgain = 1.0197k
+Open loop gain = 63.732
+Feedback factor = 16
+Loop gain = 1.0197k
 '''
     }
   , {   'stimulus': "'88.3u =Kdet' '9.07G =Kvco' '2 =M' '8 =N' '2 =F' '1KHz' lg.ec"
       , 'output': '''\
-openloop gain = 63.732
-feedback factor = 16
-loopgain = 1.0197k
+Open loop gain = 63.732
+Feedback factor = 16
+Loop gain = 1.0197k
 '''
     }
-  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `openloop gain = $a\nfeedback factor = $f\nloopgain = $T`'"""
+  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `Open loop gain = $a\nFeedback factor = $f\nLoop gain = $T`'"""
       , 'output': '''\
-openloop gain = 63.732
-feedback factor = 16
-loopgain = 1.0197k
+Open loop gain = 63.732
+Feedback factor = 16
+Loop gain = 1.0197k
 '''
     }
 ]
