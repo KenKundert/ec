@@ -31,7 +31,7 @@ setup(
     ]
   , install_requires=[
         'docopt',
-        'engfmt>=0.8',
+        'engfmt>=0.9',
         'inform',
     ]
   , classifiers=[
