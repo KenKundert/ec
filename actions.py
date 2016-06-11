@@ -16,9 +16,9 @@ from calculator import (
     SetFormat, Help, Store, Recall, SetUnits, Print, Dup, Category,
     Calculator
 )
-from engfmt import to_quantity, to_eng_quantity, set_preferences
 from inform import warn
-set_preferences(spacer=' ')
+import engfmt
+engfmt.set_preferences(spacer=' ')
 
 
 # Actions {{{1
@@ -2055,7 +2055,7 @@ def siNumber(matches):
     currency = matches[1]
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
-    num = to_quantity(sign+unsignedNum)
+    num = engfmt.to_tuple(sign+unsignedNum)
     if imag:
        num = (1j * num[0], num[1])
     if currency:
@@ -2260,7 +2260,7 @@ def sciNumber(matches):
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
     units = matches[4]
-    num = to_quantity(sign+unsignedNum+units)
+    num = engfmt.to_tuple(sign+unsignedNum+units)
     if imag:
        num = (1j * num[0], num[1])
     if currency:
@@ -2560,7 +2560,7 @@ setFixedFormat.addTest(
 # engineering format {{{3
 setEngineeringFormat = SetFormat(
     pattern=r'\Aeng(\d{1,2})?\Z'
-  , action=lambda num, units, digits: to_eng_quantity(num, units, prec=digits)
+  , action=lambda num, units, digits: engfmt.to_text(num, units, prec=digits)
   , name='eng'
   , actionTakesUnits=True
   , description="%(name)s[<#{N}>]: use engineering notation"
