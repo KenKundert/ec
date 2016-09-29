@@ -46,10 +46,10 @@ setup(
     download_url='https://github.com/kenkundert/ec/tarball/master',
     scripts=['ec'],
     py_modules=[
-        'actions'
+        'actions',
         'calculator',
         'ec',
-        'manpage'
+        'manpage',
     ],
     setup_requires=requires,
     install_requires=requires,
