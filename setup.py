@@ -12,9 +12,14 @@ class MyInstall(Install):
         # move it into position
         location = self.install_lib
         try:
-            mandir = os.path.join(self.prefix, 'man', 'man1')
-            manfile = os.path.join(mandir, 'ec.1')
-            os.makedirs(mandir)
+            prefix = self.prefix
+            if prefix:
+                mandir = os.path.join(self.prefix, 'man', 'man1')
+                os.makedirs(mandir)
+                manfile = os.path.join(mandir, 'ec.1')
+            else:
+                manfile = 'ec.1'
+                print('Could not push manpage into install directory.')
             manpage.write(manfile)
         except (IOError, OSError) as err:
             if err.errno != errno.EEXIST:
