@@ -28,6 +28,13 @@ class MyInstall(Install):
 def contents(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+requires=[
+    'docopt',
+    'docutils',
+    'engfmt>=0.9',
+    'inform',
+]
+
 setup(
     name='engineering-calculator',
     version="1.1.11",
@@ -39,12 +46,8 @@ setup(
     download_url='https://github.com/kenkundert/ec/tarball/master',
     scripts=['ec'],
     py_modules=['ec', 'calculator', 'actions'],
-    install_requires=[
-        'docopt',
-        'docutils',
-        'engfmt>=0.9',
-        'inform',
-    ],
+    setup_requires=requires,
+    install_requires=requires,
     cmdclass={
         'install': MyInstall,
     },
