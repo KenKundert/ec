@@ -12,7 +12,7 @@ Installing
 Requires Python version 2.7 or later or version of Python 3.3 or later.  Install 
 with::
 
-    pip install engineering-calculator
+    pip install engineering-calculator --user
 
 .. image:: https://travis-ci.org/KenKundert/ec.svg?branch=master
     :target: https://travis-ci.org/KenKundert/ec
@@ -97,13 +97,15 @@ computes the sum and places the results on the stack. That result stays on the
 stack while the sum of 6 and 7 is computed, and finally it is used, and 
 consumed, in the final multiplication.
 
-Alternately, you can string a long calculation over multiple lines (this 
-calculates the value of two parallel 100 ohm resistors)::
+Alternately, you can string a calculation over multiple lines (this calculates 
+the value of two parallel 100 ohm resistors)::
 
    0: 100
    100: 100
    100: ||
    50:
+
+Effectively, you only need to type *enter* is when you want to see the result.
 
 Select operators can be entered without preceding them with a space if they 
 follow a number or a name. For example::
@@ -201,6 +203,30 @@ Notice that EC captured units on 100MHz and stored them into the memory freq.
 Also notice that the units of "rads/s" were explicitly specified, and they were
 also captured. Finally, notice that dividing by *2pi* cleared the units.
 
+This simple way of adding units to a number, ex. 100MHz, is somewhat restricted.
+
+* You can only add units after a scale factor, but once you've given the scale 
+  factor the units are optional. In this way, 1m represents 1e-3 rather than one 
+  meter. If you want to specify one meter, you would use 1_m. The underscore is 
+  a scale factor, like m or k. It represents the unity scale factor.
+
+* Units added to the end of a number may consist only of letters and 
+  underscores. Digits and special characters like /, ^, \*, -, ( or ) are not 
+  allowed.
+
+* You can only add units to number literals. So 100MHz is okay, but 'omega 2pi/ 
+  Hz' is not.
+
+You can overcome this limitation by entering a quoted string. Doing so 
+interprets the contents of the string as units an applies them to whatever is in 
+the *x* register. For example::
+
+   628.32 Mrads/s: 2pi / "Hz"
+   100 MHz:
+
+   0: 9.8066 "m/s^2"
+   9.8066 m/s^2:
+
 Normally units are given after the number, however a dollar sign would be given
 immediately before::
 
@@ -247,7 +273,7 @@ your generic preferences in '~/.exrc'. For example, if your are a physicist with
 a desire for high precision results, you might use::
 
     eng6
-    h 2pi / 'J-s' =hbar
+    h 2pi / "J-s" =hbar
 
 This tells EC to use 6 digits of resolution and predefines *hbar* as a constant.
 The local start up file ('./.ecrc') or the file given as a command line argument
@@ -256,7 +282,7 @@ a directory where you are working on a PLL design you might have an './.ecrc'
 file with the following contents::
 
     88.3uSiemens =kdet
-    9.1G 'Hz/V' =kvco
+    9.1G "Hz/V" =kvco
     2 =m
     8 =n
     1.4pF =cs
@@ -265,17 +291,19 @@ file with the following contents::
 
 EC also takes commands from the command line. For example::
 
-   $ ec -x "125mV 67uV / db"
+   $ ec "125mV 67uV / db"
    65.417
-
-The ``-x`` tells ec to print out the value of the *x* register when it 
-terminates. Without it you would not see the result.
 
 EC prints back-quoted strings while interpolating the values of registers and 
 variables when requested. For example::
 
-   $ ec 'degs 500 1000 rtop "V/V" `Gain = $0 @ $1.`'
+   $ ec 'degs 500 1000 rtop "V/V" `Gain = $0 @ $1.` quit'
    Gain = 1.118 KV/V @ 26.565 degs.
+
+Normally *ec* prints the value of the x register and exits when it runs out of 
+things to do.  The *quit* at the end tells ec to exit immediately. In this way 
+the value of the x register is not printed.  Without it you would see the 
+magnitude printed twice.
 
 You can get a list of the actions available with::
 

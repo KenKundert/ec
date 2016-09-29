@@ -44,14 +44,13 @@ document = r"""{
     OPTIONS
     =======
     -i, --interactive    Open an interactive session.
-    -x, --printx         Print value of x register upon termination, ignored
-                         with interactive sessions.
     -s <file>, --startup <file>
                          Run commands from file to initialize calculator before
                          any script or interactive session is run, stack is
                          cleared after it is run.
     -c, --nocolor        Do not use colors in the output.
     -v, --verbose        Narrate the execution of any scripts.
+    -V, --version        Print the ec version information.
     -h, --help           Print the usage and exit.
 
     DESCRIPTION
@@ -199,6 +198,10 @@ document = r"""{
        |   3.16pF
        |   2.5_V
        |   4.7e-10F
+
+    Units are only allowed after a scale factor or an exponent, and the units 
+    are optional. In this way, 1m represents 1e-3 rather than 1 meter. If you 
+    wish to enter 1 meter, use 1_m. The underscore is the unity scale factor.
 
     In this case the units must be simple identifiers (must not contain special 
     characters). For complex units, such as "rads/s", or for numbers that do not 
@@ -359,16 +362,45 @@ document = r"""{
     the argument itself is executed (often it needs to be quoted to protect its
     contents from being interpreted by the shell). The arguments are executed in
     the order given. When arguments are given the calculator by default does not
-    start an interactive session and does not produce output.  If you wish to
-    use an interactive session after scripts have been evaluated, use the **-i**
-    or *--interactive* command line options. If you wish to produce output,
-    which you certainly will if you are not using the interactive session, you
-    must add print commands to your script, which is a double-quoted string. For
-    example,
+    start an interactive session. For example: to compute an RC time constant 
+    you could use:
 
-       |   **0**: \`Hello world!\`
-       |   Hello world!
-       |   **0**:
+       | $ ec 22k 1pF*
+       | 22n
+
+    Notice that the \* in the above command is interpreted as glob character, 
+    which is generally not what you want, so it is often best to quote the 
+    script:
+
+       | $ ec '22k 1pF*'
+       | 22n
+
+    Only the calculator commands would be quoted in this manner. If you included 
+    a file name on the command line to run a script, it would have to be given 
+    alone.  For example, assume that the file 'bw' exists and contains '* 2pi* 
+    recip "Hz"'. This is a script that assumes that the value of R and C are 
+    present in the *x* and *y* resisters, and then computes the 3dB bandwith of 
+    the corresponding RC filter. You could run the script with:
+
+       | $ ec '22k 1pF' bw
+       | 7.2343 MHz
+
+    Normally *ec* only prints the value of the *x* register and only as it 
+    exits.  It is possible to get more control of the output using back-quoted 
+    strings.  For example:
+
+       | $  ec '\`Hello world!\`'
+       | Hello world!
+       | 0
+
+    Whatever is found within back-quotes is printed to the output. Notice that 
+    the value of the *x* register is also output, which may not be desired when 
+    you are generating your own output. You can stop the value of the *x* 
+    register from being printed by finishing with the *quit* command, which 
+    tells *ec* to exit immediately:
+
+       | $  ec '\`Hello world!\` quit'
+       | Hello world!
 
     You can add the values of registers and variables to your print statements.
     *$N* prints out the value of register *N*, where 0 is the *x* register,
@@ -383,7 +415,7 @@ document = r"""{
        |   100 MHz corresponds to 628.32 Mrads/s.
        |   **628.32 Mrads/s**:
 
-    To illustrate the use of a script, assume that a file named *lg* exists and
+    To illustrate its use in a script, assume that a file named *lg* exists and
     contains a calculation for the loop gain of a PLL,
 
        |   =freq
@@ -397,10 +429,10 @@ document = r"""{
        |   N F* =f
        |   a f* =T
        |   \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
+       |   quit
 
     Notice that it starts by saving the value in the *x* register to the
     variable *freq*. This script would be run as:
-
 
        |   $ ec 1KHz lg
        |   Open loop gain = 63.732
@@ -413,29 +445,54 @@ document = r"""{
     print command, so the results are printed to standard output as the script
     terminates.
 
-    Generally if you do not issue a print command in a script, there is no
-    output.  However, if you specify the **-x** or **--printx** command line
-    option the value of the *x* register is printed upon termination. An
-    example of how this could be useful is:
-
-    |   $ ec -x 1.52e-11F
-    |   15.2 pF
-
-    In this example, **ec** is used simply to convert a number into the more
-    readable engineering notation.
-
     One issue with command line scripting that you need to be careful of is that 
     if an argument is a number with a leading minus sign it will be mistaken to 
     be a command line option. To avoid this issue, specify the number without 
     the minus sign and follow it with *chs*.  Alternatively, you can embed the 
     number in quotes but add a leading space.  For example,
 
-    |   $ ec -x -30 dbmv 
-    |   ec: -30 dbmv: unknown option.
-    |   $ ec -x 30 chs dbmv 
-    |   10 mV
-    |   $ ec -x ' -30' dbmv
-    |   10 mV
+       |   $ ec -30 dbmv
+       |   ec: -30 dbmv: unknown option.
+       |   $ ec 30 chs dbmv
+       |   10 mV
+       |   $ ec ' -30' dbmv
+       |   10 mV
+
+    PRELOADING CONSTANTS
+    ====================
+
+    You can use scripts to preload in a set of useful constants that can then be 
+    used in interactive calculations. To do so, use the **-i** or 
+    *--interactive* command line option. For example, replace the earlier 'lg' 
+    script with the following:
+
+       |   88.3u "V/per" =Kdet
+       |   9.07G "Hz/V" =Kvco
+       |   2 =M
+       |   8 =N
+       |   2 =F
+       |   N F* =f
+       |   clstack
+
+    Now run:
+
+       |   $ ec -i lg
+       |   0: 1kHz 2pi * Kdet * Kvco* M* =a
+       |   10.064G:
+
+    Doing so runs lg, which loads values into the various variables, and then 
+    they can be accessed in further calculations.
+
+    Notice that the script ends with *clstack* so that you start fresh in your 
+    interactive session. It simply clears the stack so that the only effect of 
+    the script is to initialize the variables.  Using **-s** or **--startup** 
+    does this for you automatically.
+
+    Alternatively, you can put the constants you wish to predeclare in 
+    *./.ecrc*, in which case they are automatically loaded whenever you invoke 
+    *ec* in the directory that contains the file.  Similarly, placing constants 
+    in *~/.ecrc* causes them to be declared for every invocation of *ec*.
+
 
     DIAGNOSTICS
     ===========

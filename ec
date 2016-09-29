@@ -24,13 +24,12 @@ Usage: ec [options] [<script>...]
 
 Options:
     -i, --interactive   Open an interactive session.
-    -x, --printx        Print value of x register upon termination, ignored with
-                        interactive sessions.
     -s, --startup file  Run commands from file to initialize calculator before
                         any script or interactive session is run, stack is
                         cleared after it is run.
     -c, --nocolor       Do not color the output.
     -v, --verbose       Narrate the execution of any scripts.
+    -V, --version       Print the ec version information.
     -h, --help          Print usage information.
 """
 
@@ -56,9 +55,13 @@ from __future__ import division
 from actions import (
     actionsToUse, predefinedVariables, defaultFormat, defaultDigits
 )
-from calculator import Calculator, Display, CalculatorError
+from calculator import (
+    Calculator, Display, CalculatorError, versionNumber, versionDate
+)
 from docopt import docopt
-from inform import Color, display, error, fatal, Inform, warn
+from inform import (
+    Color, display, error, fatal, Inform, os_error, warn, terminate
+)
 from os.path import expanduser
 import sys, os
 
@@ -68,9 +71,11 @@ args = cmdline['<script>']
 colorscheme = None if cmdline['--nocolor'] else 'dark'
 startUpFile = [cmdline['--startup']] if cmdline['--startup'] else []
 interactiveSession = cmdline['--interactive'] or not args
-printXuponTermination = cmdline['--printx']
 verbose = cmdline['--verbose']
 Inform(prog_name=False, colorscheme=colorscheme)
+if cmdline['--version']:
+    display('ec version: {} ({})'.format(versionNumber, versionDate))
+    terminate()
 
 # Define utility functions {{{1
 highlight = Color('magenta', colorscheme)
@@ -112,14 +117,10 @@ for each in rcFiles + startUpFile:
                     display("%s %s: %s ==> %s" % (
                         cmdFile, lineno, line.strip(), prompt
                     ))
-    except IOError as err:
-        if err.errno != 2 or each not in rcFiles:
-            sys.exit('%s%s: %s: %s' % (
-                each
-              , ('.%s' % lineno+1) if lineno != None else ''
-              , err.filename
-              , err.strerror
-            ))
+    except (IOError, OSError) as err:
+        if each not in rcFiles:
+            fatal(os_error(err), culprit=(each, lineno))
+
 calc.stack.clear()
 prompt = '0'
 
@@ -140,10 +141,9 @@ for arg in args:
             loc = ''
             prompt = evaluateLine(calc, arg, prompt)
             if verbose:
-                display("%s ==> %s" % (line, prompt))
-    except IOError as err:
-        if err.errno != 2:
-            fatal('%s: %s' % (err.filename, err.strerror))
+                display("%s ==> %s" % (arg, prompt))
+    except (IOError, OSError) as err:
+        fatal(os_error(err), culprit=(each, lineno))
 
 # Interact with user {{{1
 if (interactiveSession):
@@ -152,14 +152,14 @@ if (interactiveSession):
             entered = raw_input('%s: ' % highlight(prompt)) # python 2
         except (EOFError, KeyboardInterrupt):
             display()
-            sys.exit(0)
+            terminate()
         except NameError:
             try:
                 entered = input('%s: ' % highlight(prompt)) # python 3
             except (EOFError, KeyboardInterrupt):
                 display()
-                sys.exit(0)
+                terminate()
         prompt = evaluateLine(calc, entered, prompt)
-elif printXuponTermination:
-    display(prompt)
-sys.exit(0)
+
+display(prompt)
+terminate()

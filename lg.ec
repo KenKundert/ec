@@ -9,4 +9,4 @@ Kdet Kvco* omega/ M/ =a
 N F* =f
 a f* =T
 `Open loop gain = $a\nFeedback factor = $f\nLoop gain = $T`
-
+quit

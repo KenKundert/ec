@@ -41,7 +41,7 @@ Feedback factor = 16
 Loop gain = 1.0197k
 '''
     }
-  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `Open loop gain = $a\nFeedback factor = $f\nLoop gain = $T`'"""
+  , {   'stimulus': r"""'88.3u =Kdet 9.07G =Kvco 2 =M 8 =N 2 =F 1KHz =freq 2pi* "rads/s" =omega Kdet Kvco* omega/ M/ =a N F * =f a f* =T `Open loop gain = $a\nFeedback factor = $f\nLoop gain = $T` quit'"""
       , 'output': '''\
 Open loop gain = 63.732
 Feedback factor = 16
