@@ -45,7 +45,12 @@ setup(
     url='http://nurdletech.com/linux-utilities/ec',
     download_url='https://github.com/kenkundert/ec/tarball/master',
     scripts=['ec'],
-    py_modules=['ec', 'calculator', 'actions'],
+    py_modules=[
+        'actions'
+        'calculator',
+        'ec',
+        'manpage'
+    ],
     setup_requires=requires,
     install_requires=requires,
     cmdclass={
