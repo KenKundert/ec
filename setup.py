@@ -1,14 +1,27 @@
 from setuptools import setup
+from setuptools.command.install import install as Install
 import os
+import errno
 
-# Create/update manpage before installing
-try:
-    import manpage
-    manpage.write('ec.1')
-except ImportError:
-    # inform is not installed yet, so just use the existing version of the
-    # manpage rather than try to recreate/update it.
-    pass
+# Completes the install
+class MyInstall(Install):
+    def run(self):
+        # create the manpage
+        import manpage
+
+        # move it into position
+        location = self.install_lib
+        try:
+            mandir = os.path.join(self.prefix, 'man', 'man1')
+            manfile = os.path.join(mandir, 'ec.1')
+            os.makedirs(mandir)
+            manpage.write(manfile)
+        except (IOError, OSError) as err:
+            if err.errno != errno.EEXIST:
+                print(str(err))
+
+        # complete the install
+        Install.run(self)
 
 # Return the contents of a file
 # Path is relative to the location of this setup file.
@@ -16,25 +29,26 @@ def contents(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='engineering-calculator'
-  , version="1.1.11"
-  , description='engineering calculator'
-  , long_description=contents('README.rst')
-  , author="Ken Kundert"
-  , author_email='ec@nurdletech.com'
-  , url='http://nurdletech.com/linux-utilities/ec'
-  , download_url='https://github.com/kenkundert/ec/tarball/master'
-  , scripts=['ec']
-  , py_modules=['ec', 'calculator', 'actions']
-  , data_files=[
-        ('man/man1', ['ec.1'])
-    ]
-  , install_requires=[
+    name='engineering-calculator',
+    version="1.1.11",
+    description='engineering calculator',
+    long_description=contents('README.rst'),
+    author="Ken Kundert",
+    author_email='ec@nurdletech.com',
+    url='http://nurdletech.com/linux-utilities/ec',
+    download_url='https://github.com/kenkundert/ec/tarball/master',
+    scripts=['ec'],
+    py_modules=['ec', 'calculator', 'actions'],
+    install_requires=[
         'docopt',
+        'docutils',
         'engfmt>=0.9',
         'inform',
-    ]
-  , classifiers=[
+    ],
+    cmdclass={
+        'install': MyInstall,
+    },
+    classifiers=[
       'Development Status :: 5 - Production/Stable',
       'Environment :: Console',
       'Intended Audience :: Science/Research',
@@ -48,6 +62,6 @@ setup(
       'Programming Language :: Python :: 3.4',
       'Programming Language :: Python :: 3.5',
       'Topic :: Scientific/Engineering',
-    ]
-  , license='GPLv3'
+    ],
+    license='GPLv3',
 )

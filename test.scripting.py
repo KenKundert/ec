@@ -70,7 +70,7 @@ for index, case in enumerate(testCases):
     messages = []
     warnings = []
     testsRun += 1
-    stimulus = ' '.join([python, 'ec.py', case['stimulus']])
+    stimulus = ' '.join([python, 'ec', case['stimulus']])
     expectedResult = case['output']
     if printTests:
         print(status('Trying %d:' % index), stimulus)
