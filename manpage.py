@@ -357,13 +357,14 @@ document = r"""{
     SCRIPTING
     =========
 
-    Command line arguments are used as scripts. If the argument corresponds to
-    an existing file, the file is opened its contents are executed. Otherwise,
-    the argument itself is executed (often it needs to be quoted to protect its
-    contents from being interpreted by the shell). The arguments are executed in
-    the order given. When arguments are given the calculator by default does not
-    start an interactive session. For example: to compute an RC time constant 
-    you could use:
+    Command line arguments are evaluated as if they were typed into an 
+    interactive session with the exception of filename arguments.  If an 
+    argument corresponds to an existing file, the file treated as a script, 
+    meaning it is is opened its contents are evaluated.  Otherwise, the argument 
+    itself is evaluate (often it needs to be quoted to protect its contents from 
+    being interpreted by the shell). When arguments are given the calculator by 
+    default does not start an interactive session. For example: to compute an RC 
+    time constant you could use:
 
        | $ ec 22k 1pF*
        | 22n
@@ -418,12 +419,14 @@ document = r"""{
     To illustrate its use in a script, assume that a file named *lg* exists and
     contains a calculation for the loop gain of a PLL,
 
+       |   # computes and displays loop gain of a frequency synthesizer
+       |   # x register is taken to be frequency
        |   =freq
-       |   88.3u "V/per" =Kdet
-       |   9.07G "Hz/V" =Kvco
-       |   2 =M
-       |   8 =N
-       |   2 =F
+       |   88.3u "V/per" =Kdet  # gain of phase detector
+       |   9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
+       |   2 =M                 # divide ratio of divider at output of VCO
+       |   8 =N                 # divide ratio of main divider
+       |   2 =F                 # divide ratio of prescalar
        |   freq 2pi* "rads/s" =omega
        |   Kdet Kvco* omega/ M/ =a
        |   N F* =f
@@ -431,7 +434,10 @@ document = r"""{
        |   \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
        |   quit
 
-    Notice that it starts by saving the value in the *x* register to the
+    When reading scripts from a file, the '#' character introduces a comment. It 
+    and anything that follows is ignored until the end of the line.
+
+    Notice that the script starts by saving the value in the *x* register to the
     variable *freq*. This script would be run as:
 
        |   $ ec 1KHz lg

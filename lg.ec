@@ -1,9 +1,11 @@
+# computes and displays loop gain
+# x register is taken to be frequency
 =freq
-88.3u "V/per" =Kdet
-9.07G "Hz/V" =Kvco
-2 =M
-8 =N
-2 =F
+88.3u "V/per" =Kdet   # gain of phase detector
+9.07G "Hz/V" =Kvco    # gain of voltage controlled oscillator
+2 =M                  # divide ratio of divider at output of VCO
+8 =N                  # divide ratio of main divider
+2 =F                  # divide ratio of prescaler
 freq 2pi* "rads/s" =omega
 Kdet Kvco* omega/ M/ =a
 N F* =f
