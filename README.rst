@@ -305,6 +305,17 @@ things to do.  The *quit* at the end tells ec to exit immediately. In this way
 the value of the x register is not printed.  Without it you would see the 
 magnitude printed twice.
 
+You can define functions with the following syntax: *( ... )name*, where '(' 
+starts the function definition, ')name' terminates it, and ... is simply 
+a collection of calculator actions. For example::
+
+   0: (2pi * "rads/s")to_omega
+   0: (2pi / "Hz")to_freq
+   0: 1.4GHz
+   1.4 GHz: to_omega
+   8.7965 Grads/s: to_freq
+   1.4 GHz:
+
 You can get a list of the actions available with::
 
    0: ?

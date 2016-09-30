@@ -11,12 +11,12 @@ import math
 import re
 from copy import copy
 from textwrap import wrap, fill, dedent
-from inform import display, warn
+from inform import display, warn, full_stop
 from pydoc import pager
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.1.17'
+versionNumber = '1.1.18'
 versionDate = '2016-09-29'
 
 # Utility functions {{{1
@@ -169,14 +169,23 @@ class Heap:
         Prints all of the values contained on the heap.
         """
         for key in sorted(self.heap.keys()):
-            self.parent.printMessage(
-                '  %s: %s' % (key, self.parent.format(self.heap[key]))
-            )
+            kind, value = self.heap[key]
+            if kind == 'const':
+                self.parent.printMessage(
+                    '  %s: %s' % (key, self.parent.format(value))
+                )
+            elif kind == 'funct':
+                self.parent.printMessage(
+                    '  %s: (%s)' % (key, ' '.join(value))
+                )
+            else:
+                raise NotImplementedError
 
     def __getitem__(self, key):
         return self.heap[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, pair):
+        kind, value = pair
         if key in self.reserved:
             if self.removeAction:
                 self.parent.printWarning(
@@ -186,7 +195,7 @@ class Heap:
                 self.removeAction(key)
             else:
                 raise KeyError
-        self.heap[key] = value
+        self.heap[key] = kind, value
 
     def __contains__(self, key):
         return key in self.heap
@@ -1071,7 +1080,7 @@ class Store(Action):
     def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         try:
-            calc.heap[name] = calc.stack.peek()
+            calc.heap[name] = 'const', calc.stack.peek()
         except KeyError:
             raise CalculatorError("%s: reserved, cannot be used as variable name." % name)
 
@@ -1107,9 +1116,15 @@ class Recall(Action):
     def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         if name in calc.heap:
-            calc.stack.push(calc.heap[name])
+            kind, value = calc.heap[name]
+            if kind == 'const':
+                calc.stack.push(value)
+            elif kind == 'funct':
+                calc.evaluate(value)
+            else:
+                raise NotImplementedError
         else:
-            raise CalculatorError("%s: variable does not exist" % name)
+            raise CalculatorError("%s: variable does not exist." % name)
 
 # SetUnits (pop 1, push 1, match regex) {{{2
 class SetUnits(Action):
@@ -1195,7 +1210,13 @@ class Print(Action):
                     try:
                         arg = calc.stack.stack[int(arg)]
                     except ValueError:
-                        arg = calc.heap[arg]
+                        kind, value = calc.heap[arg]
+                        if kind == 'const':
+                            arg = value
+                        elif kind == 'funct':
+                            raise CalculatorError('%s: cannot print a function.' % value)
+                        else:
+                            raise NotImplementedError
                     arg = calc.format(arg)
                 except (KeyError, IndexError):
                     if arg != '$':
@@ -1316,6 +1337,8 @@ class Calculator:
         self.messagePrinter = messagePrinter
         self.warningPrinter = warningPrinter
         self.stack = Stack(parent=self)
+        self.function = None
+        self.functions = {}
         self.heap = Heap(
             initialState = predefinedVariables
           , reserved = self.smplActions.keys()
@@ -1367,20 +1390,46 @@ class Calculator:
 
         Will raise a CalculatorError if there is a problem.
         '''
+        def showLoc(given, index):
+            cmds = ' '.join(given)
+            okay = ' '.join(given[:index])
+            return '\n' + cmds + '\n '+' '*len(okay)+'^'
+
         if self.backUpStack:
             self.prevStack = self.stack.clone()
         try:
-            for cmd in given:
-                if cmd in self.smplActions:
-                    self.smplActions[cmd]._execute(self)
-                else:
-                    for action in self.regexActions:
-                        match = action.regex.match(cmd)
-                        if match:
-                            action._execute(match.groups(), self)
-                            break
+            for index, cmd in enumerate(given):
+                if self.function is not None:
+                    if cmd == '(':
+                         raise CalculatorError('nested function definitions.')
+                    elif cmd[0] == ')':
+                        name = cmd[1:]
+                        nameRegex='[a-zA-Z_]\w*'
+                        if not re.match(nameRegex, name):
+                            raise CalculatorError('%s: invalid function name.' % name)
+                        if name in self.heap:
+                            # name exists
+                            # only replace it if existing version is a function
+                            k, v = self.heap[name]
+                            if k != 'funct':
+                                raise CalculatorError('%s: name is reserved.' % name)
+                        self.heap[name] = 'funct', self.function
+                        self.function = None
                     else:
-                        raise CalculatorError("%s: unrecognized." % cmd)
+                        self.function.append(cmd)
+                else:
+                    if cmd == '(':
+                        self.function = []
+                    elif cmd in self.smplActions:
+                        self.smplActions[cmd]._execute(self)
+                    else:
+                        for action in self.regexActions:
+                            match = action.regex.match(cmd)
+                            if match:
+                                action._execute(match.groups(), self)
+                                break
+                        else:
+                            raise CalculatorError("%s: unrecognized." % cmd)
             return self.stack.peek()
         except (ValueError, OverflowError, TypeError) as err:
             if (
@@ -1388,12 +1437,13 @@ class Calculator:
                 str(err).startswith("can't convert complex to float")
             ):
                 raise CalculatorError(
-                    "Function does not support a complex argument."
+                    "Function does not support a complex argument." +
+                    showLoc(given, index)
                 )
             else:
-                raise CalculatorError(str(err))
+                raise CalculatorError(full_stop(err) + showLoc(given, index))
         except ZeroDivisionError as err:
-            raise CalculatorError("division by zero.")
+            raise CalculatorError("division by zero." + showLoc(given, index))
 
     # utility methods {{{2
     def clear(self):

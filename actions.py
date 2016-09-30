@@ -339,7 +339,7 @@ reciprocal.addTest(
 )
 reciprocal.addTest(
     stimulus='0 recip'
-  , error='division by zero.'
+  , error='division by zero.\n0 recip\n  ^'
 )
 reciprocal.addTest(
     stimulus='j recip'
@@ -381,7 +381,7 @@ ceiling.addTest(
 )
 ceiling.addTest(
     stimulus='j ceil'
-  , error='Function does not support a complex argument.'
+  , error='Function does not support a complex argument.\nj ceil\n  ^'
 )
 
 # floor {{{3
@@ -417,7 +417,7 @@ floor.addTest(
 )
 floor.addTest(
     stimulus='j floor'
-  , error='Function does not support a complex argument.'
+  , error='Function does not support a complex argument.\nj floor\n  ^'
 )
 
 
@@ -855,7 +855,7 @@ arcSine.addTest(
 )
 arcSine.addTest(
     stimulus='degs 2 asin'
-  , error='math domain error'
+  , error='math domain error.\ndegs 2 asin\n       ^'
 )
 
 # arc cosine {{{3
@@ -890,7 +890,7 @@ arcCosine.addTest(
 )
 arcCosine.addTest(
     stimulus='degs 2 acos'
-  , error='math domain error'
+  , error='math domain error.\ndegs 2 acos\n       ^'
 )
 
 # arc tangent {{{3
@@ -1449,7 +1449,7 @@ antiDecibels10.addTest(
 # voltage to dBm {{{3
 voltageToDbm = UnaryOp(
     'vdbm'
-  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Rref'][0]/2)
+  , lambda x, calc: 30+10*math.log10(x*x/calc.heap['Rref'][1][0]/2)
   , description="%(key)s: convert peak voltage to dBm"
   , needCalc=True
   , synopsis='#{x}, ... => 30+10*log10((#{x}**2)/(2*#{Rref})), ...'
@@ -1483,7 +1483,7 @@ voltageToDbm.addTest(
 # dBm to voltage {{{3
 dbmToVoltage = UnaryOp(
     'dbmv'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Rref'][0])
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)*calc.heap['Rref'][1][0])
   , description="%(key)s: dBm to peak voltage"
   , needCalc=True
   , units='V'
@@ -1518,7 +1518,7 @@ dbmToVoltage.addTest(
 # current to dBm {{{3
 currentToDbm = UnaryOp(
     'idbm'
-  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][0]/2)
+  , lambda x, calc: 30+10*math.log10(x*x*calc.heap['Rref'][1][0]/2)
   , description="%(key)s: peak current to dBm"
   , needCalc=True
   , synopsis='#{x}, ... => 30+10*log10(((#{x}**2)*#{Rref}/2), ...'
@@ -1552,7 +1552,7 @@ currentToDbm.addTest(
 # dBm to current {{{3
 dbmToCurrent = UnaryOp(
     'dbmi'
-  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Rref'][0])
+  , lambda x, calc: math.sqrt(2*pow(10,(x - 30)/10)/calc.heap['Rref'][1][0])
   , description="%(key)s: dBm to peak current"
   , needCalc=True
   , units='A'
@@ -2896,7 +2896,7 @@ recallFromVariable.addTest(
   , result=0
   , units=''
   , text='0'
-  , error='freq: variable does not exist'
+  , error='freq: variable does not exist.'
 )
 
 # list variables {{{3
@@ -3033,7 +3033,7 @@ miscellaneousCommands = Category("Miscellaneous Commands")
 printText = Print(
     name='print'
   , description='`<text>`: print text'
-  , summary="""\
+  , summary="""
         Print "text" (the contents of the back-quotes) to the terminal.
         Generally used in scripts to report and annotate results.  Any instances
         of $N or ${N} are replaced by the value of register N, where 0
@@ -3133,7 +3133,7 @@ setUnits = SetUnits(
     name='units'
   , description='"<units>": set the units of the x register'
   , synopsis='x, ... => x "units", ...'
-  , summary="""\
+  , summary="""
         The units given are applied to the value in the #{x} register.
         The actual value is unchanged.
     """
@@ -3175,7 +3175,7 @@ printHelp.addTest(
 detailedHelp = Help(
     name='?'
   , description="%(name)s[<topic>]: detailed help on a particular topic"
-  , summary="""\
+  , summary="""
         A topic, in the form of a symbol or name, may follow the question mark,
         in which case a detailed description will be printed for that topic.
         If no topic is given, a list of available topics is listed.
@@ -3477,7 +3477,7 @@ if (
     currentToDbm in actionsToUse or
     dbmToCurrent in actionsToUse
 ):
-    predefinedVariables = {'Rref': (50, 'Ohms')}
+    predefinedVariables = {'Rref': ('const', (50, 'Ohms'))}
 else:
     predefinedVariables = {}
 

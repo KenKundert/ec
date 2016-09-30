@@ -37,7 +37,7 @@ requires=[
     'docopt',
     'docutils',
     'engfmt>=0.9',
-    'inform>=1.4.2',
+    'inform>=1.4.3',
 ]
 
 setup(

@@ -328,6 +328,33 @@ document = r"""{
 
     {actions}
 
+    FUNCTIONS
+    =========
+
+    You can define functions in the following way::
+
+       ( ... )name
+
+    Here '(' starts the function definition and ')name' ends it. The name must 
+    be immediately adjacent to the name. The '...' represents a sequence of 
+    calculator actions. For example:
+
+        |   **0**: (2pi * "rads/s")to_omega
+        |   **0**: (2pi / "Hz")to_freq
+        |   **0**: 100MHz
+        |   **100 MHz**: to_omega
+        |   **628.32 Mrads/s**: to_freq
+        |   **100 MHz**:
+
+    Once defined, you can review your function with the *vars* command. It shows 
+    both the variable and the function definitions:
+
+        |     *Rref*: 50 Ohms
+        |     *to_freq*: (2pi / "Hz")
+        |     *to_omega*: (2pi * "rads/s")
+
+    The value of the functions are delimited with parentheses.
+
     HELP
     ====
 
@@ -464,27 +491,29 @@ document = r"""{
        |   $ ec ' -30' dbmv
        |   10 mV
 
-    PRELOADING CONSTANTS
-    ====================
+    INITIALIZATION SCRIPTS
+    ======================
 
-    You can use scripts to preload in a set of useful constants that can then be 
-    used in interactive calculations. To do so, use the **-i** or 
-    *--interactive* command line option. For example, replace the earlier 'lg' 
-    script with the following:
+    You can use scripts to preload in a set of useful constants and function 
+    that can then be used in interactive calculations. To do so, use the **-i** 
+    or *--interactive* command line option. For example, replace the earlier 
+    'lg' script with the following:
 
        |   88.3u "V/per" =Kdet
        |   9.07G "Hz/V" =Kvco
        |   2 =M
        |   8 =N
        |   2 =F
-       |   N F* =f
+       |   (N F* recip)f
+       |   (2pi * Kdet * Kvco* M*)a
+       |   (a f*)T
        |   clstack
 
     Now run:
 
        |   $ ec -i lg
-       |   0: 1kHz 2pi * Kdet * Kvco* M* =a
-       |   10.064G:
+       |   0: 1kHz T
+       |   629.01M:
 
     Doing so runs lg, which loads values into the various variables, and then 
     they can be accessed in further calculations.
