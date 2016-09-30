@@ -486,7 +486,7 @@ power.addTest(
 if int(sys.version[0]) < 3:
     power.addTest(
         stimulus='-8 1 3/ ytox'
-      , error='negative number cannot be raised to a fractional power'
+      , error='negative number cannot be raised to a fractional power.\n-8 1 3 / ytox\n         ^'
     )
 else:
     power.addTest(
