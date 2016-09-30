@@ -27,15 +27,15 @@ More information on both ec and ec0 can be found at `NurdleTech
 Installing from Source
 ----------------------
 
-Pip does not have the ability to install man pages. If you would like the man 
-page, you will need to install from source.  To get the source code::
+Installation of the manpage is not completely robust when using pip. If it is 
+not working for you, you should install from source.  To get the source code::
 
-   $ git clone git://github.com/KenKundert/ec.git
+   $ git clone https://github.com/KenKundert/ec.git
 
 Once cloned, you can get the latest updates using::
 
-   $ git pull
    $ cd ec
+   $ git pull
 
 Alternatively, you can download a zip file from `github 
 <https://github.com/KenKundert/ec/archive/master.zip>`_.  If you go this route, 
@@ -52,10 +52,13 @@ To run the regression tests::
 
 To install::
 
-   $ ./install
+   $ python setup.py install --user
 
-This installs *ec* in ``~/.local``. Be sure to add ``~/.local/bin`` to your 
-PATH. It also installs the man page in ``~/.local/man``
+To create and install the manpage, run::
+
+   $ ./manpage.py
+   $ mkdir -p ~/.local/man/man1
+   $ cp ec.1 ~/.local/man/man1
 
 To read the EC manual::
 

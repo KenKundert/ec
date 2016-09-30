@@ -16,7 +16,7 @@ from pydoc import pager
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.2.2'
+versionNumber = '1.2.3'
 versionDate = '2016-09-30'
 
 # Utility functions {{{1
