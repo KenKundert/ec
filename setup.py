@@ -9,21 +9,27 @@ class MyInstall(Install):
         # create the manpage
         import manpage
 
-        # move it into position
-        location = self.install_lib
-        try:
-            prefix = self.prefix
-            if prefix:
-                mandir = os.path.join(self.prefix, 'man', 'man1')
+        # move manpage it into position
+        # not sure which of these is preferred, just use the first that exists
+        for candidate in [
+            'prefix', 'install_base', 'install_data',
+            'install_platbase', 'install_userbase'
+        ]:
+            root = getattr(self, candidate, None)
+            if root:
+                break
+        if root:
+            mandir = os.path.join(root, 'man', 'man1')
+            try:
                 os.makedirs(mandir)
-                manfile = os.path.join(mandir, 'ec.1')
-            else:
-                manfile = 'ec.1'
-                print('Could not push manpage into install directory.')
-            manpage.write(manfile)
-        except (IOError, OSError) as err:
-            if err.errno != errno.EEXIST:
-                print(str(err))
+            except (IOError, OSError) as err:
+                if err.errno != errno.EEXIST:
+                    print(str(err))
+            manfile = os.path.join(mandir, 'ec.1')
+        else:
+            manfile = 'ec.1'
+        print('Installing manpage to %s.' % manfile)
+        manpage.write(manfile)
 
         # complete the install
         Install.run(self)
@@ -53,7 +59,6 @@ setup(
     py_modules=[
         'actions',
         'calculator',
-        'ec',
         'manpage',
     ],
     setup_requires=requires,

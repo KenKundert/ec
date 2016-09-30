@@ -37,9 +37,11 @@ document = r"""{
     .. :Copyright: public domain
     .. :Manual group: Utilities
 
+
     SYNOPSIS
     ========
     **ec** [*options*] [*scripts* ...]
+
 
     OPTIONS
     =======
@@ -52,6 +54,7 @@ document = r"""{
     -v, --verbose        Narrate the execution of any scripts.
     -V, --version        Print the ec version information.
     -h, --help           Print the usage and exit.
+
 
     DESCRIPTION
     ===========
@@ -69,6 +72,7 @@ document = r"""{
 
     The contents of *~/.ecrc*, *./.ecrc*, and the start up file will be run upon 
     start up if they exist, and then the stack is cleared.
+
 
     STACK
     =====
@@ -139,6 +143,7 @@ document = r"""{
        |   **3**: clstack
        |   **0**: stack
        |   **0**:
+
 
     REAL NUMBERS
     ============
@@ -255,6 +260,7 @@ document = r"""{
 
     {complexNumbers}
 
+
     CONSTANTS
     =========
 
@@ -269,6 +275,7 @@ document = r"""{
 
        |   **0**: k 27 0C + * q/
        |   **25.865m**:
+
 
     VARIABLES
     =========
@@ -300,6 +307,38 @@ document = r"""{
     predefined variable that is used in dBm calculations. You are free to change
     its value if you like.
 
+
+    USER-DEFINED FUNCTIONS
+    ======================
+
+    You can define functions in the following way::
+
+       ( ... )name
+
+    Here '(' starts the function definition and ')name' ends it. The name must 
+    be immediately adjacent to the name. The '...' represents a sequence of 
+    calculator actions. For example:
+
+        |   **0**: (2pi * "rads/s")to_omega
+        |   **0**: (2pi / "Hz")to_freq
+        |   **0**: 100MHz
+        |   **100 MHz**: to_omega
+        |   **628.32 Mrads/s**: to_freq
+        |   **100 MHz**:
+
+    The actions entered while defining the function are not evaluated until the 
+    function itself is evaluated.
+
+    Once defined, you can review your function with the *vars* command. It shows 
+    both the variable and the function definitions:
+
+        |     *Rref*: 50 Ohms
+        |     *to_freq*: (2pi / "Hz")
+        |     *to_omega*: (2pi * "rads/s")
+
+    The value of the functions are delimited with parentheses.
+
+
     OPERATORS, FUNCTIONS, NUMBERS and COMMANDS
     ==========================================
 
@@ -328,32 +367,6 @@ document = r"""{
 
     {actions}
 
-    FUNCTIONS
-    =========
-
-    You can define functions in the following way::
-
-       ( ... )name
-
-    Here '(' starts the function definition and ')name' ends it. The name must 
-    be immediately adjacent to the name. The '...' represents a sequence of 
-    calculator actions. For example:
-
-        |   **0**: (2pi * "rads/s")to_omega
-        |   **0**: (2pi / "Hz")to_freq
-        |   **0**: 100MHz
-        |   **100 MHz**: to_omega
-        |   **628.32 Mrads/s**: to_freq
-        |   **100 MHz**:
-
-    Once defined, you can review your function with the *vars* command. It shows 
-    both the variable and the function definitions:
-
-        |     *Rref*: 50 Ohms
-        |     *to_freq*: (2pi / "Hz")
-        |     *to_omega*: (2pi * "rads/s")
-
-    The value of the functions are delimited with parentheses.
 
     HELP
     ====
@@ -363,6 +376,7 @@ document = r"""{
     you can use '?'.  If you use '?' you will get a list of all available help
     topics. If you use '?<*topic*>' where *topic* us either a symbol or a
     name, you will get a detailed description of that topic.
+
 
     INITIALIZATION
     ==============
@@ -380,6 +394,15 @@ document = r"""{
     This tells **ec** to use 6 digits of resolution and predefines *hbar* as a
     constant.  After all of the startup files have been processed, the stack is
     cleared.
+
+    A typical initialization script (~/.ecrc) for a circuit designer might be:
+
+       |   # Initialize Engineering Calculator
+       |   27 "C" =T               # ambient temperature
+       |   (k T 0C + * q/ "V")vt   # thermal voltage
+       |   (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
+       |   (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
+
 
     SCRIPTING
     =========
@@ -491,6 +514,7 @@ document = r"""{
        |   $ ec ' -30' dbmv
        |   10 mV
 
+
     INITIALIZATION SCRIPTS
     ======================
 
@@ -552,6 +576,7 @@ document = r"""{
     accidentally left between the equal sign and the variable name.  Notice that
     100MHz was saved to the variable *freq*, but the stack was restored to the
     state it had before the offending line was entered.
+
 
     SEE ALSO
     ========

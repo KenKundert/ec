@@ -218,9 +218,10 @@ This simple way of adding units to a number, ex. 100MHz, is somewhat restricted.
   Hz' is not.
 
 You can overcome this limitation by entering a quoted string. Doing so 
-interprets the contents of the string as units an applies them to whatever is in 
-the *x* register. For example::
+interprets the contents of the string as units and applies them to whatever is 
+in the *x* register. For example::
 
+   0: 100MHz 2pi* "rads/s"
    628.32 Mrads/s: 2pi / "Hz"
    100 MHz:
 
