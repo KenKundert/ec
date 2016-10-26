@@ -53,7 +53,8 @@ Options:
 # Imports {{{1
 from __future__ import division
 from actions import (
-    actionsToUse, predefinedVariables, defaultFormat, defaultDigits
+    actionsToUse, predefinedVariables,
+    defaultFormat, defaultDigits, defaultSpacer
 )
 from calculator import (
     Calculator, Display, CalculatorError, versionNumber, versionDate
@@ -97,7 +98,7 @@ def evaluateLine(calc, line, prompt):
 # Create calculator {{{1
 calc = Calculator(
     actionsToUse
-  , Display(format=defaultFormat, digits=defaultDigits)
+  , Display(formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer)
   , predefinedVariables
   , backUpStack=interactiveSession
   , warningPrinter=warn

@@ -16,8 +16,8 @@ from pydoc import pager
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.2.3'
-versionDate = '2016-09-30'
+versionNumber = '1.3.0'
+versionDate = '2016-10-26'
 
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')
@@ -202,17 +202,18 @@ class Heap:
 
 # Display {{{2
 class Display:
-    def __init__(self, format, digits = 4):
-        self.defaultFormatter = format.formatter
-        self.defaultFormatterTakesUnits = format.formatterTakesUnits
+    def __init__(self, formatter, digits = 4, spacer = ' '):
+        self.defaultFormatter = formatter.formatter
+        self.defaultFormatterTakesUnits = formatter.formatterTakesUnits
         self.defaultDigits = digits
-        self.formatter = format.formatter
-        self.formatterTakesUnits = format.formatterTakesUnits
+        self.formatter = formatter.formatter
+        self.formatterTakesUnits = formatter.formatterTakesUnits
         self.digits = digits
+        self.spacer = spacer
 
-    def setFormatter(self, format):
-        self.formatter = format.formatter
-        self.formatterTakesUnits = format.formatterTakesUnits
+    def setFormatter(self, formatter):
+        self.formatter = formatter.formatter
+        self.formatterTakesUnits = formatter.formatterTakesUnits
 
     def setDigits(self, digits):
         self.digits = digits
@@ -251,7 +252,7 @@ class Display:
             elif units == '':
                 return number
             else:
-                return number + '' + units
+                return number + self.spacer + units
 
     def clear(self):
         self.formatter = self.defaultFormatter

@@ -42,13 +42,13 @@ def contents(fname):
 requires=[
     'docopt',
     'docutils',
-    'engfmt>=0.9',
+    'quantiphy',
     'inform>=1.4.3',
 ]
 
 setup(
     name='engineering-calculator',
-    version='1.2.3',
+    version='1.3.0',
     description='engineering calculator',
     long_description=contents('README.rst'),
     author="Ken Kundert",

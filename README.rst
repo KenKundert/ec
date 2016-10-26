@@ -14,8 +14,21 @@ with::
 
     pip install engineering-calculator --user
 
-.. image:: https://travis-ci.org/KenKundert/ec.svg?branch=master
+.. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec
+
+.. image:: https://img.shields.io/coveralls/KenKundert/ec.svg
+    :target: https://coveralls.io/r/KenKundert/ec
+
+.. image:: https://img.shields.io/pypi/v/ec.svg
+    :target: https://pypi.python.org/pypi/ec
+
+.. image:: https://img.shields.io/pypi/pyversions/ec.svg
+    :target: https://pypi.python.org/pypi/ec/
+
+.. image:: https://img.shields.io/pypi/dd/ec.svg
+    :target: https://pypi.python.org/pypi/ec/
+
 
 Alternatively, you can use ec0, a slightly less capable version of ec that 
 supports older versions of python.

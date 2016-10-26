@@ -17,8 +17,7 @@ from calculator import (
     Calculator
 )
 from inform import warn
-from engfmt import set_preferences, quant_to_tuple, quant_to_eng
-set_preferences(spacer=' ')
+from quantiphy import Quantity
 
 
 # Actions {{{1
@@ -2055,7 +2054,7 @@ def siNumber(matches):
     currency = matches[1]
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
-    num = quant_to_tuple(sign+unsignedNum)
+    num = Quantity(sign+unsignedNum).as_tuple()
     if imag:
        num = (1j * num[0], num[1])
     if currency:
@@ -2260,7 +2259,7 @@ def sciNumber(matches):
     imag = matches[2] == 'j'
     unsignedNum = matches[3].replace(',', '')
     units = matches[4]
-    num = quant_to_tuple(sign+unsignedNum+units)
+    num = Quantity(sign+unsignedNum+units).as_tuple()
     if imag:
        num = (1j * num[0], num[1])
     if currency:
@@ -2542,13 +2541,13 @@ setFixedFormat.addTest(
     stimulus="pi fix"
   , result=math.pi
   , units='rads'
-  , text="3.1416rads"
+  , text="3.1416 rads"
 )
 setFixedFormat.addTest(
     stimulus="pi fix8"
   , result=math.pi
   , units='rads'
-  , text="3.14159265rads"
+  , text="3.14159265 rads"
 )
 setFixedFormat.addTest(
     stimulus="$100 fix2"
@@ -2560,7 +2559,7 @@ setFixedFormat.addTest(
 # engineering format {{{3
 setEngineeringFormat = SetFormat(
     pattern=r'\Aeng(\d{1,2})?\Z'
-  , action=lambda num, units, digits: quant_to_eng(num, units, prec=digits)
+  , action=lambda num, units, digits: Quantity(num, units).render(prec=digits)
   , name='eng'
   , actionTakesUnits=True
   , description="%(name)s[<#{N}>]: use engineering notation"
@@ -2607,7 +2606,7 @@ setScientificFormat.addTest(
     stimulus='pi 1e3 * "rads" sci8'
   , result=1e3*math.pi
   , units='rads'
-  , text="3.14159265e+03rads"
+  , text="3.14159265e+03 rads"
 )
 setScientificFormat.addTest(
     stimulus='1e-10 sci8'
@@ -3485,6 +3484,7 @@ else:
 # default behavior.
 defaultFormat = setEngineeringFormat
 defaultDigits = 4
+defaultSpacer = ' '
 
 # The following variables control the generation of the documentation
 # (the man page).
@@ -3511,3 +3511,4 @@ documentIntegers = (
     setOctalFormat in actionsToUse or
     setBinaryFormat in actionsToUse
 )
+Quantity.set_preferences(spacer=defaultSpacer)
