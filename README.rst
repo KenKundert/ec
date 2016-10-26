@@ -9,10 +9,8 @@ and uses a text-only user interface.
 Installing
 ----------
 
-Requires Python version 2.7 or later or version of Python 3.3 or later.  Install 
-with::
-
-    pip install engineering-calculator --user
+| Version: 1.3.0
+| Released: 2016-10-26
 
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec
@@ -26,6 +24,11 @@ with::
 .. image:: https://img.shields.io/pypi/dd/engineering_calculator.svg
     :target: https://pypi.python.org/pypi/engineering_calculator
 
+Install with::
+
+    pip install engineering-calculator --user
+
+Requires Python version 2.7 or later or version of Python 3.3 or later.
 
 Alternatively, you can use ec0, a slightly less capable version of ec that 
 supports older versions of python.
