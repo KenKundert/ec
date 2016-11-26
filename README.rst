@@ -9,9 +9,8 @@ and uses a text-only user interface.
 Installing
 ----------
 
-| Version: 1.3.0
-| Released: 2016-10-26
-|
+| Version: 1.3.1
+| Released: 2016-11-25
 
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec

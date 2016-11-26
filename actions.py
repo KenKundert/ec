@@ -18,6 +18,7 @@ from calculator import (
 )
 from inform import warn
 from quantiphy import Quantity
+import sys
 
 
 # Actions {{{1
@@ -3511,4 +3512,7 @@ documentIntegers = (
     setOctalFormat in actionsToUse or
     setBinaryFormat in actionsToUse
 )
-Quantity.set_preferences(spacer=defaultSpacer)
+Quantity.set_preferences(
+    spacer=defaultSpacer,
+    render_sf=Quantity.render_sf_in_greek if sys.version_info.major == 3 else None
+)
