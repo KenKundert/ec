@@ -2019,7 +2019,7 @@ freeSpacePermeability.addTest(
     stimulus='mu0'
   , result=4e-7*math.pi
   , units='H/m'
-  , text='1.2566 uH/m'
+  , text='1.2566 μH/m'
 )
 
 # free space characteristic impedance {{{3
@@ -2066,7 +2066,7 @@ def siNumber(matches):
     return num
 
 engineeringNumber = Number(
-    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_munpfazy])([a-zA-Z_]*))?)\Z'
+    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mμunpfazy])([a-zA-Z_]*))?)\Z'
   , action=siNumber
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
@@ -2342,31 +2342,31 @@ scientificNumber.addTest(
     stimulus='+j1.5e-6Ohms'
   , result=1.5e-6j
   , units='Ohms'
-  , text='j1.5 uOhms'
+  , text='j1.5 μOhms'
 )
 scientificNumber.addTest(
     stimulus='-j1.5e-6'
   , result=-1.5e-6j
   , units=''
-  , text='-0 - j1.5u'
+  , text='-0 - j1.5μ'
 )
 scientificNumber.addTest(
     stimulus='$j1.5e-6'
   , result=1.5e-6j
   , units='$'
-  , text='j$1.5u'
+  , text='j$1.5μ'
 )
 scientificNumber.addTest(
     stimulus='+$j1.5e-6'
   , result=1.5e-6j
   , units='$'
-  , text='j$1.5u'
+  , text='j$1.5μ'
 )
 scientificNumber.addTest(
     stimulus='-$j1.5e-6'
   , result=-1.5e-6j
   , units='$'
-  , text='-$0 - j$1.5u'
+  , text='-$0 - j$1.5μ'
 )
 
 # hexadecimal number {{{3
@@ -2912,11 +2912,11 @@ listVariables.addTest(
     stimulus='1MHz =freq 10us =time vars'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10 μs'
   , messages=[
         '  Rref: 50 Ohms'
       , '  freq: 1 MHz'
-      , '  time: 10 us'
+      , '  time: 10 μs'
     ]
 )
 
@@ -2952,16 +2952,16 @@ duplicateX = Dup(
   , aliases=['enter']
 )
 duplicateX.addTest(
-    stimulus='1MHz 10us dup'
+    stimulus='1MHz 10μs dup'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10 μs'
 )
 duplicateX.addTest(
     stimulus='1MHz 10us dup swap'
   , result=10e-6
   , units='s'
-  , text='10 us'
+  , text='10 μs'
 )
 
 # pop {{{3
@@ -3004,7 +3004,7 @@ listStack.addTest(
   , text='36'
   , messages=[
         '     1 MHz'
-      , '     10 us'
+      , '     10 μs'
       , '  y: 160.22e-21 C'
       , '  x: 36'
     ]
