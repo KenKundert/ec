@@ -1683,18 +1683,18 @@ imaginaryTwoPi.addTest(
 # planck constant {{{3
 planckConstant = Constant(
     'h'
-  , lambda: 6.62606957e-34
+  , lambda: 6.626070e-34
   , description="%(key)s: Planck constant"
   , units='J-s'
   , synopsis='... => #{h}, ...'
   , summary="""
-        The Planck constant (6.62606957e-34 J-s) is pushed on the stack into
+        The Planck constant (6.626070e-34 J-s) is pushed on the stack into
         the #{x} register.
     """
 )
 planckConstant.addTest(
     stimulus='h'
-  , result=6.62606957e-34
+  , result=6.62607e-34
   , units='J-s'
   , text='662.61e-36 J-s'
 )
@@ -1702,18 +1702,18 @@ planckConstant.addTest(
 # reduced plank constant {{{3
 planckConstantReduced = Constant(
     'hbar'
-  , lambda: 1.054571726e-34
+  , lambda: 1.054571800e-34
   , description="%(key)s: Reduced Planck constant"
   , units='J-s'
   , synopsis='... => #{h}/(2*#{pi}), ...'
   , summary="""
-        The reduced Planck constant (1.054571726e-34 J-s) is pushed on the stack
+        The reduced Planck constant (1.054571800e-34 J-s) is pushed on the stack
         into the #{x} register.
     """
 )
 planckConstantReduced.addTest(
     stimulus='hbar'
-  , result=1.054571726e-34
+  , result=1.054571800e-34
   , units='J-s'
   , text='105.46e-36 J-s'
 )
@@ -1721,18 +1721,18 @@ planckConstantReduced.addTest(
 # planck length {{{3
 planckLength = Constant(
     'lP'
-  , lambda: 1.616199e-35
+  , lambda: 1.616229e-35
   , description="%(key)s: Planck length"
   , units='m'
   , synopsis='... => #{lP}, ...'
   , summary="""
-        The Planck length (sqrt(h*G/(2*pi*c**3)) or 1.616199e-35 m) is pushed on
+        The Planck length (sqrt(h*G/(2*pi*c**3)) or 1.616229e-35 m) is pushed on
         the stack into the #{x} register.
     """
 )
 planckLength.addTest(
     stimulus='lP'
-  , result=1.616199e-35
+  , result=1.616229e-35
   , units='m'
   , text='16.162e-36m'
 )
@@ -1740,18 +1740,18 @@ planckLength.addTest(
 # planck mass {{{3
 planckMass = Constant(
     'mP'
-  , lambda: 2.17651e-5
+  , lambda: 2.176470e-5
   , description="%(key)s: Planck mass"
   , units='g'
   , synopsis='... => #{mP}, ...'
   , summary="""
-        The Planck mass (sqrt(h*c/(2*pi*G)) or 2.17651e-5 g) is pushed on
+        The Planck mass (sqrt(h*c/(2*pi*G)) or 2.176470e-5 g) is pushed on
         the stack into the #{x} register.
     """
 )
 planckMass.addTest(
     stimulus='mP'
-  , result=2.17651e-5
+  , result=2.176470e-5
   , units='g'
   , text='21.765ug'
 )
@@ -1759,18 +1759,18 @@ planckMass.addTest(
 # planck temperature {{{3
 planckTemperature = Constant(
     'TP'
-  , lambda: 1.416833e32
+  , lambda: 1.416808e32
   , description="%(key)s: Planck temperature"
   , units='K'
   , synopsis='... => #{TP}, ...'
   , summary="""
-        The Planck temperature (mP*c**2/k or 1.416833e32 K) is pushed
+        The Planck temperature (mP*c**2/k or 1.416808e32 K) is pushed
         on the stack into the #{x} register.
     """
 )
 planckTemperature.addTest(
     stimulus='TP'
-  , result=1.416833e32
+  , result=1.416808e32
   , units='K'
   , text='141.68e30_K'
 )
@@ -1778,18 +1778,18 @@ planckTemperature.addTest(
 # planck time {{{3
 planckTime = Constant(
     'tP'
-  , lambda: 5.39106e-44
+  , lambda: 5.39116e-44
   , description="%(key)s: Planck time"
   , units='s'
   , synopsis='... => #{tP}, ...'
   , summary="""
-        The Planck time (sqrt(h*G/(2*pi*c**5)) or 5.39106e-44 s) is pushed on
+        The Planck time (sqrt(h*G/(2*pi*c**5)) or 5.39116e-44 s) is pushed on
         the stack into the #{x} register.
     """
 )
 planckTime.addTest(
     stimulus='tP'
-  , result=5.39106e-44
+  , result=5.39116e-44
   , units='s'
   , text='53.911e-45s'
 )
@@ -1797,18 +1797,18 @@ planckTime.addTest(
 # boltzmann constant {{{3
 boltzmann = Constant(
     'k'
-  , lambda: 1.3806488e-23
+  , lambda: 1.38064852e-23
   , description="%(key)s: Boltzmann constant"
   , units='J/K'
   , synopsis='... => #{k}, ...'
   , summary="""
-        The Boltzmann constant (R/NA) or 1.3806488e-23 J/K) is pushed on the
+        The Boltzmann constant (R/NA) or 1.38064852e-23 J/K) is pushed on the
         stack into the #{x} register.
     """
 )
 boltzmann.addTest(
     stimulus='k'
-  , result=1.3806488e-23
+  , result=1.38064852e-23
   , units='J/K'
   , text='13.806e-24 J/K'
 )
@@ -1816,18 +1816,18 @@ boltzmann.addTest(
 # elementary charge {{{3
 elementaryCharge = Constant(
     'q'
-  , lambda: 1.602176565e-19
+  , lambda: 1.6021766208e-19
   , description="%(key)s: elementary charge (the charge of an electron)"
   , units='C'
   , synopsis='... => #{q}, ...'
   , summary="""
-        The elementary charge (the charge of an electron or 1.602176565e-19 C)
+        The elementary charge (the charge of an electron or 1.6021766208e-19 C)
         is pushed on the stack into the #{x} register.
     """
 )
 elementaryCharge.addTest(
     stimulus='q'
-  , result=1.602176565e-19
+  , result=1.6021766208e-19
   , units='C'
   , text='160.22e-21 C'
 )
@@ -1835,18 +1835,18 @@ elementaryCharge.addTest(
 # mass of electron {{{3
 massOfElectron = Constant(
     'me'
-  , lambda: 9.10938291e-28
+  , lambda: 9.10938356e-28
   , description="%(key)s: mass of an electron"
   , units='g'
   , synopsis='... => #{me}, ...'
   , summary="""
-        The mass of an electron (9.10938291e-28 g) is pushed on the stack into
+        The mass of an electron (9.10938356e-28 g) is pushed on the stack into
         the #{x} register.
     """
 )
 massOfElectron.addTest(
     stimulus='me'
-  , result=9.10938291e-28
+  , result=9.10938356e-28
   , units='g'
   , text='910.94e-30 g'
 )
@@ -1854,18 +1854,18 @@ massOfElectron.addTest(
 # mass of proton {{{3
 massOfProton = Constant(
     'mp'
-  , lambda: 1.672621777e-24
+  , lambda: 1.672621898e-24
   , description="%(key)s: mass of a proton"
   , units='g'
   , synopsis='... => #{mp}, ...'
   , summary="""
-        The mass of a proton (1.672621777e-24 g) is pushed on the stack into
+        The mass of a proton (1.672621898e-24 g) is pushed on the stack into
         the #{x} register.
     """
 )
 massOfProton.addTest(
     stimulus='mp'
-  , result=1.672621777e-24
+  , result=1.672621898e-24
   , units='g'
   , text='1.6726e-24 g'
 )
@@ -1892,20 +1892,20 @@ speedOfLight.addTest(
 # gravitational constant {{{3
 gravitationalConstant = Constant(
     'G'
-  , lambda: 6.6746e-11
+  , lambda: 6.6746e-14
   , description="%(key)s: universal gravitational constant"
-  , units="m^3/(kg-s^2)"
+  , units="m^3/(g-s^2)"
   , synopsis='... => #{G}, ...'
   , summary="""
-        The universal gravitational constant (6.6746e-11 m^3/(kg-s^2)) is pushed
+        The universal gravitational constant (6.6746e-14 m^3/(g-s^2)) is pushed
         on the stack into the #{x} register.
     """
 )
 gravitationalConstant.addTest(
     stimulus='G'
-  , result=6.6746e-11
-  , units='m^3/(kg-s^2)'
-  , text='66.746 pm^3/(kg-s^2)'
+  , result=6.6746e-14
+  , units='m^3/(g-s^2)'
+  , text='66.746 fm^3/(g-s^2)'
 )
 
 # acceleration of gravity {{{3
@@ -1927,40 +1927,97 @@ standardAccelerationOfGravity.addTest(
   , text='9.8066 m/s^2'
 )
 
+# Rydberg constant {{{3
+rydbergConstant = Constant(
+    'Rinf'
+  , lambda: 10973731.568508
+  , description="%(key)s: Rydberg constant"
+  , units='m^-1'
+  , synopsis='... => #{Ry}, ...'
+  , summary="""
+        The Rydberg constant (10973731 1/m) is pushed on the stack into the
+        #{x} register.
+    """
+)
+rydbergConstant.addTest(
+    stimulus='Rinf'
+  , result=10973731.568508
+  , units='m^-1'
+  , text='10.974 Mm^-1'
+)
+
+# Stephan-Boltzmann constant {{{3
+stefanBoltsmannConstant = Constant(
+    'sigma'
+  , lambda: 5.670367e-8
+  , description="%(key)s: Stefan-Boltzmann constant"
+  , units='W m^-2 K^-4'
+  , synopsis='... => #{sigma}, ...'
+  , summary="""
+        The Stefan-Boltzmann constant (5.670367e-8 W m^-2 K^-4) is pushed on
+        the stack into the #{x} register.
+    """
+)
+stefanBoltsmannConstant.addTest(
+    stimulus='sigma'
+  , result=5.670367e-8
+  , units='W m^-2 K^-4'
+  , text='56.704 nW m^-2 K^-4'
+)
+
+# Fine Structure constant {{{3
+fineStructureConstant = Constant(
+    'alpha'
+  , lambda: 7.2973525664e-3
+  , description="%(key)s: Fine stucture constant"
+  , units=''
+  , synopsis='... => #{alpha}, ...'
+  , summary="""
+        The fine structure  constant (7.2973525664e-3) is pushed on
+        the stack into the #{x} register.
+    """
+)
+fineStructureConstant.addTest(
+    stimulus='alpha'
+  , result=7.2973525664e-3
+  , units=''
+  , text='7.2974m'
+)
+
 # avogadro constant {{{3
 avogadroConstant = Constant(
     'NA'
-  , lambda: 6.02214129e23
+  , lambda: 6.022140857e23
   , description="%(key)s: Avagadro Number"
-  , units='/mol'
+  , units='mol^-1'
   , synopsis='... => #{NA}, ...'
   , summary="""
-        Avogadro constant (6.02214129e23) is pushed on the stack into the #{x}
+        Avogadro constant (6.022140857e23) is pushed on the stack into the #{x}
         register.
     """
 )
 avogadroConstant.addTest(
     stimulus='NA'
-  , result=6.02214129e23
-  , units='/mol'
-  , text='602.21e21 /mol'
+  , result=6.022140857e23
+  , units='mol^-1'
+  , text='602.21e21 mol^-1'
 )
 
 # gas constant {{{3
 molarGasConstant = Constant(
     'R'
-  , lambda: 8.3144621
+  , lambda: 8.3144598
   , description="%(key)s: molar gas constant"
   , units='J/(mol-K)'
   , synopsis='... => #{R}, ...'
   , summary="""
-        The molar gas constant (8.3144621 J/(mol-K)) is pushed on the stack into
+        The molar gas constant (8.3144598 J/(mol-K)) is pushed on the stack into
         the #{x} register.
     """
 )
 molarGasConstant.addTest(
     stimulus='R'
-  , result=8.3144621
+  , result=8.3144598
   , units='J/(mol-K)'
   , text='8.3145 J/(mol-K)'
 )
@@ -2560,7 +2617,7 @@ setFixedFormat.addTest(
 # engineering format {{{3
 setEngineeringFormat = SetFormat(
     pattern=r'\Aeng(\d{1,2})?\Z'
-  , action=lambda num, units, digits: Quantity(num, units).render(prec=digits)
+  , action=lambda num, units, digits: Quantity(num, units=units).render(prec=digits)
   , name='eng'
   , actionTakesUnits=True
   , description="%(name)s[<#{N}>]: use engineering notation"
@@ -3144,6 +3201,12 @@ setUnits.addTest(
   , units='V/s'
   , text='100 MV/s'
 )
+setUnits.addTest(
+    stimulus='2pi 1e-27 * "erg s" =hb'
+  , result=6.2832e-27
+  , units='erg s'
+  , text='6.2832e-27 erg s'
+)
 
 printAbout = Command(
     'about'
@@ -3312,6 +3375,9 @@ physicsConstantActions = [
     speedOfLight,
     gravitationalConstant,
     standardAccelerationOfGravity,
+    rydbergConstant,
+    stefanBoltsmannConstant,
+    fineStructureConstant,
     freeSpacePermittivity,
     freeSpacePermeability,
 ]

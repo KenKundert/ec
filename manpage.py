@@ -265,8 +265,13 @@ document = r"""{
     =========
 
     **ec** provides several useful mathematical and physical constants that are
-    accessed by specifying them by name. The physical constants are given in MKS
-    units. The available constants include:
+    accessed by specifying them by name. The physical constants are given in 
+    base units (meters, grams, seconds) and so do not necessarily correspond to 
+    MKS or GGS values. For example, the mass of an electron is given in grams 
+    rather than kilograms as would be expected for MKS units. Similarly, the 
+    speed of light is given in meters per second rather than centimeters per 
+    second as would be expected of CGS units.  The 2014 NIST values are used. 
+    The available constants include:
 
     {constantsTable}
 
