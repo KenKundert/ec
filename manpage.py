@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf8
 # Convert the restructured text version of the manpage to a nroff manpage file.
 
 from actions import (

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf8
 #
 # An RPN calculator that supports numbers with SI scale factors and units.
 
