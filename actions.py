@@ -483,7 +483,7 @@ power.addTest(
   , units=''
   , text='2'
 )
-if int(sys.version[0]) < 3:
+if sys.version_info.major < 3:
     power.addTest(
         stimulus='-8 1 3/ ytox'
       , error='negative number cannot be raised to a fractional power.\n-8 1 3 / ytox\n         ^'
@@ -3008,7 +3008,7 @@ duplicateX = Dup(
     """
   , aliases=['enter']
 )
-if sys.version[0] == '3':
+if sys.version_info.major == 3:
     duplicateX.addTest(
         stimulus='1MHz 10μs dup'
       , result=10e-6

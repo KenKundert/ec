@@ -9,7 +9,7 @@ and uses a text-only user interface.
 Installing
 ----------
 
-| Version: 1.4.2
+| Version: 1.4.3
 | Released: 2016-12-07
 
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg

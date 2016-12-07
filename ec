@@ -102,7 +102,10 @@ calc = Calculator(
   , Display(formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer)
   , predefinedVariables
   , backUpStack=interactiveSession
-  , warningPrinter=warn
+  , warningPrinter=lambda warning: None
+#    Disable the warning printer initially to suppress warnings from scripts.
+#    Will add true warning printer when starting interactive session.
+#    This allows users to override built in constants without seeing warnings.
 )
 prompt = '0'
 
@@ -151,6 +154,9 @@ for arg in args:
 
 # Interact with user {{{1
 if (interactiveSession):
+    # turn on warnings
+    calc.warningPrinter = warn
+
     while(True):
         try:
             entered = raw_input('%s: ' % highlight(prompt)) # python 2

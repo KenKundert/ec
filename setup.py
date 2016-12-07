@@ -48,7 +48,7 @@ requires=[
 
 setup(
     name='engineering-calculator',
-    version='1.4.2',
+    version='1.4.3',
     description='engineering calculator',
     long_description=contents('README.rst'),
     author="Ken Kundert",

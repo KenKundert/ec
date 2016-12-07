@@ -391,15 +391,20 @@ document = r"""{
     '~/.ecrc' and runs any commands it contains if it exists.  It then tries
     './.ecrc' if it exists.  Finally it runs the startup file specified on the
     command line (with the **-s** or **--startup** option).  It is common to put
-    your generic preferences in '~/.exrc'.  For example, if your are a physicist
+    your generic preferences in '~/.exrc'.  For example, if your are an astronomer 
     with a desire for high precision results, you might use:
 
        |   eng6
-       |   h 2pi / "J-s" =hbar
+       |   6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
+       |   1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
+       |   1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
 
-    This tells **ec** to use 6 digits of resolution and predefines *hbar* as a
-    constant.  After all of the startup files have been processed, the stack is
-    cleared.
+    This tells **ec** to use 6 digits of resolution and redefines *h* and *hbar* 
+    so that they are given in CGS units. The redefining of the names *h*, 
+    *hbar*, and *k* would normally cause **ec** to print a warning, but such 
+    warnings are suppressed when reading initialization files and scripts.
+
+    After all of the startup files have been processed, the stack is cleared.
 
     A typical initialization script (~/.ecrc) for a circuit designer might be:
 
