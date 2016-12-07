@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+# encoding: utf8
 
 # Test EC
 # Imports {{{1
+from __future__ import print_function
 from runtests import (
     cmdLineOpts, writeSummary, succeed, fail, info, status
 )
@@ -9,7 +11,7 @@ from calculator import Calculator, Display, CalculatorError
 from actions import (
     allActions, predefinedVariables, defaultFormat, defaultDigits, detailedHelp
 )
-import math, sys
+import math, sys, re
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
@@ -17,6 +19,19 @@ testsRun = 0
 failures = 0
 reltol=1e-9
 abstol = 1e-13
+
+# Utilities {{{1
+knownUnicode = {
+    'μ': 'u',
+    '°': '',
+    'Ω': 'Ohms',
+}
+def clean(text):
+    # remove unicode from text
+    # this makes our tests less sensitive to differences between python 2 & 3
+    for uc, asc in knownUnicode.items():
+        text = re.sub(uc, asc, text)
+    return text
 
 # Test cases {{{1
 testCases = []
@@ -92,13 +107,26 @@ for index, case in enumerate(testCases):
                 abs(result-expectedResult) > (reltol*abs(expectedResult)+abstol)
             ) or
             expectedFormattedResult != None and (
-                calc.format((result, units)) != expectedFormattedResult
+                clean(calc.format((result, units))) != clean(expectedFormattedResult)
             ) or
-            expectedUnits != None and (units != expectedUnits) or
-            expectedError or
-            messages != expectedMessages or
-            warnings != expectedWarnings
+            expectedUnits != None and (clean(units) != clean(expectedUnits)) or
+            expectedError
         )
+        if type(messages) == list:
+            if (
+                [clean(m) for m in messages] != [clean(m) for m in expectedMessages]
+            ):
+                failure = True
+        elif messages != expectedMessages:
+            failure = True
+        if type(warnings) == list:
+            if (
+                [clean(w) for w in warnings] != [clean(w) for w in expectedWarnings]
+            ):
+                failure = True
+        elif warnings != expectedWarnings:
+            failure = True
+
         if failure:
             failures += 1
             print("%s:" % fail('Failure detected (%s):' % failures))

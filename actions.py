@@ -3008,12 +3008,13 @@ duplicateX = Dup(
     """
   , aliases=['enter']
 )
-duplicateX.addTest(
-    stimulus='1MHz 10μs dup'
-  , result=10e-6
-  , units='s'
-  , text='10 μs'
-)
+if sys.version[0] == '3':
+    duplicateX.addTest(
+        stimulus='1MHz 10μs dup'
+      , result=10e-6
+      , units='s'
+      , text='10 μs'
+    )
 duplicateX.addTest(
     stimulus='1MHz 10us dup swap'
   , result=10e-6
