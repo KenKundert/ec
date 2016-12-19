@@ -15,15 +15,16 @@ from textwrap import dedent
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent, coverage = cmdLineOpts()
+if coverage is False:
+    python = pythonCmd()
+else:
+    python = coverageCmd(source=coverage)
+
 testsRun = 0
 failures = 0
 reltol=1e-9
 abstol = 1e-12
 
-if coverage is False:
-    python = pythonCmd()
-else:
-    python = coverageCmd(source=coverage)
 
 # Test cases {{{1
 testCases = [
