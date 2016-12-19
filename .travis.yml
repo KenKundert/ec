@@ -13,5 +13,5 @@ deploy:
     provider: pypi
     on:
         tags: true
-
-
+after_success:
+  - coveralls
