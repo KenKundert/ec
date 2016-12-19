@@ -14,7 +14,7 @@ from actions import (
 import math, sys, re
 
 # Initialization {{{1
-fast, printSummary, printTests, printResults, colorize, parent = cmdLineOpts()
+fast, printSummary, printTests, printResults, colorize, parent, coverage = cmdLineOpts()
 testsRun = 0
 failures = 0
 reltol=1e-9

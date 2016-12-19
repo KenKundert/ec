@@ -3,4 +3,4 @@
 
 from runtests import runTests
 
-runTests(['ec', 'scripting'])
+runTests(['ec', 'scripting'], source='ec,actions.py,calculator.py')
