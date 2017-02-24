@@ -3581,5 +3581,5 @@ documentIntegers = (
 )
 Quantity.set_preferences(
     spacer=defaultSpacer,
-    render_sf=Quantity.render_sf_in_greek if sys.version_info.major == 3 else None
+    map_sf=Quantity.map_sf_to_greek if sys.version_info.major == 3 else None
 )
