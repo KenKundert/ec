@@ -873,8 +873,9 @@ def write(manFileName, rstFileName=None):
             outputFile.write(rst)
 
     # Generate man page
-    with open(manFileName, 'w') as outputFile:
-        outputFile.write(publish_string(rst, writer=manpage.Writer()).decode())
+    with open(manFileName, 'wb') as outputFile:
+        text = publish_string(rst, writer=manpage.Writer())
+        outputFile.write(text)
 
 if __name__ == '__main__':
     write('ec.1', 'ec.rst')
