@@ -4,7 +4,7 @@
 # Imports {{{1
 from __future__ import print_function
 from runtests import (
-    cmdLineOpts, writeSummary, succeed, fail, info, status,
+    cmdLineOpts, writeSummary, succeed, fail, info, status, warning,
     pythonCmd, coverageCmd
 )
 from calculator import Calculator, Display, CalculatorError
@@ -14,6 +14,7 @@ from subprocess import Popen, PIPE
 from textwrap import dedent
 
 # Initialization {{{1
+# Specification URL: ${MiM_URL/ "/spec_sheets/edit/" SpecSheetID/&}
 fast, printSummary, printTests, printResults, colorize, parent, coverage = cmdLineOpts()
 if coverage is False:
     python = pythonCmd()
@@ -25,6 +26,7 @@ failures = 0
 reltol=1e-9
 abstol = 1e-12
 
+python = 'python%s' % sys.version[0]
 
 # Test cases {{{1
 testCases = [

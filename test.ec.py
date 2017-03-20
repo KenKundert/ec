@@ -5,7 +5,8 @@
 # Imports {{{1
 from __future__ import print_function
 from runtests import (
-    cmdLineOpts, writeSummary, succeed, fail, info, status
+    cmdLineOpts, writeSummary, succeed, fail, info, status, warning,
+    pythonCmd, coverageCmd
 )
 from calculator import Calculator, Display, CalculatorError
 from actions import (
@@ -15,6 +16,11 @@ import math, sys, re
 
 # Initialization {{{1
 fast, printSummary, printTests, printResults, colorize, parent, coverage = cmdLineOpts()
+if coverage is False:
+    python = pythonCmd()
+else:
+    python = coverageCmd(source=coverage)
+
 testsRun = 0
 failures = 0
 reltol=1e-9

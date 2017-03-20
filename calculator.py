@@ -16,8 +16,8 @@ from pydoc import pager
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.4.4'
-versionDate = '2017-02-24'
+versionNumber = '1.5.0'
+versionDate = '2017-03-19'
 
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')
@@ -481,20 +481,15 @@ class Constant(Action):
         The symbol or word used to identify the operator (the user types this
         in to execute the command).
     action:
-        A function that is called to perform the command. The function takes an
-        argument if *needCalc* is true. The argument is calc (the calculator
-        object, used to gain access to calculator methods such as toRadians(),
-        fromRadians(), angleUnits(), as well as stack, heap and formatter
-        methods (using <calc>.stack, <calc>.heap and <calc>.formatter).
+        May be a dict, in which case the key will be the name for the current
+        system of units (mks or cgs). May be a tuple, in which case the tuple
+        contains the value and the units, or may be a simple value, in which
+        case the units are assumed to be empty. The value may be callable, in
+        which case it is called with no arguments to get the actual value.
     description (optional):
         The description is a brief half line description of the action.
         It may contain '%(attr)s' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
-    needCalc (optional):
-        Boolean. If true, the calculator object will be passed in as an argument
-        to *action*. Otherwise, no arguments are passed to *action*.
-    units (optional):
-        The units of the value being pushed onto the stack.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
         affected by this action.
@@ -520,8 +515,20 @@ class Constant(Action):
 
     def _execute(self, calc):
         stack = calc.stack
-        result = self.action()
-        stack.push((result, self.units))
+        if type(self.action) is dict:
+            try:
+                result, units = self.action[calc.unit_system]
+            except KeyError:
+                raise CalculatorError(
+                    "%s: %s version unavailable." % (self.key, calc.unit_system)
+                )
+        elif type(self.action) is tuple:
+            result, units = self.action
+        else:
+            result, units = self.action, ''
+        if callable(result):
+            result = result()
+        stack.push((result, units))
 
 # UnaryOp (pop 1, push 1, match name) {{{2
 class UnaryOp(Action):
@@ -1456,6 +1463,7 @@ class Calculator:
         self.formatter.clear()
         self.heap.clear()
         self.useDegrees()
+        self.useMKS()
 
     def restoreStack(self):
         '''
@@ -1477,6 +1485,12 @@ class Calculator:
         when a user creates a variable of the same name.
         '''
         del self.smplActions[key]
+
+    def useMKS(self):
+        self.unit_system = 'mks'
+
+    def useCGS(self):
+        self.unit_system = 'cgs'
 
     def useRadians(self):
         self.trigMode = 'rads'

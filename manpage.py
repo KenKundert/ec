@@ -266,21 +266,39 @@ document = r"""{
     =========
 
     **ec** provides several useful mathematical and physical constants that are
-    accessed by specifying them by name. The physical constants are given in 
-    base units (meters, grams, seconds) and so do not necessarily correspond to 
-    MKS or GGS values. For example, the mass of an electron is given in grams 
-    rather than kilograms as would be expected for MKS units. Similarly, the 
-    speed of light is given in meters per second rather than centimeters per 
-    second as would be expected of CGS units.  The 2014 NIST values are used. 
-    The available constants include:
+    accessed by specifying them by name. Several of the constants have both MKS 
+    and CGS forms (ec uses ESU-CGS). You can set which version you want by 
+    setting the desired unit system as follows:
+
+       |   **0**: mks
+       |   **0**: h
+       |   **662.61e-36 J-s**: k
+       |   **13.806e-24 J/K**: cgs
+       |   **13.806e-24 J/K**: h
+       |   **6.6261e-27 erg-s**: k
+       |   **138.06 aerg/K**:
+
+    Notice that the unit-system is sticky, meaning that it remains in force 
+    until explicitly changed. 'mks' is the default unit system.
+
+    The physical constants are given in base units (meters, grams, seconds).  
+    For example, the mass of an electron is given in grams rather than kilograms 
+    as would be expected for MKS units.  Similarly, the speed of light is given 
+    in meters per second rather than centimeters per second as would be expected 
+    of CGS units.  This is necessary so that numbers are not displayed with two 
+    scale factors (ex. 1 mkg).  Thus, it may be necessary for you to explicitly 
+    convert to kg (MKS) or cm (CGS) before using values in formulas that are 
+    tailored for one specific unit system.
+
+    The 2014 NIST values are used.  The available constants include:
 
     {constantsTable}
 
     As an example of using the predefined constants, consider computing the
     thermal voltage, kT/q.
 
-       |   **0**: k 27 0C + * q/
-       |   **25.865m**:
+       |   **0**: k 27 0C + * q/ "V"
+       |   **25.865 mV**:
 
 
     VARIABLES
@@ -723,12 +741,13 @@ constants = []
 keyWidth = descWidth = 0
 for action in actions:
     if isinstance(action, Constant):
-        value = action.action()
+        # value = action.action()
         # strip off the key or pattern
         description = action.description.split(':', 1)[1].strip()
         # add the value to the description
         # actually, do not add the value, it makes text too wide and in the case
-        # of rand is misleading 
+        # of rand is misleading, also value can be a number, a tuple, a dict, or 
+        # a function, would need to accommodate all of these.
         #if value and action.units:
         #    desc = '%s (%s %s)' % (description, value, action.units)
         #elif value:

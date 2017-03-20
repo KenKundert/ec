@@ -42,13 +42,13 @@ def contents(fname):
 requires=[
     'docopt',
     'docutils',
-    'quantiphy>=1.2.0',
+    'quantiphy>=1.3.0',
     'inform>=1.4.3',
 ]
 
 setup(
     name='engineering-calculator',
-    version='1.4.4',
+    version='1.5.0',
     description='engineering calculator',
     long_description=contents('README.rst'),
     author="Ken Kundert",
@@ -79,7 +79,6 @@ setup(
       'Programming Language :: Python :: 3.3',
       'Programming Language :: Python :: 3.4',
       'Programming Language :: Python :: 3.5',
-      'Programming Language :: Python :: 3.6',
       'Topic :: Scientific/Engineering',
     ],
     license='GPLv3',
