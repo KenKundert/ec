@@ -21,8 +21,9 @@ Installing
 .. image:: https://img.shields.io/pypi/pyversions/engineering_calculator.svg
     :target: https://pypi.python.org/pypi/engineering_calculator
 
-.. image:: https://img.shields.io/pypi/dd/engineering_calculator.svg
-    :target: https://pypi.python.org/pypi/engineering_calculator
+.. IGNORE: pypi statics are broken and unlikely to be fixed
+    .. image:: https://img.shields.io/pypi/dm/engineering_calculator.svg
+        :target: https://pypi.python.org/pypi/engineering_calculator
 
 Install with::
 
