@@ -5,8 +5,7 @@
 # An RPN calculator that supports numbers with SI scale factors and units.
 
 # Imports {{{1
-from __future__ import division
-from __future__ import print_function
+from __future__ import division, print_function
 import math
 import re
 from copy import copy

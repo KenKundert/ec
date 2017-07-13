@@ -3668,7 +3668,7 @@ documentIntegers = (
     setOctalFormat in actionsToUse or
     setBinaryFormat in actionsToUse
 )
-Quantity.set_preferences(
+Quantity.set_prefs(
     spacer=defaultSpacer,
     map_sf=Quantity.map_sf_to_greek if sys.version_info.major == 3 else None
 )
