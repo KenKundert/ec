@@ -15,8 +15,8 @@ from pydoc import pager
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.5.0'
-versionDate = '2017-03-19'
+versionNumber = '1.5.1'
+versionDate = '2017-07-13'
 
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')
