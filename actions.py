@@ -3300,6 +3300,16 @@ printAbout.addTest(
   , messages=True
 )
 
+describeFunctions = Command(
+    'functions'
+  , Calculator.describeFunctions
+  , description="%(key)s: describes how to define and use functions."
+)
+printAbout.addTest(
+    stimulus='about'
+  , messages=True
+)
+
 terminate = Command(
     'quit'
   , Calculator.quit
@@ -3552,10 +3562,11 @@ miscellaneousActions = [
     randomNumber,
     printText,
     setUnits,
-    printAbout,
+    describeFunctions,
     terminate,
     printHelp,
     detailedHelp,
+    printAbout,
 ]
 
 # Action Lists {{{1

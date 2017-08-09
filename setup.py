@@ -42,8 +42,8 @@ def contents(fname):
 requires=[
     'docopt',
     'docutils',
-    'quantiphy>=2.0.0',
-    'inform>=1.4.3',
+    'quantiphy>=2.1.0',
+    'inform>=1.9',
 ]
 
 setup(

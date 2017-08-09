@@ -1591,6 +1591,30 @@ class Calculator:
             To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
         """ % (versionNumber, versionDate)))
 
+    def describeFunctions(calc):  # pylint: disable=no-self-argument
+        '''
+        Describe usage of user-define functions.
+        '''
+        calc.printMessage(dedent("""
+            Define functions using:
+                ( ... )name
+
+            Here '(' starts the function definition and ')name' ends it. The
+            closing parenthesis must be immediately adjacent to 'name'. The
+            '...' represents a sequence of calculator actions. For example:
+
+                0: (2pi * “rads/s”)to_omega
+                0: (2pi / “Hz”)to_freq
+                0: 100MHz
+                100 MHz: to_omega
+                628.32 Mrads/s: to_freq
+                100 MHz:
+
+            You can list the user-defined functions along with the user-defined
+            variables using the 'vars' command. The functions are delimited with
+            parentheses.
+        """).strip())
+
     def quit(calc):  # pylint: disable=no-self-argument
         '''
         Quit EC.
