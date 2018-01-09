@@ -8,8 +8,8 @@ from runtests import (
     cmdLineOpts, writeSummary, succeed, fail, info, status, warning,
     pythonCmd, coverageCmd
 )
-from calculator import Calculator, Display, CalculatorError
-from actions import (
+from engineering_calculator.calculator import Calculator, Display, CalculatorError
+from engineering_calculator.actions import (
     allActions, predefinedVariables, defaultFormat, defaultDigits, detailedHelp
 )
 import math, sys, re

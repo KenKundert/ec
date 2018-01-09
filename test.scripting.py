@@ -7,8 +7,8 @@ from runtests import (
     cmdLineOpts, writeSummary, succeed, fail, info, status, warning,
     pythonCmd, coverageCmd
 )
-from calculator import Calculator, Display, CalculatorError
-from actions import allActions, defaultFormat, defaultDigits
+from engineering_calculator.calculator import Calculator, Display, CalculatorError
+from engineering_calculator.actions import allActions, defaultFormat, defaultDigits
 import math, sys
 from subprocess import Popen, PIPE
 from textwrap import dedent
@@ -74,16 +74,16 @@ def grabWarnings(warning):
     warnings += [warning]
 
 calc = Calculator(
-    allActions
-  , Display(defaultFormat, defaultDigits)
-  , messagePrinter=grabMessages
-  , warningPrinter=grabWarnings
+    allActions,
+    Display(defaultFormat, defaultDigits),
+    messagePrinter=grabMessages,
+    warningPrinter=grabWarnings,
 )
 for index, case in enumerate(testCases):
     messages = []
     warnings = []
     testsRun += 1
-    stimulus = ' '.join([python, 'ec', case['stimulus']])
+    stimulus = ' '.join(['ec', case['stimulus']])
     expectedResult = dedent(case['output']).strip()
     if printTests:
         print(status('Trying %d:' % index), stimulus)

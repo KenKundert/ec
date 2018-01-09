@@ -6,17 +6,17 @@
 
 # Imports {{{1
 from __future__ import division, print_function
-import math
-import re
 from copy import copy
 from textwrap import wrap, fill, dedent
 from inform import display, warn, full_stop
 from pydoc import pager
+import math
+import re
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.5.2'
-versionDate = '2017-08-09'
+versionNumber = '1.5.3'
+versionDate = '2018-01-09'
 
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')

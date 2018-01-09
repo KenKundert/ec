@@ -6,12 +6,7 @@
 
 # Imports {{{1
 from __future__ import division, print_function
-import sys
-import operator
-import math
-import cmath
-import random
-from calculator import (
+from .calculator import (
     Command, Constant, UnaryOp, BinaryOp, BinaryIoOp, Number,
     SetFormat, Help, Store, Recall, SetUnits, Print, Dup, Category,
     Calculator
@@ -19,6 +14,10 @@ from calculator import (
 from inform import warn
 from quantiphy import Quantity
 import sys
+import operator
+import math
+import cmath
+import random
 
 
 # Actions {{{1

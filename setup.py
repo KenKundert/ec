@@ -48,19 +48,17 @@ requires=[
 
 setup(
     name='engineering-calculator',
-    version='1.5.2',
+    version='1.5.3',
     description='engineering calculator',
     long_description=contents('README.rst'),
     author="Ken Kundert",
     author_email='ec@nurdletech.com',
     url='http://nurdletech.com/linux-utilities/ec',
     download_url='https://github.com/kenkundert/ec/tarball/master',
-    scripts=['ec'],
-    py_modules=[
-        'actions',
-        'calculator',
-        'manpage',
-    ],
+    packages='engineering_calculator'.split(),
+    entry_points = {
+        'console_scripts': ['ec=engineering_calculator.main:main'],
+    },
     setup_requires=requires,
     install_requires=requires,
     cmdclass={

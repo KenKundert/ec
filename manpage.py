@@ -2,11 +2,11 @@
 # encoding: utf8
 # Convert the restructured text version of the manpage to a nroff manpage file.
 
-from actions import (
+from engineering_calculator.actions import (
     actionsToUse as actions
   , Constant, documentIntegers, documentVerilogIntegers, documentComplexNumbers
 )
-from calculator import versionDate, versionNumber
+from engineering_calculator.calculator import versionDate, versionNumber
 from docutils.core import publish_string
 from docutils.writers import manpage
 from textwrap import dedent
