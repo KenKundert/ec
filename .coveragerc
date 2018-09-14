@@ -4,4 +4,4 @@ exclude_lines =
     raise NotImplementedError
 
 [run]
-source = engineering_calculator
+source = ec,actions.py,calculator.py

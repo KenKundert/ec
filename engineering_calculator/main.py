@@ -100,13 +100,13 @@ def main():
     # Create calculator {{{1
     calc = Calculator(
         actionsToUse,
-      Display(formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer),
-      predefinedVariables,
-      backUpStack=interactiveSession,
-      warningPrinter=lambda warning: None,
-    #    Disable the warning printer initially to suppress warnings from scripts.
-    #    Will add true warning printer when starting interactive session.
-    #    This allows users to override built in constants without seeing warnings.
+        Display(formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer),
+        predefinedVariables,
+        backUpStack=interactiveSession,
+        warningPrinter=lambda warning: None,
+        # Disable the warning printer initially to suppress warnings from scripts.
+        # Will add true warning printer when starting interactive session.
+        # This allows users to override built in constants without seeing warnings.
     )
     prompt = '0'
 
@@ -161,13 +161,13 @@ def main():
         while(True):
             try:
                 entered = raw_input('%s: ' % highlight(prompt)) # python 2
-            except (EOFError, KeyboardInterrupt):
+            except (EOFError, KeyboardInterrupt, SystemError):
                 display()
                 terminate()
             except NameError:
                 try:
                     entered = input('%s: ' % highlight(prompt)) # python 3
-                except (EOFError, KeyboardInterrupt):
+                except (EOFError, KeyboardInterrupt, SystemError):
                     display()
                     terminate()
             prompt = evaluateLine(calc, entered, prompt)
