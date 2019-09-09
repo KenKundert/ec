@@ -2131,7 +2131,7 @@ freeSpacePermeability.addTest(
     stimulus='mks mu0'
   , result=4e-7*math.pi
   , units='H/m'
-  , text='1.2566 μH/m'
+  , text='1.2566 µH/m'
 )
 freeSpacePermeability.addTest(
     stimulus='cgs mu0'
@@ -2203,7 +2203,7 @@ def siNumber(matches):
     return num
 
 engineeringNumber = Number(
-    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mμunpfazy])([a-zA-Z_]*))?)\Z'
+    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mµμunpfazy])([a-zA-Z_]*))?)\Z'
   , action=siNumber
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
@@ -2479,31 +2479,31 @@ scientificNumber.addTest(
     stimulus='+j1.5e-6Ohms'
   , result=1.5e-6j
   , units='Ohms'
-  , text='j1.5 μOhms'
+  , text='j1.5 µOhms'
 )
 scientificNumber.addTest(
     stimulus='-j1.5e-6'
   , result=-1.5e-6j
   , units=''
-  , text='-0 - j1.5μ'
+  , text='-0 - j1.5µ'
 )
 scientificNumber.addTest(
     stimulus='$j1.5e-6'
   , result=1.5e-6j
   , units='$'
-  , text='j$1.5μ'
+  , text='j$1.5µ'
 )
 scientificNumber.addTest(
     stimulus='+$j1.5e-6'
   , result=1.5e-6j
   , units='$'
-  , text='j$1.5μ'
+  , text='j$1.5µ'
 )
 scientificNumber.addTest(
     stimulus='-$j1.5e-6'
   , result=-1.5e-6j
   , units='$'
-  , text='-$0 - j$1.5μ'
+  , text='-$0 - j$1.5µ'
 )
 
 # hexadecimal number {{{3
@@ -3049,11 +3049,11 @@ listVariables.addTest(
     stimulus='1MHz =freq 10us =time vars'
   , result=10e-6
   , units='s'
-  , text='10 μs'
+  , text='10 µs'
   , messages=[
         '  Rref: 50 Ω'
       , '  freq: 1 MHz'
-      , '  time: 10 μs'
+      , '  time: 10 µs'
     ]
 )
 
@@ -3090,16 +3090,16 @@ duplicateX = Dup(
 )
 if sys.version_info.major == 3:
     duplicateX.addTest(
-        stimulus='1MHz 10μs dup'
+        stimulus='1MHz 10µs dup'
       , result=10e-6
       , units='s'
-      , text='10 μs'
+      , text='10 µs'
     )
 duplicateX.addTest(
     stimulus='1MHz 10us dup swap'
   , result=10e-6
   , units='s'
-  , text='10 μs'
+  , text='10 µs'
 )
 
 # pop {{{3
@@ -3142,7 +3142,7 @@ listStack.addTest(
   , text='36'
   , messages=[
         '     1 MHz'
-      , '     10 μs'
+      , '     10 µs'
       , '  y: 160.22e-21 C'
       , '  x: 36'
     ]
