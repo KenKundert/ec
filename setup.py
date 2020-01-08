@@ -1,5 +1,6 @@
 from setuptools import setup
 from setuptools.command.install import install as Install
+from codecs import open
 import os
 import errno
 
@@ -37,7 +38,7 @@ class MyInstall(Install):
 # Return the contents of a file
 # Path is relative to the location of this setup file.
 def contents(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return open(os.path.join(os.path.dirname(__file__), fname), encoding='utf-8').read()
 
 requires=[
     'docopt',
