@@ -45,6 +45,7 @@ requires=[
     'docutils',
     'quantiphy>=2.1.0',
     'inform>=1.9',
+    'wheel',
 ]
 
 setup(
