@@ -159,9 +159,9 @@ Use *stack* to see the contents of the stack::
    -1:
 
 The stack grows without limit as needed. The bottom two values are the values 
-that are generally involved in operations and they are labeled for *x* and *y* 
-as an aid to help you understand and predict the basic operation of various 
-commands. For example::
+that are generally involved in operations and they are labeled *x* and *y* as an 
+aid to help you understand and predict the basic operation of various commands. 
+For example::
 
    0: 8 2 stack
      y: 8
