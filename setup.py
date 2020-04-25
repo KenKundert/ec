@@ -49,7 +49,7 @@ requires=[
 
 setup(
     name='engineering-calculator',
-    version='1.6.0',
+    version='1.5.3',
     description='engineering calculator',
     long_description=contents('README.rst'),
     author="Ken Kundert",
@@ -82,6 +82,7 @@ setup(
       'Programming Language :: Python :: 3.5',
       'Programming Language :: Python :: 3.6',
       'Programming Language :: Python :: 3.7',
+      'Programming Language :: Python :: 3.8',
       'Topic :: Scientific/Engineering',
     ],
     license='GPLv3',
