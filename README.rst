@@ -21,9 +21,6 @@ Installing
 .. image:: https://img.shields.io/pypi/pyversions/engineering_calculator.svg
     :target: https://pypi.python.org/pypi/engineering_calculator
 
-.. IGNORE: pypi statistics are broken and unlikely to be fixed
-    .. image:: https://img.shields.io/pypi/dm/engineering_calculator.svg
-        :target: https://pypi.python.org/pypi/engineering_calculator
 
 Install with::
 
@@ -358,5 +355,5 @@ You can quit the program using::
 
 (or *:q* or *^D*).
 
-| Enjoy,
-|    -Ken
+More detailed information can be found `here 
+<https://nurdletech.com/linux-utilities/ec/ec.html>`_.
