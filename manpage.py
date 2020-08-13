@@ -6,7 +6,7 @@ from engineering_calculator.actions import (
     actionsToUse as actions
   , Constant, documentIntegers, documentVerilogIntegers, documentComplexNumbers
 )
-from engineering_calculator.calculator import versionDate, versionNumber
+from engineering_calculator.calculator import __released__, __version__
 from docutils.core import publish_string
 from docutils.writers import manpage
 from textwrap import dedent
@@ -860,12 +860,12 @@ for action in actions:
 # Generate restructured text {{{1
 def write(manFileName, rstFileName=None):
     rst = dedent(document[1:-1]).format(
-        date=versionDate
-      , version=versionNumber
-      , integers=dedent(integerSection)
-      , complexNumbers=dedent(complexNumberSection)
-      , constantsTable=constantsTable
-      , actions='\n'.join(actionText)
+        date = __released__,
+        version = __version__,
+        integers = dedent(integerSection),
+        complexNumbers = dedent(complexNumberSection),
+        constantsTable = constantsTable,
+        actions = '\n'.join(actionText),
     )
     # generate reStructuredText file (only used for debugging)
     if rstFileName:

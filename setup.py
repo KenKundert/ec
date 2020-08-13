@@ -48,24 +48,24 @@ requires=[
 ]
 
 setup(
-    name='engineering-calculator',
-    version='1.6.0',
-    description='engineering calculator',
-    long_description=contents('README.rst'),
-    author="Ken Kundert",
-    author_email='ec@nurdletech.com',
-    url='http://nurdletech.com/linux-utilities/ec',
-    download_url='https://github.com/kenkundert/ec/tarball/master',
-    packages='engineering_calculator'.split(),
+    name = 'engineering-calculator',
+    version = '1.6.0',
+    description = 'engineering calculator',
+    long_description = contents('README.rst'),
+    author = "Ken Kundert",
+    author_email = 'ec@nurdletech.com',
+    url = 'http://nurdletech.com/linux-utilities/ec',
+    download_url = 'https://github.com/kenkundert/ec/tarball/master',
+    packages = 'engineering_calculator'.split(),
     entry_points = {
-        'console_scripts': ['ec=engineering_calculator.main:main'],
+        'console_scripts': ['ec = engineering_calculator.main:main'],
     },
-    setup_requires=requires,
-    install_requires=requires,
-    cmdclass={
+    setup_requires = requires,
+    install_requires = requires,
+    cmdclass = {
         'install': MyInstall,
     },
-    classifiers=[
+    classifiers = [
       'Development Status :: 5 - Production/Stable',
       'Environment :: Console',
       'Intended Audience :: Science/Research',
@@ -85,5 +85,5 @@ setup(
       'Programming Language :: Python :: 3.8',
       'Topic :: Scientific/Engineering',
     ],
-    license='GPLv3',
+    license = 'GPLv3',
 )
