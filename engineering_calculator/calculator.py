@@ -15,8 +15,8 @@ import re
 import sys
 
 # Set the version information {{{1
-versionNumber = '1.6.0'
-versionDate = '2020-04-15'
+__version__ = '1.6.0'
+__released__ = '2020-04-15'
 
 # Utility functions {{{1
 italicsRegex = re.compile(r'#\{(\w+)\}')
