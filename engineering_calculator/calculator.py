@@ -1589,7 +1589,7 @@ class Calculator:
             EC was written by Ken Kundert.
             Email your comments and questions to ec@nurdletech.com.
             To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
-        """ % (versionNumber, versionDate)))
+        """ % (__version__, __released__)))
 
     def describeFunctions(calc):  # pylint: disable=no-self-argument
         '''

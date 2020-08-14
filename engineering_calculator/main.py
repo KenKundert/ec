@@ -58,7 +58,7 @@ from .actions import (
     defaultFormat, defaultDigits, defaultSpacer
 )
 from .calculator import (
-    Calculator, Display, CalculatorError, versionNumber, versionDate
+    Calculator, Display, CalculatorError, __version__, __released__
 )
 from docopt import docopt
 from inform import (
@@ -77,7 +77,7 @@ def main():
     verbose = cmdline['--verbose']
     Inform(prog_name=False, colorscheme=colorscheme)
     if cmdline['--version']:
-        display('ec version: {} ({})'.format(versionNumber, versionDate))
+        display('ec version: {} ({})'.format(__version__, __released__))
         terminate()
 
     # Define utility functions {{{1
