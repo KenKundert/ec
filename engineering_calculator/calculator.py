@@ -70,6 +70,7 @@ class Stack:
 
         Takes one argument, the value to be pushed onto the stack.
         """
+        self.parent.update_last_x = True
         self.stack.insert(0, value)
 
     def pop(self):
@@ -1279,7 +1280,7 @@ class Calculator:
     # before splitting the input, the following regex will be replaced by a
     # space. This allows certain operators to be given abutted to numbers
     operatorSplitRegex = re.compile('''
-        (?<=[a-zA-Z0-9])    # alphanum before the split
+        (?<=[a-zA-Z0-9°ÅΩƱΩ℧])    # alphanum before the split
         (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z)) # selected operators followed by white space or EOL: - + * / % ! ** || //
     ''', re.X)
     # strings are delimited by "" and `` (' is reserved for use with verilog
@@ -1406,6 +1407,8 @@ class Calculator:
             self.prevStack = self.stack.clone()
         try:
             for index, cmd in enumerate(given):
+                last_x = self.stack.peek()
+                self.update_last_x = False
                 if self.function is not None:
                     if cmd == '(':
                          raise CalculatorError('nested function definitions.')
@@ -1436,7 +1439,11 @@ class Calculator:
                                 action._execute(match.groups(), self)
                                 break
                         else:
+                            if cmd == '#':
+                                break   # ignore comments
                             raise CalculatorError("%s: unrecognized." % cmd)
+                if self.update_last_x:
+                    self.last_x = last_x
             return self.stack.peek()
         except (ValueError, OverflowError, TypeError) as err:
             if (
@@ -1459,6 +1466,7 @@ class Calculator:
         '''
         self.stack.clear()
         self.prevStack = None
+        self.last_x = (0, '')
         self.formatter.clear()
         self.heap.clear()
         self.useDegrees()

@@ -205,14 +205,18 @@ document = r"""{
        |   2.5_V
        |   4.7e-10F
 
-    Units are only allowed after a scale factor or an exponent, and the units 
-    are optional. In this way, 1m represents 1e-3 rather than 1 meter. If you 
-    wish to enter 1 meter, use 1_m. The underscore is the unity scale factor.
+    Both units and scale factors are optional, which causes a natural ambiguity 
+    as to whether the first letter of a suffix is a scale factor or not. If the 
+    first letter is a valid scale factor, then it is assume to be a scale 
+    factor.  In this way, '300K is treated as 300e3 rather than 300 Kelvin. If 
+    you intend the units without a scale factor, add the unit scale factor: '_'.  
+    Thus, use 300_K to enter 300 Kelvin.
 
     In this case the units must be simple identifiers (must not contain special 
-    characters). For complex units, such as "rads/s", or for numbers that do not 
-    have scale factors, it is possible to attach units to a number in the *x* 
-    register by entering a quoted string.
+    characters, though use of particular units symbols, °ÅΩƱ. are allowed). For 
+    complex units, such as "rads/s", or for numbers that do not have scale 
+    factors, it is possible to attach units to a number in the *x* register by 
+    entering a quoted string.
 
        |   **0**: 6.626e-34
        |   **662.6e-36**: "J-s"
@@ -223,6 +227,11 @@ document = r"""{
 
        |    $100K
 
+    Numbers my also contain commas as digit separators, which are ignored.
+
+       |    $200,000.00
+
+    The dollar sign ($) is a special unit that is given before the number.
     **ec** takes a conservative approach to units. You can enter them and it
     remembers them, but they do not survive any operation where the resulting
     units would be in doubt.  In this way it displays units when it can, but
@@ -390,6 +399,13 @@ document = r"""{
     to the left one place.
 
     {actions}
+
+
+    COMMENTS
+    ========
+
+    Any text that follows a # is ignored. In this way you can add documentation
+    to initialization files and scripts, as shown in the next few sections.
 
 
     HELP

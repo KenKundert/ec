@@ -955,20 +955,16 @@ complexAndVectorFunctions = Category("Complex and Vector Functions")
 # absolute value {{{3
 # Absolute Value of a complex number.
 # Also known as the magnitude, amplitude, or modulus
-absoluteValue = Dup(
+absoluteValue = UnaryOp(
     'abs'
   , lambda x: abs(x)
-  , description="%(key)s: magnitude"
+  , description="%(key)s: magnitude of complex number"
   , units=lambda calc, units: units[0]
   , synopsis='#{x}, ... => abs(#{x}), #{x}, ...'
   , summary="""
         The absolute value of the number in the #{x} register is pushed onto the
         stack if it is real. If the value is complex, the magnitude is pushed
         onto the stack.
-
-        Unlike most other functions, this one does not replace the value of its
-        argument on the stack. Its value is simply pushed onto the stack without
-        first popping off the argument.
     """
   , aliases=['mag']
 )
@@ -991,22 +987,22 @@ absoluteValue.addTest(
   , text='1'
 )
 absoluteValue.addTest(
-    stimulus='1 j + "V" mag pop'
-  , result=1+1j
+    stimulus='1 j + "V" mag'
+  , result=cmath.sqrt(2)
   , units='V'
-  , text='1 V + j V'
+  , text='1.4142 V'
 )
 
 # argument {{{3
 # Argument of a complex number, also known as the phase , or angle
-argument = Dup(
+argument = UnaryOp(
     'arg'
   , lambda x, calc: (
         calc.fromRadians(math.atan2(x.imag,x.real))
         if type(x) == complex
         else 0
     )
-  , description="%(key)s: phase"
+  , description="%(key)s: phase of complex number"
   , needCalc=True
   , units=lambda calc, units: calc.angleUnits()
   , synopsis='#{x}, ... => arg(#{x}), #{x}, ...'
@@ -1014,10 +1010,6 @@ argument = Dup(
         The argument of the number in the #{x} register is pushed onto the
         stack if it is complex. If the value is real, zero is pushed
         onto the stack.
-
-        Unlike most other functions, this one does not replace the value of its
-        argument on the stack. Its value is simply pushed onto the stack without
-        first popping off the argument.
     """
   , aliases=['ph']
 )
@@ -1034,16 +1026,16 @@ argument.addTest(
   , text='-785.4 mrads'
 )
 argument.addTest(
-    stimulus='1 j + "V" ph pop'
-  , result=1+1j
-  , units='V'
-  , text='1 V + j V'
+    stimulus='1 j + "V" ph'
+  , result=45.0
+  , units='degs'
+  , text='45 degs'
 )
 argument.addTest(
-    stimulus='1 j + "m/s" arg pop'
-  , result=1+1j
-  , units='m/s'
-  , text='1 m/s + j m/s'
+    stimulus='1 -j1 + "m/s" arg'
+  , result=-45
+  , units='degs'
+  , text='-45 degs'
 )
 
 # hypotenuse {{{3
@@ -2203,7 +2195,11 @@ def siNumber(matches):
     return num
 
 engineeringNumber = Number(
-    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mµμunpfazy])([a-zA-Z_]*))?)\Z'
+    #pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mµμunpfazy])([a-zA-Z_°ÅΩƱΩ℧]*))?)\Z'
+    # above pattern does not allow one to skip the scale factor, pattern below does
+    pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)([a-wyzA-Z_µμ°ÅΩƱΩ℧][a-zA-Z_µμ°ÅΩƱΩ℧]*)?)\Z'
+        # x is removed from the possible initial letters in the units to avoid
+        # ambiquity with hex numbers.
   , action=siNumber
   , name='engnum'
   , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
@@ -2319,6 +2315,18 @@ engineeringNumber.addTest(
   , text='-$1k'
 )
 engineeringNumber.addTest(
+    stimulus='50Ω'
+  , result=50
+  , units='Ω'
+  , text='50 Ω'
+)
+engineeringNumber.addTest(
+    stimulus='50kΩ'
+  , result=50000
+  , units='Ω'
+  , text='50 kΩ'
+)
+engineeringNumber.addTest(
     stimulus='j1,000.00KOhms'
   , result=1j * 1e6
   , units='Ohms'
@@ -2409,7 +2417,7 @@ def sciNumber(matches):
 
 # real number in scientific notation {{{3
 scientificNumber = Number(
-    pattern=r'\A([-+]?)(\$?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_]*)\Z'
+    pattern=r'\A([-+]?)(\$?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_°ÅΩƱΩ℧]*)\Z'
   , action=sciNumber
   , name='scinum'
   , description="<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation"
@@ -2462,6 +2470,12 @@ scientificNumber.addTest(
   , result=-2e-3
   , units='$'
   , text='-$2m'
+)
+scientificNumber.addTest(
+    stimulus='50e3Ω'
+  , result=50_000
+  , units='Ω'
+  , text='50 kΩ'
 )
 scientificNumber.addTest(
     stimulus='j1e6Ohms'
@@ -2705,7 +2719,7 @@ setEngineeringFormat = SetFormat(
         Numbers are displayed with a fixed number of digits of precision and the
         SI scale factors are used to convey the exponent when possible.  If an
         optional whole number #{N} immediately follows #{eng}, the precision is
-        set to #{N} digits. 
+        set to #{N} digits.
     """
 )
 setEngineeringFormat.addTest(
@@ -3126,6 +3140,45 @@ popX.addTest(
   , text='0'
 )
 
+# lastx {{{3
+lastX = Command(
+    'lastx'
+  , lambda calc: calc.stack.push(calc.last_x)
+  , description='%(key)s: recall previous value of x'
+  , synopsis='... => #{lastx}, ...'
+  , summary="""
+        The previous value of the #{x} register is pushed onto the stack.
+    """
+)
+listStack = Command(
+    'stack'
+  , lambda calc: calc.stack.display()
+  , description="%(key)s: print stack"
+  , summary="""
+        Print all the values stored on the stack.
+    """
+)
+lastX.addTest(
+    stimulus='100MHz 10us * lastx stack'
+  , result=10e-6
+  , units='s'
+  , text='10 µs'
+  , messages=[
+        '  y: 1k'
+      , '  x: 10 µs'
+    ]
+)
+lastX.addTest(
+    stimulus='1 j + "V" arg lastx stack'
+  , result=1+1j
+  , units='V'
+  , text='1 V + j V'
+  , messages=[
+        '  y: 45 degs'
+      , '  x: 1 V + j V'
+    ]
+)
+
 # stack {{{3
 listStack = Command(
     'stack'
@@ -3158,7 +3211,7 @@ clearStack = Command(
         Remove all values from the stack.
     """
 )
-listStack.addTest(
+clearStack.addTest(
     stimulus='1MHz 10us clstack stack'
   , result=0
   , units=''
@@ -3551,6 +3604,7 @@ stackActions = [
     swapXandY,
     duplicateX,
     popX,
+    lastX,
     listStack,
     clearStack,
 ]
