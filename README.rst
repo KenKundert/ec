@@ -350,10 +350,13 @@ You can get a list of the help topics available with::
 
    0: help
 
-There is much more available that what is described here. For more information,
-run::
+There is much more available that what is described here. If you have installed 
+the man-page, you can get more information by running::
 
    $ man ec
+
+Alternately, you can view the `online documentation 
+<https://engineering-calculator.readthedocs.io>`_.
 
 You can quit the program using::
 
