@@ -1,0 +1,5 @@
+#!/bin/sh
+mkdir -p ~/.local/man/man1
+cd ~/.local/man/man1
+rm -f ec.1
+wget https://raw.githubusercontent.com/KenKundert/ec/master/doc/ec.1
