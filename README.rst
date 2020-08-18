@@ -71,6 +71,23 @@ To run EC::
    0:
 
 
+Installing Man Page
+-------------------
+
+If you have installed from source, you can install the manpage with::
+
+    cd doc
+    make publish
+
+Otherwise, you can install the latest version of the manpage on GitHub using::
+
+    curl https://raw.githubusercontent.com/KenKundert/ec/master/install-manpage | bash -
+
+Once installed, you can get access the man page using::
+
+    man ec
+
+
 A Brief Tour of Engineering Calculator
 --------------------------------------
 

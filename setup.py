@@ -13,7 +13,7 @@ setup(
     entry_points = {
         'console_scripts': ['ec = engineering_calculator.main:main'],
     },
-    install_requires = 'docopt quantiphy>=2.1.0 inform>=1.9'.split(),
+    install_requires = 'docopt docutils quantiphy>=2.1.0 inform>=1.9'.split(),
     classifiers = [
       'Development Status :: 5 - Production/Stable',
       'Environment :: Console',
