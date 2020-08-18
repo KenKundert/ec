@@ -1592,12 +1592,12 @@ class Calculator:
         '''
         calc.printMessage(dedent("""\
             EC: Engineering Calculator
-            Version %s (%s).
+            Version {} ({}).
 
             EC was written by Ken Kundert.
-            Email your comments and questions to ec@nurdletech.com.
-            To get the source, use 'git clone git@github.com:KenKundert/ec.git'.\
-        """ % (__version__, __released__)))
+            Report issues or ask questions at https://github.com/KenKundert/ec/issues
+            To view the manual, visit https://engineering-calculator.readthedocs.io\
+        """.format(__version__, __released__)))
 
     def describeFunctions(calc):  # pylint: disable=no-self-argument
         '''

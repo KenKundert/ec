@@ -6,8 +6,8 @@ Engineering Calculator
 | Version: 1.6.2
 
 
-This calculator is noteworthy in that it employs a stack model of computation␣
-(Reverse Polish Notation); it supports numbers with SI scale factors and units;␣
+This calculator is noteworthy in that it employs a stack model of computation
+(Reverse Polish Notation); it supports numbers with SI scale factors and units;
 and uses a text-only user interface.
 
 
@@ -29,7 +29,7 @@ Features
 - Stack-based calculation model
 - Full scientific/engineering calculator.
 - Support SI scale factors and units on inputs and outputs.
-- Supports hexadecimal, octal, and binary formats in both programmers and 
+- Supports hexadecimal, octal, and binary formats in both programmers and
   Verilog notation.
 - Provides special functionality for electrical engineers.
 
@@ -37,7 +37,7 @@ Features
 Examples
 --------
 
-Invoke engineering calculator and compute the value of a resistor by dividing 
+Invoke engineering calculator and compute the value of a resistor by dividing
 the voltage difference across the resistor by the current through it::
 
     > ec
@@ -51,8 +51,8 @@ Here a hexadecimal number is converted to and from decimal::
     255: vhex
     'h00ff:
 
-In this example, a frequency is converted to radians and saved into the variable 
-*omega*, which is then used to compute the impedance of an inductor and 
+In this example, a frequency is converted to radians and saved into the variable
+*omega*, which is then used to compute the impedance of an inductor and
 capacitor::
 
     > ec
@@ -65,7 +65,7 @@ capacitor::
 Issues
 ------
 
-Please ask questions or report problems on `Github 
+Please ask questions or report problems on `Github
 <https://github.com/KenKundert/engineering_calculator/issues>`_.
 
 
