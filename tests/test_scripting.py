@@ -92,6 +92,11 @@ scripts = {
         10MHz =freq   # operating frequency
         1nF =Cin      # input capacitance
         50Ω =Rl       # load resistance
+
+        # define some functions useful in phasor analysis
+        (2pi * "rads/s")to_omega    # convert frequency in Herts to radians/s
+        (mag 2pi / "Hz")to_freq     # convert frequency in radians/s to Hertz
+        (j2pi * "rads/s")to_jomega  # convert frequency in Herts to imaginary radians/s
     """).lstrip(),
 }
 for name, content in scripts.items():
