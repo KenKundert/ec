@@ -330,9 +330,9 @@ user_manual = r"""
     Once defined, you can review your function with the *vars* command. It shows 
     both the variable and the function definitions:
 
-        |     *Rref*: 50 Ohms
-        |     *to_freq*: (2pi / "Hz")
-        |     *to_omega*: (2pi * "rads/s")
+        |     **Rref**: 50 Ohms
+        |     **to_freq**: (2pi / "Hz")
+        |     **to_omega**: (2pi * "rads/s")
 
     The value of the functions are delimited with parentheses.
 
@@ -361,13 +361,14 @@ user_manual = r"""
     '~/.ecrc' and runs any commands it contains if it exists.  It then tries
     './.ecrc' if it exists.  Finally it runs the startup file specified on the
     command line (with the **-s** or **--startup** option).  It is common to put
-    your generic preferences in '~/.exrc'.  For example, if your are an 
-    astronomer with a desire for high precision results, you might use:
+    your generic preferences in '~/.exrc'.  For example, if your are an
+    astronomer with a desire for high precision results, you might use::
 
-       |   eng6
-       |   6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
-       |   1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
-       |   1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
+       # inditialization file for ec (engineering calculator)
+       eng6
+       6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
+       1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
+       1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
 
     This tells **ec** to use 6 digits of resolution and redefines *h* and *hbar* 
     so that they are given in CGS units. The redefining of the names *h*, 
@@ -376,13 +377,13 @@ user_manual = r"""
 
     After all of the startup files have been processed, the stack is cleared.
 
-    A typical initialization script (~/.ecrc) for a circuit designer might be:
+    A typical initialization script (~/.ecrc) for a circuit designer might be::
 
-       |   # Initialize Engineering Calculator
-       |   27 "C" =T               # ambient temperature
-       |   (k T 0C + * q/ "V")vt   # thermal voltage
-       |   (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
-       |   (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
+       # Initialize Engineering Calculator
+       27 "C" =T               # ambient temperature
+       (k T 0C + * q/ "V")vt   # thermal voltage
+       (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
+       (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
 
 
     Scripting
@@ -448,22 +449,22 @@ user_manual = r"""
        |   **628.32 Mrads/s**:
 
     To illustrate its use in a script, assume that a file named *lg* exists and
-    contains a calculation for the loop gain of a PLL,
+    contains a calculation for the loop gain of a PLL::
 
-       |   # computes and displays loop gain of a frequency synthesizer
-       |   # x register is taken to be frequency
-       |   =freq
-       |   88.3u "V/per" =Kdet  # gain of phase detector
-       |   9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
-       |   2 =M                 # divide ratio of divider at output of VCO
-       |   8 =N                 # divide ratio of main divider
-       |   2 =F                 # divide ratio of prescalar
-       |   freq 2pi* "rads/s" =omega
-       |   Kdet Kvco* omega/ M/ =a
-       |   N F* =f
-       |   a f* =T
-       |   \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
-       |   quit
+       # computes and displays loop gain of a frequency synthesizer
+       # x register is taken to be frequency
+       =freq
+       88.3u "V/per" =Kdet  # gain of phase detector
+       9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
+       2 =M                 # divide ratio of divider at output of VCO
+       8 =N                 # divide ratio of main divider
+       2 =F                 # divide ratio of prescalar
+       freq 2pi* "rads/s" =omega
+       Kdet Kvco* omega/ M/ =a
+       N F* =f
+       a f* =T
+       \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
+       quit
 
     When reading scripts from a file, the '#' character introduces a comment. It 
     and anything that follows is ignored until the end of the line.
@@ -502,17 +503,17 @@ user_manual = r"""
     You can use scripts to preload in a set of useful constants and function 
     that can then be used in interactive calculations. To do so, use the **-i** 
     or *--interactive* command line option. For example, replace the earlier 
-    'lg' script with the following:
+    'lg' script with the following::
 
-       |   88.3u "V/per" =Kdet
-       |   9.07G "Hz/V" =Kvco
-       |   2 =M
-       |   8 =N
-       |   2 =F
-       |   (N F* recip)f
-       |   (2pi * Kdet * Kvco* M*)a
-       |   (a f*)T
-       |   clstack
+       88.3u "V/per" =Kdet
+       9.07G "Hz/V" =Kvco
+       2 =M
+       8 =N
+       2 =F
+       (N F* recip)f
+       (2pi * Kdet * Kvco* M*)a
+       (a f*)T
+       clstack
 
     Now run:
 

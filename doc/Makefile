@@ -41,3 +41,6 @@ ec.1: engineering_calculator/actions.py create-manpage.py
 publish: ec.1
 	mkdir -p ~/.local/man/man1
 	cp ec.1 ~/.local/man/man1
+
+show: html
+	xdg-open .build/html/index.html
