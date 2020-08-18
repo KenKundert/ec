@@ -1279,9 +1279,9 @@ class Calculator:
     '''
     # before splitting the input, the following regex will be replaced by a
     # space. This allows certain operators to be given abutted to numbers
-    operatorSplitRegex = re.compile('''
-        (?<=[a-zA-Z0-9°ÅΩƱΩ℧])    # alphanum before the split
-        (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z)) # selected operators followed by white space or EOL: - + * / % ! ** || //
+    operatorSplitRegex = re.compile(r'''
+        (?<=[a-zA-Z0-9°ÅΩƱΩ℧])              # alphanum before the split
+        (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z))  # selected operators followed by white space or EOL: - + * / % ! ** || //
     ''', re.X)
     # strings are delimited by "" and `` (' is reserved for use with verilog
     # integer literals)
@@ -1414,7 +1414,7 @@ class Calculator:
                          raise CalculatorError('nested function definitions.')
                     elif cmd[0] == ')':
                         name = cmd[1:]
-                        nameRegex='[a-zA-Z_]\w*'
+                        nameRegex = r'[a-zA-Z_]\w*'
                         if not re.match(nameRegex, name):
                             raise CalculatorError('%s: invalid function name.' % name)
                         if name in self.heap:

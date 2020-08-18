@@ -2,6 +2,14 @@
 .*.swp
 doc/.build
 tests/.coverage
+.ecrc
+compute-zo
+lg.ec
+lg0.ec
+tests/.ecrc
+tests/compute-zo
+tests/lg.ec
+tests/lg0.ec
 
 # Packages
 *.egg
