@@ -14,9 +14,9 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+.PHONY: help clean html manpage publish
 
-default: html
+default: html manpage
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -32,3 +32,12 @@ html: user.rst reference.rst
 
 user.rst reference.rst: create-manual.py
 	./create-manual.py
+
+manpage: ec.1
+
+ec.1: engineering_calculator/actions.py create-manpage.py
+	./create-manpage.py
+
+publish: ec.1
+	mkdir -p ~/.local/man/man1
+	cp ec.1 ~/.local/man/man1
