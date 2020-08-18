@@ -7,7 +7,7 @@ Engineering Calculator
 
 
 This calculator is noteworthy in that it employs a stack model of computation
-(Reverse Polish Notation); it supports numbers with SI scale factors and units;
+(Reverse Polish Notation), it supports numbers with SI scale factors and units,
 and uses a text-only user interface.
 
 
