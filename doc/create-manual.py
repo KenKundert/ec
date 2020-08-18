@@ -830,7 +830,7 @@ def write(user_filename=None, reference_filename=None):
         [user_filename, reference_filename],
     ):
         if filename:
-            rst = dedent(template[1:-1]).format(
+            rst = dedent(template).format(
                 date = __released__,
                 version = __version__,
                 integers = dedent(integerSection),

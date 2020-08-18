@@ -1,3 +1,4 @@
+
 Synopsis
 ========
 **ec** [*options*] [*scripts* ...]
@@ -180,7 +181,6 @@ The dollar sign ($) is a special unit that is given before the number.
 remembers them, but they do not survive any operation where the resulting
 units would be in doubt.  In this way it displays units when it can, but
 should never display incorrect or misleading units. For example:
-
 
    |   **0**: 100MHz
    |   **100 MHz**: 2pi*
@@ -452,8 +452,8 @@ At start up **ec** reads and executes commands from files.  It first tries
 '~/.ecrc' and runs any commands it contains if it exists.  It then tries
 './.ecrc' if it exists.  Finally it runs the startup file specified on the
 command line (with the **-s** or **--startup** option).  It is common to put
-your generic preferences in '~/.exrc'.  For example, if your are an astronomer 
-with a desire for high precision results, you might use:
+your generic preferences in '~/.exrc'.  For example, if your are an 
+astronomer with a desire for high precision results, you might use:
 
    |   eng6
    |   6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
@@ -625,8 +625,8 @@ Alternatively, you can put the constants you wish to predeclare in
 in *~/.ecrc* causes them to be declared for every invocation of *ec*.
 
 
-Diagnostics
-===========
+Errors
+======
 
 If an error occurs on a line, an error message is printed and the stack is
 restored to the values it had before the line was entered. So it is almost
