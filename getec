@@ -1,7 +1,0 @@
-#!/bin/sh
-# For those without git, this script will download ec.
-
-wget --no-check-certificate https://github.com/KenKundert/ec/tarball/master
-tar zxf master
-rm -rf master ec
-mv KenKundert-ec-* ec

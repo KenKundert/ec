@@ -2,8 +2,8 @@ Engineering Calculator
 ======================
 
 :Author: Ken Kundert <ec@nurdletech.com>
-:Date: {date}
-:Version: {version}
+:Date: 2020-08-14
+:Version: 1.6.1
 
 This calculator is noteworthy in that it employs a stack model of computation␣
 (Reverse Polish Notation); it supports numbers with SI scale factors and units;␣
