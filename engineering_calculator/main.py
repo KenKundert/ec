@@ -118,11 +118,10 @@ def main():
             cmdFile = expanduser(each)
             with open(cmdFile) as pFile:
                 for lineno, line in enumerate(pFile):
-                    code = line.split('#', 1)[0]
-                    prompt = evaluateLine(calc, code, prompt)
+                    prompt = evaluateLine(calc, line, prompt)
                     if verbose:
                         display("%s %s: %s ==> %s" % (
-                            cmdFile, lineno, code.strip(), prompt
+                            cmdFile, lineno, line.strip(), prompt
                         ))
         except (IOError, OSError) as err:
             if each not in rcFiles:
@@ -138,12 +137,11 @@ def main():
             if os.path.exists(cmdFile):
                 with open(cmdFile) as pFile:
                     for lineno, line in enumerate(pFile):
-                        code = line.split('#', 1)[0]
                         loc = '%s.%s: ' % (cmdFile, lineno+1)
-                        prompt = evaluateLine(calc, code, prompt)
+                        prompt = evaluateLine(calc, line, prompt)
                         if verbose:
                             display("%s %s: %s ==> %s" % (
-                                cmdFile, lineno, code.strip(), prompt
+                                cmdFile, lineno, line.strip(), prompt
                             ))
             else:
                 loc = ''

@@ -2022,7 +2022,7 @@ stefanBoltsmannConstant.addTest(
 fineStructureConstant = Constant(
     'alpha'
   , (7.2973525664e-3, '')
-  , description="%(key)s: Fine stucture constant"
+  , description="%(key)s: Fine structure constant"
   , synopsis='... => #{alpha}, ...'
   , summary="""
         The fine structure  constant (7.2973525664e-3) is pushed on
@@ -2040,7 +2040,7 @@ fineStructureConstant.addTest(
 avogadroConstant = Constant(
     'NA'
   , (6.022140857e23, 'mol^-1')
-  , description="%(key)s: Avagadro Number"
+  , description="%(key)s: Avogadro Number"
   , synopsis='... => #{NA}, ...'
   , summary="""
         Avogadro constant (6.022140857e23 mol^-1) is pushed on the stack into
@@ -3295,14 +3295,14 @@ printText.addTest(
   , result=0
   , units=''
   , text='0'
-  , messages=["I have 50 Ohms, you have $50"]
+  , messages=["I have 50 Ω, you have $50"]
 )
 printText.addTest(
     stimulus='`I have ${Rref}, you have $$50`'
   , result=0
   , units=''
   , text='0'
-  , messages=["I have 50 Ohms, you have $50"]
+  , messages=["I have 50 Ω, you have $50"]
 )
 printText.addTest(
     stimulus='`I have $Q, you have $$50`'

@@ -1,7 +1,7 @@
 *.py[co]
-ec.rst
 .*.swp
-bump
+doc/.build
+tests/.coverage
 
 # Packages
 *.egg
