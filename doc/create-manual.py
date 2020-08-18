@@ -739,8 +739,10 @@ for action in actions:
 #] + [delimiter]
 # convert the constants into a restructured text definition list
 constants = [
-    "    %s\n        %s" % constant for constant in constants
+    "   {:<7}  {}".format(*constant) for constant in constants
 ]
+decorator = "   ======== ================================================="
+constants = [decorator] + constants + [decorator]
 constantsTable = '\n'.join(constants)
 
 # Actions {{{1

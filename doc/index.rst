@@ -5,6 +5,7 @@ Engineering Calculator
 | Date: 2020-08-17
 | Version: 1.6.2
 
+
 This calculator is noteworthy in that it employs a stack model of computation␣
 (Reverse Polish Notation); it supports numbers with SI scale factors and units;␣
 and uses a text-only user interface.

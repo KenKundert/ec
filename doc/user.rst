@@ -304,60 +304,35 @@ tailored for one specific unit system.
 
 The 2014 NIST values are used.  The available constants include:
 
-    pi
-        the ratio of a circle's circumference to its diameter
-    2pi
-        the ratio of a circle's circumference to its radius
-    rt2
-        square root of two
-    0C
-        0 Celsius in Kelvin
-    j
-        imaginary unit (square root of -1)
-    j2pi
-        j*2*pi
-    k
-        Boltzmann constant
-    h
-        Planck constant
-    q
-        elementary charge (the charge of an electron)
-    c
-        speed of light in a vacuum
-    eps0
-        permittivity of free space
-    mu0
-        permeability of free space
-    Z0
-        Characteristic impedance of free space
-    hbar
-        Reduced Planck constant
-    me
-        rest mass of an electron
-    mp
-        mass of a proton
-    mn
-        mass of a neutron
-    mh
-        mass of a hydrogen atom
-    amu
-        unified atomic mass unit
-    G
-        universal gravitational constant
-    g
-        earth gravity
-    Rinf
-        Rydberg constant
-    sigma
-        Stefan-Boltzmann constant
-    alpha
-        Fine structure constant
-    R
-        molar gas constant
-    NA
-        Avogadro Number
-    rand
-        random number between 0 and 1
+   ======== =================================================
+   pi       the ratio of a circle's circumference to its diameter
+   2pi      the ratio of a circle's circumference to its radius
+   rt2      square root of two
+   0C       0 Celsius in Kelvin
+   j        imaginary unit (square root of -1)
+   j2pi     j*2*pi
+   k        Boltzmann constant
+   h        Planck constant
+   q        elementary charge (the charge of an electron)
+   c        speed of light in a vacuum
+   eps0     permittivity of free space
+   mu0      permeability of free space
+   Z0       Characteristic impedance of free space
+   hbar     Reduced Planck constant
+   me       rest mass of an electron
+   mp       mass of a proton
+   mn       mass of a neutron
+   mh       mass of a hydrogen atom
+   amu      unified atomic mass unit
+   G        universal gravitational constant
+   g        earth gravity
+   Rinf     Rydberg constant
+   sigma    Stefan-Boltzmann constant
+   alpha    Fine structure constant
+   R        molar gas constant
+   NA       Avogadro Number
+   rand     random number between 0 and 1
+   ======== =================================================
 
 As an example of using the predefined constants, consider computing the
 thermal voltage, kT/q.
