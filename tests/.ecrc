@@ -1,4 +1,0 @@
-# define default values for parameters
-10MHz =freq   # operating frequency
-1nF =Cin      # input capacitance
-50Ω =Rl       # load resistance

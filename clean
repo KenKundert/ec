@@ -10,6 +10,8 @@ rm -rf build *.egg-info dist __pycache__ **/__pycache__ .pytest_cache
 rm -rf .coverage .coverage-html htmlcov .eggs
 rm -f ec.*.tgz* ec.spec ec.exe
 rm -rf ec.build release
+rm -f lg0.ec lg.ec compute-zo .ecrc
+rm -f tests/lg0.ec tests/lg.ec tests/compute-zo tests/.ecrc
 for i in */clean
 do
     if [[ "$i" == '*/clean' ]]
