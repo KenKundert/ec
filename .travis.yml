@@ -1,13 +1,9 @@
 language: python
-matrix:
-  include:
-    - python: 3.6
-    - python: 3.7
-    - python: 3.8
-    - python: nightly
+os:
+  - linux
 install:
   - pip install .
-  - pip install coveralls
+  - pip install coveralls pytest pytest-cov
 script:
   - (cd tests; pytest --cov)
 deploy:
@@ -16,3 +12,12 @@ deploy:
         tags: true
 after_success:
   - coveralls
+jobs:
+  include:
+    - python: 3.6
+    - python: 3.7
+    - python: 3.8
+    - python: nightly
+  allow_failures:
+    - python: nightly
+  fast_finish: true
