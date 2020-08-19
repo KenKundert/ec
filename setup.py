@@ -5,6 +5,7 @@ setup(
     version = '1.7.0',
     description = 'engineering calculator',
     long_description = open('README.rst').read(),
+    long_description_content_type = 'text/x-rst',
     author = "Ken Kundert",
     author_email = 'ec@nurdletech.com',
     url = 'http://nurdletech.com/linux-utilities/ec',
