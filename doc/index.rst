@@ -2,8 +2,8 @@ Engineering Calculator
 ======================
 
 | Author: Ken Kundert <ec@nurdletech.com>
-| Date: 2020-08-17
-| Version: 1.6.2
+| Date: 2020-08-18
+| Version: 1.7.0
 
 
 This calculator is noteworthy in that it employs a stack model of computation
