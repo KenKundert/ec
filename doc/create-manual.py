@@ -20,13 +20,11 @@ actions = sansDups
 
 # User's Manual {{{1
 user_manual = r"""
-    Synopsis
-    ========
+    Usage
+    =====
+
     **ec** [*options*] [*scripts* ...]
 
-
-    Options
-    =======
     -i, --interactive    Open an interactive session.
     -s <file>, --startup <file>
                          Run commands from file to initialize calculator before
@@ -347,10 +345,10 @@ user_manual = r"""
     Help
     ====
 
-    You can use help to get a summary of the various features available in EC
+    You can use *help* to get a listing of the various features available in EC
     along with a short summary of each feature. For more detailed information,
-    you can use '?'.  If you use '?' you will get a list of all available help
-    topics. If you use '?<*topic*>' where *topic* us either a symbol or a
+    you can use '?'.  If you use '?' alone you will get a list of all available
+    help topics. If you use '?<*topic*>' where *topic* us either a symbol or a
     name, you will get a detailed description of that topic.
 
 
