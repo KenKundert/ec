@@ -817,7 +817,7 @@ Constants
 Numbers
 --------
 
-``<N[.M][S[U]]>``: a real number
+``<N[.M][S][U]>``: a real number
 
     The number is pushed on the stack into the *x* register.  *N* is the
     integer portion of the mantissa and *M* is an optional fractional part.

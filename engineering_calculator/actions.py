@@ -2189,7 +2189,7 @@ def siNumber(matches):
        num = (1j * num[0], num[1])
     if currency:
         if num[1]:
-            warn("Too many units ($ and %s)." % num[1])
+            warn(f"Too many units ($ and {num[1]}).")
         else:
             num = (num[0], currency)
     return num
@@ -2199,10 +2199,10 @@ engineeringNumber = Number(
     # above pattern does not allow one to skip the scale factor, pattern below does
     pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)([a-wyzA-Z_µμ°ÅΩƱΩ℧][a-zA-Z_µμ°ÅΩƱΩ℧]*)?)\Z'
         # x is removed from the possible initial letters in the units to avoid
-        # ambiquity with hex numbers.
+        # ambiguity with hex numbers.
   , action=siNumber
   , name='engnum'
-  , description="<#{N}[.#{M}][#{S}[#{U}]]>: a real number"
+  , description="<#{N}[.#{M}][#{S}][#{U}]>: a real number"
   , synopsis='... => #{num}, ...'
   , summary="""
         The number is pushed on the stack into the #{x} register.  #{N} is the
@@ -2410,7 +2410,7 @@ def sciNumber(matches):
        num = (1j * num[0], num[1])
     if currency:
         if num[1]:
-            warn("Too many units ($ and %s)." % num[1])
+            warn(f"Too many units ($ and {num[1]}).")
         else:
             num = (num[0], currency)
     return num
@@ -2672,7 +2672,7 @@ numberFormats = Category("Number Formats")
 # fixed format {{{3
 setFixedFormat = SetFormat(
     pattern=r'\Afix(\d{1,2})?\Z'
-  , action=lambda num, digits: '{0:.{prec}f}'.format(num, prec=digits)
+  , action=lambda num, digits: '{0:,.{prec}f}'.format(num, prec=digits)
   , name='fix'
   , actionTakesUnits=False
   , description="%(name)s[<#{N}>]: use fixed notation"
@@ -2687,7 +2687,7 @@ setFixedFormat.addTest(
     stimulus="1e6 fix0"
   , result=1e6
   , units=''
-  , text="1000000"
+  , text="1,000,000"
 )
 setFixedFormat.addTest(
     stimulus="pi fix"
