@@ -15,6 +15,7 @@ setup(
         'console_scripts': ['ec = engineering_calculator.main:main'],
     },
     install_requires = 'docopt docutils quantiphy>=2.1.0 inform>=1.9'.split(),
+    zip_safe = True,
     classifiers = [
       'Development Status :: 5 - Production/Stable',
       'Environment :: Console',

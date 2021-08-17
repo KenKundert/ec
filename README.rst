@@ -15,6 +15,9 @@ Installing
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec
 
+.. image:: https://img.shields.io/readthedocs/engineering_calculator.svg
+   :target: https://engineering_calculator.readthedocs.io/en/latest/?badge=latest
+
 .. image:: https://img.shields.io/pypi/v/engineering_calculator.svg
     :target: https://pypi.python.org/pypi/engineering_calculator
 
