@@ -1280,7 +1280,7 @@ class Calculator:
     # before splitting the input, the following regex will be replaced by a
     # space. This allows certain operators to be given abutted to numbers
     operatorSplitRegex = re.compile(r'''
-        (?<=[a-zA-Z0-9°ÅΩƱΩ℧])              # alphanum before the split
+        (?<=[a-zA-Z0-9°ÅΩƱΩ℧µμ])            # alphanum before the split
         (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z))  # selected operators followed by white space or EOL: - + * / % ! ** || //
     ''', re.X)
     # strings are delimited by "" and `` (' is reserved for use with verilog
