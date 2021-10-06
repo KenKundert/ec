@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'engineering-calculator',
-    version = '1.7.0',
+    version = '1.7.1',
     description = 'engineering calculator',
     long_description = open('README.rst').read(),
     long_description_content_type = 'text/x-rst',
