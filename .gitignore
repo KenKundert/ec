@@ -10,6 +10,7 @@ tests/.ecrc
 tests/compute-zo
 tests/lg.ec
 tests/lg0.ec
+.hypothesis
 
 # Packages
 *.egg
