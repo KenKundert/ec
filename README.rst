@@ -9,8 +9,8 @@ and uses a text-only user interface.
 Installing
 ----------
 
-| Version: 1.7.1
-| Released: 2021-10-05
+| Version: 1.8.0
+| Released: 2021-11-10
 
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec
