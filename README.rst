@@ -15,6 +15,10 @@ Installing
 .. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
     :target: https://travis-ci.org/KenKundert/ec
 
+.. image::
+    https://github.com/KenKundert/ec/actions/workflows/build.yaml/badge.svg
+    :target: https://github.com/KenKundert/ec/actions/workflows/build.yaml
+
 .. image:: https://img.shields.io/readthedocs/engineering_calculator.svg
    :target: https://engineering_calculator.readthedocs.io/en/latest/?badge=latest
 
