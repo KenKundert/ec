@@ -12,9 +12,6 @@ Installing
 | Version: 1.8.0
 | Released: 2021-11-10
 
-.. image:: https://img.shields.io/travis/KenKundert/ec/master.svg
-    :target: https://travis-ci.org/KenKundert/ec
-
 .. image::
     https://github.com/KenKundert/ec/actions/workflows/build.yaml/badge.svg
     :target: https://github.com/KenKundert/ec/actions/workflows/build.yaml
