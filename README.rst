@@ -12,8 +12,10 @@ Installing
 | Version: 1.8.0
 | Released: 2021-11-10
 
-.. image::
-    https://github.com/KenKundert/ec/actions/workflows/build.yaml/badge.svg
+.. image:: https://pepy.tech/badge/ec/month
+    :target: https://pepy.tech/project/ec
+
+..  image:: https://github.com/KenKundert/ec/actions/workflows/build.yaml/badge.svg
     :target: https://github.com/KenKundert/ec/actions/workflows/build.yaml
 
 .. image:: https://img.shields.io/readthedocs/engineering_calculator.svg
