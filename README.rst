@@ -30,7 +30,7 @@ Installing
 
 Install with::
 
-    pip3 install engineering-calculator --user
+    pip3 install --user engineering-calculator
 
 Requires Python version 3.3 or later. Also supports Python 2.7 with slightly 
 reduced functionality.
