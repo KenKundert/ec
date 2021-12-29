@@ -15,34 +15,39 @@ import re
 import sys
 
 # Set the version information {{{1
-__version__ = '1.8.0'
-__released__ = '2021-11-10'
+__version__ = "1.8.0"
+__released__ = "2021-11-10"
 
 # Utility functions {{{1
-italicsRegex = re.compile(r'#\{(\w+)\}')
-boldRegex = re.compile(r'@\{(\w+)\}')
+italicsRegex = re.compile(r"#\{(\w+)\}")
+boldRegex = re.compile(r"@\{(\w+)\}")
+
 
 def stripFormatting(text):
-    text = italicsRegex.sub(r'\1', text)
-    text = boldRegex.sub(r'\1', text)
+    text = italicsRegex.sub(r"\1", text)
+    text = boldRegex.sub(r"\1", text)
     return text
+
 
 # Utility classes {{{1
 # CalculatorError {{{2
 class CalculatorError(Exception):
-    '''
+    """
     Calculator Error
 
     Indicates that an error was found when executing the calculator and contains
     the error message.
-    '''
+    """
+
     def __init__(self, message):
         self.message = message
+
     def getMessage(self):
-        '''
+        """
         Get the error message.
-        '''
+        """
         return self.message
+
 
 # Stack {{{2
 class Stack:
@@ -50,7 +55,8 @@ class Stack:
     The stack is the used by the calculator to hold the input values, the output
     values, and the intermediate used during a computation.
     """
-    def __init__(self, parent, stack = None):
+
+    def __init__(self, parent, stack=None):
         """
         Creates a stack object.
 
@@ -80,9 +86,9 @@ class Stack:
         try:
             return self.stack.pop(0)
         except IndexError:
-            return (0, '')
+            return (0, "")
 
-    def peek(self, reg = 0):
+    def peek(self, reg=0):
         """
         Returns the most recent value pushed onto the stack.
         The stack is not changed.
@@ -90,7 +96,7 @@ class Stack:
         try:
             return self.stack[reg]
         except IndexError:
-            return (0, '')
+            return (0, "")
 
     def clear(self):
         """
@@ -114,11 +120,10 @@ class Stack:
         Prints all of the values contained on the stack.
         """
         length = len(self.stack)
-        labels = ['x:', 'y:'] + (length-2)*['  ']
+        labels = ["x:", "y:"] + (length - 2) * ["  "]
         for label, value in reversed(list(zip(labels, self.stack))):
-            self.parent.printMessage(
-                '  %s %s' % (label, self.parent.format(value))
-            )
+            self.parent.printMessage("  %s %s" % (label, self.parent.format(value)))
+
 
 # Heap {{{2
 class Heap:
@@ -126,13 +131,8 @@ class Heap:
     The heap is the used by the calculator for long term storage. It contains a
     set of named values.
     """
-    def __init__(
-        self
-      , parent = None
-      , initialState = None
-      , reserved = []
-      , removeAction = None
-    ):
+
+    def __init__(self, parent=None, initialState=None, reserved=[], removeAction=None):
         """
         Creates a heap object.
 
@@ -170,14 +170,10 @@ class Heap:
         """
         for key in sorted(self.heap.keys()):
             kind, value = self.heap[key]
-            if kind == 'const':
-                self.parent.printMessage(
-                    '  %s: %s' % (key, self.parent.format(value))
-                )
-            elif kind == 'funct':
-                self.parent.printMessage(
-                    '  %s: (%s)' % (key, ' '.join(value))
-                )
+            if kind == "const":
+                self.parent.printMessage("  %s: %s" % (key, self.parent.format(value)))
+            elif kind == "funct":
+                self.parent.printMessage("  %s: (%s)" % (key, " ".join(value)))
             else:
                 raise NotImplementedError
 
@@ -188,9 +184,7 @@ class Heap:
         kind, value = pair
         if key in self.reserved:
             if self.removeAction:
-                self.parent.printWarning(
-                    "%s: variable has overridden built-in." % key
-                )
+                self.parent.printWarning("%s: variable has overridden built-in." % key)
                 del self.reserved[self.reserved.index(key)]
                 self.removeAction(key)
             else:
@@ -200,9 +194,10 @@ class Heap:
     def __contains__(self, key):
         return key in self.heap
 
+
 # Display {{{2
 class Display:
-    def __init__(self, formatter, digits = 4, spacer = ' '):
+    def __init__(self, formatter, digits=4, spacer=" "):
         self.defaultFormatter = formatter.formatter
         self.defaultFormatterTakesUnits = formatter.formatterTakesUnits
         self.defaultDigits = digits
@@ -225,31 +220,31 @@ class Display:
             imag = self.format((num.imag, units))
             zero = self.format((0, units))
             one = self.format((1, units))
-            units = ' '+units if units else ''
+            units = " " + units if units else ""
 
             # suppress the imaginary if it would display as zero
             if imag == zero:
                 return real
-            elif imag[0] == '-':
+            elif imag[0] == "-":
                 imag = imag[1:] if imag[1:] != one else units.strip()
                 if imag == zero:
                     return real
                 if real == zero:
-                    return '-j' + imag
+                    return "-j" + imag
                 return "%s - j%s" % (real, imag)
             else:
                 imag = imag if imag != one else units
                 if real == zero:
-                    return 'j' + imag
+                    return "j" + imag
                 return "%s + j%s" % (real, imag)
 
         if self.formatterTakesUnits:
             return self.formatter(num, units, self.digits)
         else:
             number = self.formatter(num, self.digits)
-            if units == '$':
+            if units == "$":
                 return units + number
-            elif units == '':
+            elif units == "":
                 return number
             else:
                 return number + self.spacer + units
@@ -259,29 +254,31 @@ class Display:
         self.formatterTakesUnits = self.defaultFormatterTakesUnits
         self.digits = self.defaultDigits
 
+
 # Action classes {{{1
 class Action:
-    '''
+    """
     Base class for all actions.
-    '''
+    """
+
     def __init__(self):
-        '''
+        """
         Do not instantiate this base class.
-        '''
+        """
         raise NotImplementedError
 
-    def getName(self, givenName = None):
-        '''
+    def getName(self, givenName=None):
+        """
         Return the primary name of the action.
 
         Takes one optional argument:
         givenName: causes this function to return the primary name of the action
             if the value of this argument corresponds to this action (is the
             primary name or an alias), otherwise it returns None.
-        '''
-        if hasattr(self, 'name') and self.name:
+        """
+        if hasattr(self, "name") and self.name:
             primaryName = self.name
-        elif hasattr(self, 'key') and self.key:
+        elif hasattr(self, "key") and self.key:
             primaryName = self.key
         else:
             primaryName = None
@@ -289,11 +286,11 @@ class Action:
         if givenName:
             # An argument is given: assure that it corresponds to this action,
             # if so return the primary name, otherwise return None
-            if hasattr(self, 'name') and givenName == self.name:
+            if hasattr(self, "name") and givenName == self.name:
                 return primaryName
-            if hasattr(self, 'key') and givenName == self.key:
+            if hasattr(self, "key") and givenName == self.key:
                 return primaryName
-            if hasattr(self, 'aliases') and givenName in self.aliases:
+            if hasattr(self, "aliases") and givenName in self.aliases:
                 return primaryName
             return None
         else:
@@ -301,61 +298,67 @@ class Action:
             return primaryName
 
     def getDescription(self):
-        '''
+        """
         Returns the description of the action.
         The description is a brief half line description of the action.
         It may contain '%(attr)s' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
-        '''
+        """
         try:
-            return self.description if self.description else ''
+            return self.description if self.description else ""
         except AttributeError:
-            return ''
+            return ""
 
     def getSynopsis(self):
-        '''
+        """
         Returns the synopsis of the action.
         The synopsis is a brief one line description of how the stack is
         affected by this action.
-        '''
+        """
         try:
-            return self.synopsis if self.synopsis else ''
+            return self.synopsis if self.synopsis else ""
         except AttributeError:
-            return ''
+            return ""
 
     def getSummary(self):
-        '''
+        """
         Returns the summary of the action.
         The summary is a complete description of the action.
-        '''
+        """
         try:
-            return self.summary if self.summary else ''
+            return self.summary if self.summary else ""
         except AttributeError:
-            return ''
+            return ""
 
     def addAliases(self, aliases):
-        '''
+        """
         Add an alias or a list of aliases to the action.
-        '''
+        """
         try:
             self.aliases |= set(aliases)
         except AttributeError:
             self.aliases = set(aliases)
 
     def getAliases(self):
-        '''
+        """
         Return the alias(es) associated with this action.
-        '''
+        """
         try:
             return self.aliases
         except AttributeError:
             return set()
 
-    def addTest(self, stimulus
-      , result = None, units = None, text = None
-      , error = None, messages = None, warnings = None
+    def addTest(
+        self,
+        stimulus,
+        result = None,
+        units = None,
+        text = None,
+        error = None,
+        messages = None,
+        warnings = None,
     ):
-        '''
+        """
         Add a regression test.
 
         stimulus:
@@ -387,44 +390,46 @@ class Action:
             A string or list of strings that are expected match the warning
             messages generated during the execution of the stimulus. If None or
             not given, no messages are expected.
-        '''
+        """
 
-        test = {'stimulus': stimulus}
+        test = {"stimulus": stimulus}
         if result != None:
-            test['result'] = result
+            test["result"] = result
         if units != None:
-            test['units'] = units
+            test["units"] = units
         if text != None:
-            test['text'] = text
+            test["text"] = text
         if error != None:
-            test['error'] = error
+            test["error"] = error
         if messages != None:
-            test['messages'] = [messages] if type(messages) == str else messages
+            test["messages"] = [messages] if type(messages) == str else messages
         if warnings != None:
-            test['warnings'] = warnings if type(warnings) == list else [warnings]
+            test["warnings"] = warnings if type(warnings) == list else [warnings]
 
-        if hasattr(self, 'tests'):
+        if hasattr(self, "tests"):
             self.tests += [test]
         else:
             self.tests = [test]
 
         # assure that the action is contained within the stimulus (otherwise
         # this test is likely placed on the wrong action)
-        misplacedTest = 'misplaced test: action=%s, stimulus=%s' % (
-            self.getName(), stimulus
+        misplacedTest = "misplaced test: action=%s, stimulus=%s" % (
+            self.getName(),
+            stimulus,
         )
         components = Calculator.split(stimulus)
-        if hasattr(self, 'key'):
+        if hasattr(self, "key"):
             found = self.key in components
-            if not found and hasattr(self, 'aliases'):
+            if not found and hasattr(self, "aliases"):
                 found = set(self.aliases).intersection(set(components))
-        elif hasattr(self, 'regex'):
+        elif hasattr(self, "regex"):
             found = False
             for each in components:
                 if self.regex.match(each):
                     found = True
                     break
         assert found, misplacedTest
+
 
 # Command (pop 0, push 0, match name) {{{2
 class Command(Action):
@@ -454,11 +459,15 @@ class Command(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description = None
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description = None,
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -469,6 +478,7 @@ class Command(Action):
 
     def _execute(self, calc):
         self.action(calc)
+
 
 # Constant (pop 0, push 1, match name) {{{2
 class Constant(Action):
@@ -498,12 +508,16 @@ class Constant(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description = None
-      , units = ''
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description=None,
+        units="",
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -525,10 +539,11 @@ class Constant(Action):
         elif type(self.action) is tuple:
             result, units = self.action
         else:
-            result, units = self.action, ''
+            result, units = self.action, ""
         if callable(result):
             result = result()
         stack.push((result, units))
+
 
 # UnaryOp (pop 1, push 1, match name) {{{2
 class UnaryOp(Action):
@@ -566,13 +581,17 @@ class UnaryOp(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description = None
-      , needCalc = False
-      , units = ''
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description = None,
+        needCalc = False,
+        units = "",
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -595,6 +614,7 @@ class UnaryOp(Action):
         else:
             units = self.units
         stack.push((x, units))
+
 
 # BinaryOp (pop 2, push 1, match name) {{{2
 class BinaryOp(Action):
@@ -634,13 +654,17 @@ class BinaryOp(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description = None
-      , needCalc = False
-      , units = ''
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description=None,
+        needCalc=False,
+        units="",
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -664,6 +688,7 @@ class BinaryOp(Action):
         else:
             units = self.units
         stack.push((result, units))
+
 
 # BinaryIoOp (pop 2, push 2, match name) {{{2
 class BinaryIoOp(Action):
@@ -709,14 +734,18 @@ class BinaryIoOp(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description=None
-      , needCalc=False
-      , xUnits=''
-      , yUnits=''
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description = None,
+        needCalc = False,
+        xUnits = "",
+        yUnits = "",
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -746,6 +775,7 @@ class BinaryIoOp(Action):
             yUnits = self.yUnits
         stack.push((result[1], yUnits))
         stack.push((result[0], xUnits))
+
 
 # Dup (peek 1, push 1, match name) {{{2
 class Dup(Action):
@@ -787,13 +817,17 @@ class Dup(Action):
     aliases (optional):
         An alias or a list of aliases for this action.
     """
-    def __init__(self, key, action
-      , description = None
-      , needCalc=False
-      , units=''
-      , synopsis = None
-      , summary = None
-      , aliases = frozenset()
+
+    def __init__(
+        self,
+        key,
+        action,
+        description = None,
+        needCalc = False,
+        units = "",
+        synopsis = None,
+        summary = None,
+        aliases = frozenset(),
     ):
         self.key = key
         self.action = action
@@ -819,6 +853,7 @@ class Dup(Action):
                 else:
                     xUnits = self.units
         stack.push((x, xUnits))
+
 
 # Number (pop 0, push 1, match regex) {{{2
 class Number(Action):
@@ -855,11 +890,16 @@ class Number(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, pattern, action, name
-      , description = None
-      , needCalc = False
-      , synopsis = None
-      , summary = None
+
+    def __init__(
+        self,
+        pattern,
+        action,
+        name,
+        description = None,
+        needCalc = False,
+        synopsis = None,
+        summary = None,
     ):
         self.pattern = pattern
         self.action = action
@@ -876,6 +916,7 @@ class Number(Action):
         else:
             num, units = self.action(matchGroups)
         calc.stack.push((num, units))
+
 
 # SetFormat (pop 0, push 0, match regex) {{{2
 class SetFormat(Action):
@@ -920,10 +961,15 @@ class SetFormat(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, pattern, action, name
-      , actionTakesUnits = False
-      , description = None
-      , summary = None
+
+    def __init__(
+        self,
+        pattern,
+        action,
+        name,
+        actionTakesUnits = False,
+        description = None,
+        summary = None,
     ):
         self.pattern = pattern
         self.formatter = action
@@ -937,6 +983,7 @@ class SetFormat(Action):
         calc.formatter.setFormatter(self)
         if matchGroups and matchGroups[0] != None:
             calc.formatter.setDigits(int(matchGroups[0]))
+
 
 # Help (pop 0, push 0, match regex) {{{2
 class Help(Action):
@@ -960,11 +1007,12 @@ class Help(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name = None, description = None, summary = None):
+
+    def __init__(self, name=None, description=None, summary=None):
         self.name = name
         self.description = description
         self.summary = summary
-        self.regex = re.compile(r'\?(\S+)?')
+        self.regex = re.compile(r"\?(\S+)?")
 
     def _execute(self, matchGroups, calc):
         topic = matchGroups[0]
@@ -979,27 +1027,27 @@ class Help(Action):
                     aliases = action.getAliases()
                     if aliases:
                         if len(aliases) > 1:
-                            aliases = 'aliases: %s' % ','.join(aliases)
+                            aliases = "aliases: %s" % ",".join(aliases)
                         else:
-                            aliases = 'alias: %s' % ','.join(aliases)
+                            aliases = "alias: %s" % ",".join(aliases)
                     else:
-                        aliases = ''
+                        aliases = ""
                     if action.description:
-                        calc.printMessage(fill(
-                            stripFormatting(
-                                action.description % (action.__dict__)
+                        calc.printMessage(
+                            fill(
+                                stripFormatting(action.description % (action.__dict__)),
+                                subsequent_indent="    ",
                             )
-                          , subsequent_indent='    '
-                        ))
+                        )
                     else:
-                        calc.printMessage(found + ':')
+                        calc.printMessage(found + ":")
                     if summary:
                         calc.printMessage()
                         calc.printMessage(self.formatHelpText(summary))
                     if synopsis or aliases:
                         calc.printMessage()
                     if synopsis:
-                        calc.printMessage('stack: %s' % synopsis)
+                        calc.printMessage("stack: %s" % synopsis)
                     if aliases:
                         calc.printMessage(aliases)
                     return
@@ -1013,17 +1061,17 @@ class Help(Action):
         calc.printMessage("For help on a particular topic, use '?topic'.")
         calc.printMessage()
         calc.printMessage("Available topics:")
-        numCols = 78//colWidth
-        numRows = (len(topics) + numCols - 1)//numCols
+        numCols = 78 // colWidth
+        numRows = (len(topics) + numCols - 1) // numCols
         cols = []
         for i in range(numCols):
-            cols.append(topics[i*numRows:(i+1)*numRows])
+            cols.append(topics[i * numRows : (i + 1) * numRows])
         for i in range(len(cols[0])):
             for j in range(numCols):
                 try:
                     calc.printMessage(
-                        "{0:{width}s}".format(cols[j][i], width=colWidth)
-                      , style='fragment'
+                        "{0:{width}s}".format(cols[j][i], width=colWidth),
+                        style = "fragment",
                     )
                 except IndexError:
                     pass
@@ -1037,13 +1085,13 @@ class Help(Action):
         gatheredLines = []
         verbatim = False
         for line in lines:
-            if line.strip() == r'\verb{':
+            if line.strip() == r"\verb{":
                 # start of verbatim region
                 verbatim = True
                 # emit lines gathered so far as a paragraph
-                paragraphs += [fill(' '.join(gatheredLines))]
+                paragraphs += [fill(" ".join(gatheredLines))]
                 gatheredLines = []
-            elif line.strip() == '}':
+            elif line.strip() == "}":
                 # end of verbatim region
                 verbatim = False
             else:
@@ -1053,8 +1101,9 @@ class Help(Action):
                 else:
                     gatheredLines += [line.strip()]
         if gatheredLines:
-            paragraphs += [fill(' '.join(gatheredLines))]
-        return '\n'.join(paragraphs)
+            paragraphs += [fill(" ".join(gatheredLines))]
+        return "\n".join(paragraphs)
+
 
 # Store (peek 1, push 0, match regex) {{{2
 class Store(Action):
@@ -1078,19 +1127,23 @@ class Store(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, synopsis = None, summary = None):
+
+    def __init__(self, name, description=None, synopsis=None, summary=None):
         self.name = name
         self.description = description
         self.synopsis = synopsis
         self.summary = summary
-        self.regex = re.compile(r'=([a-z]\w*)', re.I)
+        self.regex = re.compile(r"=([a-z]\w*)", re.I)
 
     def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         try:
-            calc.heap[name] = 'const', calc.stack.peek()
+            calc.heap[name] = "const", calc.stack.peek()
         except KeyError:
-            raise CalculatorError("%s: reserved, cannot be used as variable name." % name)
+            raise CalculatorError(
+                "%s: reserved, cannot be used as variable name." % name
+            )
+
 
 # Recall (pop 0, push 1, match regex) {{{2
 class Recall(Action):
@@ -1114,25 +1167,27 @@ class Recall(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, synopsis = None, summary = None):
+
+    def __init__(self, name, description=None, synopsis=None, summary=None):
         self.name = name
         self.description = description
         self.synopsis = synopsis
         self.summary = summary
-        self.regex = re.compile(r'([a-z]\w*)', re.I)
+        self.regex = re.compile(r"([a-z]\w*)", re.I)
 
     def _execute(self, matchGroups, calc):
         name = matchGroups[0]
         if name in calc.heap:
             kind, value = calc.heap[name]
-            if kind == 'const':
+            if kind == "const":
                 calc.stack.push(value)
-            elif kind == 'funct':
+            elif kind == "funct":
                 calc.evaluate(value)
             else:
                 raise NotImplementedError
         else:
             raise CalculatorError("%s: variable does not exist." % name)
+
 
 # SetUnits (pop 1, push 1, match regex) {{{2
 class SetUnits(Action):
@@ -1156,7 +1211,8 @@ class SetUnits(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, synopsis = None, summary = None):
+
+    def __init__(self, name, description=None, synopsis=None, summary=None):
         self.name = name
         self.description = description
         self.synopsis = synopsis
@@ -1165,9 +1221,10 @@ class SetUnits(Action):
 
     def _execute(self, matchGroups, calc):
         stack = calc.stack
-        units, = matchGroups
+        (units,) = matchGroups
         x, xUnits = stack.pop()
         stack.push((x, units))
+
 
 # Print (pop 0, push (Action)0, match regex) {{{2
 class Print(Action):
@@ -1190,25 +1247,26 @@ class Print(Action):
     summary (optional):
         The summary is a complete description of the action.
     """
-    def __init__(self, name, description = None, summary = None):
+
+    def __init__(self, name, description=None, summary=None):
         self.name = name
         self.description = description
         self.summary = summary
-        self.regex = re.compile(r'`(.*)`')
-        self.argsRegex = re.compile(r'\${?(\w+|\$)}?')
+        self.regex = re.compile(r"`(.*)`")
+        self.argsRegex = re.compile(r"\${?(\w+|\$)}?")
 
     def _execute(self, matchGroups, calc):
         # Prints a message after expanding any $codes it contains
         # $N or ${N} are replaced by the contents of a stack register (0=x, ...)
         # $name or ${name} are replaced by the contents of a variable
         # $$ is replaced by $
-        text, = matchGroups
+        (text,) = matchGroups
         if not text:
             message = calc.format(calc.stack.stack[0])
         else:
             # process newlines and tabs
-            text = text.replace(r'\n', '\n')
-            text = text.replace(r'\t', '\t')
+            text = text.replace(r"\n", "\n")
+            text = text.replace(r"\t", "\t")
             components = self.argsRegex.split(text)
             textFrags = components[0::2]
             args = components[1::2]
@@ -1219,22 +1277,25 @@ class Print(Action):
                         arg = calc.stack.stack[int(arg)]
                     except ValueError:
                         kind, value = calc.heap[arg]
-                        if kind == 'const':
+                        if kind == "const":
                             arg = value
-                        elif kind == 'funct':
-                            raise CalculatorError('%s: cannot print a function.' % value)
+                        elif kind == "funct":
+                            raise CalculatorError(
+                                "%s: cannot print a function." % value
+                            )
                         else:
                             raise NotImplementedError
                     arg = calc.format(arg)
                 except (KeyError, IndexError):
-                    if arg != '$':
+                    if arg != "$":
                         if calc.warningPrinter:
                             calc.warningPrinter("$%s: unknown." % arg)
-                        arg = '$?%s?' % arg
+                        arg = "$?%s?" % arg
                 formattedArgs += [arg]
             components[1::2] = formattedArgs
-            message = ''.join(components)
+            message = "".join(components)
         calc.printMessage(message)
+
 
 # Category (not an action, merely a header in the help summary) {{{2
 class Category(Action):
@@ -1245,13 +1306,15 @@ class Category(Action):
     description (optional):
         The description is a brief one line description of the category.
     """
+
     def __init__(self, description):
         self.category = description
         self.description = description
 
+
 # Calculator {{{1
 class Calculator:
-    '''
+    """
     The calculator.
 
     It takes the following arguments:
@@ -1276,26 +1339,30 @@ class Calculator:
         be used when displaying the message.
     warningPrinter (optional):
         Function that takes a string an prints it for the user as a warning.
-    '''
+    """
+
     # before splitting the input, the following regex will be replaced by a
     # space. This allows certain operators to be given abutted to numbers
-    operatorSplitRegex = re.compile(r'''
+    operatorSplitRegex = re.compile(
+        r"""
         (?<=[a-zA-Z0-9°ÅΩƱΩ℧µμ])            # alphanum before the split
         (?=([-+*/%!]|\*\*|\|\||//)(\s|\Z))  # selected operators followed by white space or EOL: - + * / % ! ** || //
-    ''', re.X)
+    """,
+        re.X,
+    )
     # strings are delimited by "" and `` (' is reserved for use with verilog
     # integer literals)
-    stringSplitRegex = re.compile(r'''((?:"[^"]*"|`[^`]*`)+)''')
+    stringSplitRegex = re.compile(r"""((?:"[^"]*"|`[^`]*`)+)""")
 
     # constructor {{{2
     def __init__(
-        self
-      , actions
-      , formatter
-      , predefinedVariables={}
-      , backUpStack=False
-      , messagePrinter=None
-      , warningPrinter=None
+        self,
+        actions,
+        formatter,
+        predefinedVariables = {},
+        backUpStack = False,
+        messagePrinter = None,
+        warningPrinter = None,
     ):
         # Process the actions, pruning out those already seen, assuring that
         # there are no duplicate names, and partitioning the actions into two
@@ -1312,30 +1379,30 @@ class Calculator:
                 # earlier versions of the python math library (it is easier
                 # to set them to None that to edit them out of the list)
                 continue
-            elif hasattr(action, 'key'):
+            elif hasattr(action, "key"):
                 if action.key not in alreadySeen:
                     self.smplActions.update({action.key: action})
                     prunedActions += [action]
                     alreadySeen.add(action.key)
-                    assert action.key not in names, '%s: duplicate name' % (
-                        action.key
-                    )
+                    assert action.key not in names, "%s: duplicate name" % (action.key)
                     names.add(action.key)
                     for alias in action.getAliases():
-                        assert alias not in names, '%s: duplicate name' % alias
+                        assert alias not in names, "%s: duplicate name" % alias
                         names.add(alias)
                         self.smplActions.update({alias: action})
-            elif hasattr(action, 'regex'):
+            elif hasattr(action, "regex"):
                 if action.regex not in alreadySeen:
                     self.regexActions += [action]
                     prunedActions += [action]
                     alreadySeen.add(action.regex)
                     assert action.name not in self.smplActions, (
-                        '%s: duplicate name' % action.name
+                        "%s: duplicate name" % action.name
                     )
                     names.add(action.name)
             else:
-                assert hasattr(action, 'category'), 'expected category: %s' % (action.__dict__)
+                assert hasattr(action, "category"), "expected category: %s" % (
+                    action.__dict__
+                )
                 prunedActions += [action]
         self.actions = prunedActions
 
@@ -1348,34 +1415,34 @@ class Calculator:
         self.function = None
         self.functions = {}
         self.heap = Heap(
-            initialState = predefinedVariables
-          , reserved = self.smplActions.keys()
-          , removeAction = self.removeAction
-          , parent = self
+            initialState = predefinedVariables,
+            reserved = self.smplActions.keys(),
+            removeAction = self.removeAction,
+            parent = self,
         )
         self.clear()
 
     # split input into commands {{{2
     @classmethod
     def split(cls, given):
-        '''
+        """
         Split a command string into tokens.
 
         Takes a sequence of commands, numbers, operators, and functions (as a
         string) and returns the same sequence as a list. Each command, number,
         operator and function is separated into its own entry in the list.
-        '''
-        #There are a couple of things that complicate this.
-        #First, strings must be kept intact.
-        #Second, operators can follow immediately after numbers of words without
+        """
+        # There are a couple of things that complicate this.
+        # First: strings must be kept intact.
+        # Second: operators can follow immediately after numbers of words without
         #    a space, such as in '2 3*'. We want to split those.
-        #Third, parens, brackets, and braces may butt up against the things they
+        # Third: parens, brackets, and braces may butt up against the things they
         #    are grouping, as in '(1.6*)toKm'. In this case the parens should be
         #    split from their contents, so this should be split into ['(', '1.6',
         #    '*', ')toKm'].
 
         # first add spaces after leading parens and after trailing ones
-        processed = given.replace('(', '( ').replace(')', ' )')
+        processed = given.replace("(", "( ").replace(")", " )")
 
         # second, split into strings and non-strings
         components = Calculator.stringSplitRegex.split(processed)
@@ -1388,20 +1455,21 @@ class Calculator:
                 # token is not a string
                 # add spaces between numbers/identifiers and operators, then
                 # split again
-                tokens += Calculator.operatorSplitRegex.sub(' ', component).split()
+                tokens += Calculator.operatorSplitRegex.sub(" ", component).split()
         return tokens
 
     # evaluate commands {{{2
     def evaluate(self, given):
-        '''
+        """
         Execute a list of actions.
 
         Will raise a CalculatorError if there is a problem.
-        '''
+        """
+
         def showLoc(given, index):
-            cmds = ' '.join(given)
-            okay = ' '.join(given[:index])
-            return '\n' + cmds + '\n '+' '*len(okay)+'^'
+            cmds = " ".join(given)
+            okay = " ".join(given[:index])
+            return "\n" + cmds + "\n " + " " * len(okay) + "^"
 
         if self.backUpStack:
             self.prevStack = self.stack.clone()
@@ -1410,25 +1478,25 @@ class Calculator:
                 last_x = self.stack.peek()
                 self.update_last_x = False
                 if self.function is not None:
-                    if cmd == '(':
-                         raise CalculatorError('nested function definitions.')
-                    elif cmd[0] == ')':
+                    if cmd == "(":
+                        raise CalculatorError("nested function definitions.")
+                    elif cmd[0] == ")":
                         name = cmd[1:]
-                        nameRegex = r'[a-zA-Z_]\w*'
+                        nameRegex = r"[a-zA-Z_]\w*"
                         if not re.match(nameRegex, name):
-                            raise CalculatorError('%s: invalid function name.' % name)
+                            raise CalculatorError("%s: invalid function name." % name)
                         if name in self.heap:
                             # name exists
                             # only replace it if existing version is a function
                             k, v = self.heap[name]
-                            if k != 'funct':
-                                raise CalculatorError('%s: name is reserved.' % name)
-                        self.heap[name] = 'funct', self.function
+                            if k != "funct":
+                                raise CalculatorError("%s: name is reserved." % name)
+                        self.heap[name] = "funct", self.function
                         self.function = None
                     else:
                         self.function.append(cmd)
                 else:
-                    if cmd == '(':
+                    if cmd == "(":
                         self.function = []
                     elif cmd in self.smplActions:
                         self.smplActions[cmd]._execute(self)
@@ -1439,20 +1507,19 @@ class Calculator:
                                 action._execute(match.groups(), self)
                                 break
                         else:
-                            if cmd == '#':
-                                break   # ignore comments
+                            if cmd == "#":
+                                break  # ignore comments
                             raise CalculatorError("%s: unrecognized." % cmd)
                 if self.update_last_x:
                     self.last_x = last_x
             return self.stack.peek()
         except (ValueError, OverflowError, TypeError) as err:
-            if (
-                isinstance(err, TypeError) and
-                str(err).startswith("can't convert complex to float")
+            if isinstance(err, TypeError) and str(err).startswith(
+                "can't convert complex to float"
             ):
                 raise CalculatorError(
-                    "Function does not support a complex argument." +
-                    showLoc(given, index)
+                    "Function does not support a complex argument."
+                    + showLoc(given, index)
                 )
             else:
                 raise CalculatorError(full_stop(err) + showLoc(given, index))
@@ -1461,68 +1528,68 @@ class Calculator:
 
     # utility methods {{{2
     def clear(self):
-        '''
+        """
         Clear the state of the calculator.
-        '''
+        """
         self.stack.clear()
         self.prevStack = None
-        self.last_x = (0, '')
+        self.last_x = (0, "")
         self.formatter.clear()
         self.heap.clear()
         self.useDegrees()
         self.useMKS()
 
     def restoreStack(self):
-        '''
+        """
         Restore stack to its state before the last evaluate.
         Used for recovering from errors.
-        '''
+        """
         self.stack = self.prevStack
         return self.format(self.stack.peek())
 
     def format(self, value):
-        '''
+        """
         Convert a number to a string using the current format settings.
-        '''
+        """
         return self.formatter.format(value)
 
     def removeAction(self, key):
-        '''
+        """
         Remove a named action. Used by heap to override commands and functions
         when a user creates a variable of the same name.
-        '''
+        """
         del self.smplActions[key]
 
     def useMKS(self):
-        self.unit_system = 'mks'
+        self.unit_system = "mks"
 
     def useCGS(self):
-        self.unit_system = 'cgs'
+        self.unit_system = "cgs"
 
     def useRadians(self):
-        self.trigMode = 'rads'
+        self.trigMode = "rads"
         self.convertToRadians = 1
 
     def useDegrees(self):
-        self.trigMode = 'degs'
-        self.convertToRadians = math.pi/180
+        self.trigMode = "degs"
+        self.convertToRadians = math.pi / 180
 
     def toRadians(self, arg):
-        '''
+        """
         Converts a number to radians (affected by trig mode).
-        '''
+        """
         return arg * self.convertToRadians
 
     def fromRadians(self, arg):
-        '''
+        """
         Converts a number from radians (affected by trig mode).
-        '''
+        """
         return arg / self.convertToRadians
 
     def angleUnits(self):
-        '''
+        """
         Converts a number from radians (affected by trig mode).
-        '''
+        """
         return self.trigMode
 
     def swap(self):
@@ -1535,75 +1602,82 @@ class Calculator:
     def pop(self):
         self.stack.pop()
 
-    def printMessage(self, message='', style='line'):
-        '''
+    def printMessage(self, message="", style="line"):
+        """
         Prints a message to the user.
-        '''
+        """
         if self.messagePrinter:
             self.messagePrinter(message, style)
         else:
-            if style == 'page':
+            if style == "page":
                 pager(message)
-            elif style == 'line':
+            elif style == "line":
                 display(message)
             else:
-                assert style == 'fragment'
-                display(message, end=' ')
+                assert style == "fragment"
+                display(message, end=" ")
 
     def printWarning(self, warning):
-        '''
+        """
         Prints a message to the user in the form of a warning.
-        '''
+        """
         if self.warningPrinter:
             self.warningPrinter(warning)
         else:
             warn(warning)
 
     def displayHelp(calc):  # pylint: disable=no-self-argument
-        '''
+        """
         Print a single line summary of all available actions.
-        '''
+        """
         lines = []
         for action in calc.actions:
             if action.description:
-                if hasattr(action, 'category'):
-                    lines += ['\n' + action.description % (action.__dict__)]
+                if hasattr(action, "category"):
+                    lines += ["\n" + action.description % (action.__dict__)]
                 else:
                     aliases = action.getAliases()
                     if aliases:
                         if len(aliases) > 1:
-                            aliases = ' (aliases: %s)' % ','.join(aliases)
+                            aliases = " (aliases: %s)" % ",".join(aliases)
                         else:
-                            aliases = ' (alias: %s)' % ','.join(aliases)
+                            aliases = " (alias: %s)" % ",".join(aliases)
                     else:
-                        aliases = ''
+                        aliases = ""
                     lines += wrap(
-                        stripFormatting(
-                            action.description % (action.__dict__)
-                        ) + aliases
-                      , initial_indent='    '
-                      , subsequent_indent='        '
+                        stripFormatting(action.description % (action.__dict__))
+                        + aliases,
+                        initial_indent = "    ",
+                        subsequent_indent = "        ",
                     )
-        calc.printMessage('\n'.join(lines) + '\n', style='page')
+        calc.printMessage("\n".join(lines) + "\n", style="page")
 
     def aboutMsg(calc):  # pylint: disable=no-self-argument
-        '''
+        """
         Print administrative information about EC.
-        '''
-        calc.printMessage(dedent("""\
+        """
+        calc.printMessage(
+            dedent(
+                """\
             EC: Engineering Calculator
             Version {} ({}).
 
             EC was written by Ken Kundert.
             Report issues or ask questions at https://github.com/KenKundert/ec/issues
             To view the manual, visit https://engineering-calculator.readthedocs.io\
-        """.format(__version__, __released__)))
+        """.format(
+                    __version__, __released__
+                )
+            )
+        )
 
     def describeFunctions(calc):  # pylint: disable=no-self-argument
-        '''
+        """
         Describe usage of user-define functions.
-        '''
-        calc.printMessage(dedent("""
+        """
+        calc.printMessage(
+            dedent(
+                """
             Define functions using:
                 ( ... )name
 
@@ -1621,10 +1695,12 @@ class Calculator:
             You can list the user-defined functions along with the user-defined
             variables using the 'vars' command. The functions are delimited with
             parentheses.
-        """).strip())
+        """
+            ).strip()
+        )
 
     def quit(calc):  # pylint: disable=no-self-argument
-        '''
+        """
         Quit EC.
-        '''
+        """
         sys.exit(0)

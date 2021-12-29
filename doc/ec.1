@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH EC 1 "2020-08-17" "1.6.2" ""
+.TH EC 1 "2021-11-10" "1.8.0" ""
 .SH NAME
 ec \- engineering calculator
 .
@@ -718,7 +718,7 @@ register.
 .sp
 .nf
 .ft C
-x, y, ... => x+y, ...
+x, y, ... → x+y, ...
 .ft P
 .fi
 .UNINDENT
@@ -737,7 +737,7 @@ register.
 .sp
 .nf
 .ft C
-x, y, ... => x\-y, ...
+x, y, ... → x\-y, ...
 .ft P
 .fi
 .UNINDENT
@@ -756,7 +756,7 @@ register.
 .sp
 .nf
 .ft C
-x, y, ... => x*y, ...
+x, y, ... → x*y, ...
 .ft P
 .fi
 .UNINDENT
@@ -784,7 +784,7 @@ values are treated as real numbers and the result is a real number. So
 .sp
 .nf
 .ft C
-x, y, ... => y/x, ...
+x, y, ... → y/x, ...
 .ft P
 .fi
 .UNINDENT
@@ -814,7 +814,7 @@ the \fIx\fP register.  So
 .sp
 .nf
 .ft C
-x, y, ... => y//x, ...
+x, y, ... → y//x, ...
 .ft P
 .fi
 .UNINDENT
@@ -845,7 +845,7 @@ times, which leaves a remainder of 2.
 .sp
 .nf
 .ft C
-x, y, ... => y%x, ...
+x, y, ... → y%x, ...
 .ft P
 .fi
 .UNINDENT
@@ -862,7 +862,7 @@ The value in the \fIx\fP register is replaced with its negative.
 .sp
 .nf
 .ft C
-x, ... => \-x, ...
+x, ... → \-x, ...
 .ft P
 .fi
 .UNINDENT
@@ -879,7 +879,7 @@ The value in the \fIx\fP register is replaced with its reciprocal.
 .sp
 .nf
 .ft C
-x, ... => 1/x, ...
+x, ... → 1/x, ...
 .ft P
 .fi
 .UNINDENT
@@ -898,7 +898,7 @@ value).
 .sp
 .nf
 .ft C
-x, ... => ceil(x), ...
+x, ... → ceil(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -917,7 +917,7 @@ than its value).
 .sp
 .nf
 .ft C
-x, ... => floor(x), ...
+x, ... → floor(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -928,13 +928,14 @@ x, ... => floor(x), ...
 \fB!\fP: factorial
 .INDENT 0.0
 .INDENT 3.5
-The value in the \fIx\fP register is replaced with its factorial.
+The value in the \fIx\fP register is replaced with the factorial of its
+value rounded to the nearest integer.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-x, ... => x!, ...
+x, ... → x!, ...
 .ft P
 .fi
 .UNINDENT
@@ -953,7 +954,7 @@ back into the \fIx\fP register.
 .sp
 .nf
 .ft C
-x, y, ... => 100*(x\-y)/y, ...
+x, y, ... → 100*(x\-y)/y, ...
 .ft P
 .fi
 .UNINDENT
@@ -976,7 +977,7 @@ conductance, capacitance or susceptance of the two in series.
 .sp
 .nf
 .ft C
-x, y, ... => 1/(1/x+1/y), ...
+x, y, ... → 1/(1/x+1/y), ...
 .ft P
 .fi
 .UNINDENT
@@ -996,7 +997,7 @@ stack and replaced with the value of \fIy\fP raised to the power of
 .sp
 .nf
 .ft C
-x, y, ... => y**x, ...
+x, y, ... → y**x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1016,7 +1017,7 @@ Supports a complex argument.
 .sp
 .nf
 .ft C
-x, ... => exp(x), ...
+x, ... → exp(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1036,7 +1037,7 @@ Supports a complex argument.
 .sp
 .nf
 .ft C
-x, ... => ln(x), ...
+x, ... → ln(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1055,7 +1056,7 @@ The value in the \fIx\fP register is replaced with 10 raised to \fIx\fP\&.
 .sp
 .nf
 .ft C
-x, ... => 10**x, ...
+x, ... → 10**x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1074,7 +1075,7 @@ The value in the \fIx\fP register is replaced with its common logarithm.
 .sp
 .nf
 .ft C
-x, ... => log(x), ...
+x, ... → log(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1093,7 +1094,7 @@ The value in the \fIx\fP register is replaced with 2 raised to \fIx\fP\&.
 .sp
 .nf
 .ft C
-x, ... => 2**x, ...
+x, ... → 2**x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1112,7 +1113,7 @@ The value in the \fIx\fP register is replaced with its base 2 logarithm.
 .sp
 .nf
 .ft C
-x, ... => log2(x), ...
+x, ... → log2(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1131,7 +1132,7 @@ The value in the \fIx\fP register is replaced with its square.
 .sp
 .nf
 .ft C
-x, ... => x**2, ...
+x, ... → x**2, ...
 .ft P
 .fi
 .UNINDENT
@@ -1148,7 +1149,7 @@ The value in the \fIx\fP register is replaced with its square root.
 .sp
 .nf
 .ft C
-x, ... => sqrt(x), ...
+x, ... → sqrt(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1167,7 +1168,7 @@ The value in the \fIx\fP register is replaced with its cube root.
 .sp
 .nf
 .ft C
-x, ... => cbrt(x), ...
+x, ... → cbrt(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1185,7 +1186,7 @@ The value in the \fIx\fP register is replaced with its sine.
 .sp
 .nf
 .ft C
-x, ... => sin(x), ...
+x, ... → sin(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1202,7 +1203,7 @@ The value in the \fIx\fP register is replaced with its cosine.
 .sp
 .nf
 .ft C
-x, ... => cos(x), ...
+x, ... → cos(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1219,7 +1220,7 @@ The value in the \fIx\fP register is replaced with its tangent.
 .sp
 .nf
 .ft C
-x, ... => tan(x), ...
+x, ... → tan(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1236,7 +1237,7 @@ The value in the \fIx\fP register is replaced with its arc sine.
 .sp
 .nf
 .ft C
-x, ... => asin(x), ...
+x, ... → asin(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1253,7 +1254,7 @@ The value in the \fIx\fP register is replaced with its arc cosine.
 .sp
 .nf
 .ft C
-x, ... => acos(x), ...
+x, ... → acos(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1270,7 +1271,7 @@ The value in the \fIx\fP register is replaced with its arc tangent.
 .sp
 .nf
 .ft C
-x, ... => atan(x), ...
+x, ... → atan(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1310,7 +1311,7 @@ onto the stack.
 .sp
 .nf
 .ft C
-x, ... => abs(x), x, ...
+x, ... → abs(x), x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1331,7 +1332,7 @@ onto the stack.
 .sp
 .nf
 .ft C
-x, ... => arg(x), x, ...
+x, ... → arg(x), x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1352,7 +1353,7 @@ replaced with the length of the vector from the origin to the point
 .sp
 .nf
 .ft C
-x, y, ... => sqrt(x**2+y**2), ...
+x, y, ... → sqrt(x**2+y**2), ...
 .ft P
 .fi
 .UNINDENT
@@ -1372,7 +1373,7 @@ replaced with the angle of the vector from the origin to the point.
 .sp
 .nf
 .ft C
-x, y, ... => atan2(y,x), ...
+x, y, ... → atan2(y,x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1394,7 +1395,7 @@ point (\fIx\fP, \fIy\fP).
 .sp
 .nf
 .ft C
-x, y, ... => sqrt(x**2+y**2), atan2(y,x), ...
+x, y, ... → sqrt(x**2+y**2), atan2(y,x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1413,7 +1414,7 @@ the coordinates of the end\-point of that vector.
 .sp
 .nf
 .ft C
-x, y, ... => x*cos(y), x*sin(y), ...
+x, y, ... → x*cos(y), x*sin(y), ...
 .ft P
 .fi
 .UNINDENT
@@ -1431,7 +1432,7 @@ The value in the \fIx\fP register is replaced with its hyperbolic sine.
 .sp
 .nf
 .ft C
-x, ... => sinh(x), ...
+x, ... → sinh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1448,7 +1449,7 @@ The value in the \fIx\fP register is replaced with its hyperbolic cosine.
 .sp
 .nf
 .ft C
-x, ... => cosh(x), ...
+x, ... → cosh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1465,7 +1466,7 @@ The value in the \fIx\fP register is replaced with its hyperbolic tangent.
 .sp
 .nf
 .ft C
-x, ... => tanh(x), ...
+x, ... → tanh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1482,7 +1483,7 @@ The value in the \fIx\fP register is replaced with its hyperbolic arc sine.
 .sp
 .nf
 .ft C
-x, ... => asinh(x), ...
+x, ... → asinh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1500,7 +1501,7 @@ cosine.
 .sp
 .nf
 .ft C
-x, ... => acosh(x), ...
+x, ... → acosh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1518,7 +1519,7 @@ tangent.
 .sp
 .nf
 .ft C
-x, ... => atanh(x), ...
+x, ... → atanh(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1538,7 +1539,7 @@ converting voltage or current to decibels.
 .sp
 .nf
 .ft C
-x, ... => 20*log(x), ...
+x, ... → 20*log(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1559,7 +1560,7 @@ form when converting decibels to voltage or current.
 .sp
 .nf
 .ft C
-x, ... => 10**(x/20), ...
+x, ... → 10**(x/20), ...
 .ft P
 .fi
 .UNINDENT
@@ -1580,7 +1581,7 @@ apply this form when converting power to decibels.
 .sp
 .nf
 .ft C
-x, ... => 10*log(x), ...
+x, ... → 10*log(x), ...
 .ft P
 .fi
 .UNINDENT
@@ -1601,7 +1602,7 @@ form when converting decibels to voltage or current.
 .sp
 .nf
 .ft C
-x, ... => 10**(x/10), ...
+x, ... → 10**(x/10), ...
 .ft P
 .fi
 .UNINDENT
@@ -1623,7 +1624,7 @@ decibels relative to 1 milliwatt.
 .sp
 .nf
 .ft C
-x, ... => 30+10*log10((x**2)/(2*Rref)), ...
+x, ... → 30+10*log10((x**2)/(2*Rref)), ...
 .ft P
 .fi
 .UNINDENT
@@ -1645,7 +1646,7 @@ resistor equal to \fIRref\fP (a predefined variable).
 .sp
 .nf
 .ft C
-x, ... => sqrt(2*10**(x \- 30)/10)*Rref), ...
+x, ... → sqrt(2*10**(x \- 30)/10)*Rref), ...
 .ft P
 .fi
 .UNINDENT
@@ -1667,7 +1668,7 @@ decibels relative to 1 milliwatt.
 .sp
 .nf
 .ft C
-x, ... => 30+10*log10(((x**2)*Rref/2), ...
+x, ... → 30+10*log10(((x**2)*Rref/2), ...
 .ft P
 .fi
 .UNINDENT
@@ -1689,7 +1690,7 @@ resistor equal to \fIRref\fP (a predefined variable).
 .sp
 .nf
 .ft C
-x, ... => sqrt(2*10**(x \- 30)/10)/Rref), ...
+x, ... → sqrt(2*10**(x \- 30)/10)/Rref), ...
 .ft P
 .fi
 .UNINDENT
@@ -1703,50 +1704,52 @@ alias: dbm2i
 \fBpi\fP: the ratio of a circle\(aqs circumference to its diameter
 .INDENT 0.0
 .INDENT 3.5
-The value of pi (3.141592...) is pushed on the stack into the \fIx\fP
+The value of π (3.141592...) is pushed on the stack into the \fIx\fP
 register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => pi, ...
+\&... → π, ...
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
+.sp
+alias: π
 .UNINDENT
 .UNINDENT
 .sp
 \fB2pi\fP: the ratio of a circle\(aqs circumference to its radius
 .INDENT 0.0
 .INDENT 3.5
-Two times the value of pi (6.283185...) is pushed on the stack into the
-\fIx\fP register.
+2π (6.283185...) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => 2*pi, ...
+\&... → 2π, ...
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
+.sp
+aliases: tau, τ, 2π
 .UNINDENT
 .UNINDENT
 .sp
 \fBrt2\fP: square root of two
 .INDENT 0.0
 .INDENT 3.5
-The square root of two (1.4142...) is pushed on the stack into the \fIx\fP
-register.
+√2 (1.4142...) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => sqrt(2), ...
+\&... → √2, ...
 .ft P
 .fi
 .UNINDENT
@@ -1764,7 +1767,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => 0C, ...
+\&... → 0C, ...
 .ft P
 .fi
 .UNINDENT
@@ -1782,7 +1785,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => j, ...
+\&... → j, ...
 .ft P
 .fi
 .UNINDENT
@@ -1793,18 +1796,20 @@ the \fIx\fP register.
 \fBj2pi\fP: j*2*pi
 .INDENT 0.0
 .INDENT 3.5
-2 pi times the imaginary unit (j6.283185...) is pushed on the stack into
+2π times the imaginary unit (j6.283185...) is pushed on the stack into
 the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => j*2*pi, ...
+\&... → j*2*pi, ...
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
+.sp
+aliases: jtau, jτ, j2π
 .UNINDENT
 .UNINDENT
 .sp
@@ -1819,7 +1824,7 @@ register.
 .sp
 .nf
 .ft C
-\&... => k, ...
+\&... → k, ...
 .ft P
 .fi
 .UNINDENT
@@ -1830,14 +1835,14 @@ register.
 \fBh\fP: Planck constant
 .INDENT 0.0
 .INDENT 3.5
-The Planck constant (6.626070e\-34 J\-s [mks] or 6.626070e\-27 erg\-s [cgs])
+The Planck constant \fIh\fP (6.626070e\-34 J\-s [mks] or 6.626070e\-27 erg\-s [cgs])
 is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => h, ...
+\&... → h, ...
 .ft P
 .fi
 .UNINDENT
@@ -1856,7 +1861,7 @@ The elementary charge (the charge of an electron or 1.6021766208e\-19 C
 .sp
 .nf
 .ft C
-\&... => q, ...
+\&... → q, ...
 .ft P
 .fi
 .UNINDENT
@@ -1874,7 +1879,7 @@ into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => c, ...
+\&... → c, ...
 .ft P
 .fi
 .UNINDENT
@@ -1892,7 +1897,7 @@ stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => eps0, ...
+\&... → eps0, ...
 .ft P
 .fi
 .UNINDENT
@@ -1910,7 +1915,7 @@ The permeability of free space (4e\-7*pi H/m [mks] or 4π/c² s^2/m^2
 .sp
 .nf
 .ft C
-\&... => mu0, ...
+\&... → mu0, ...
 .ft P
 .fi
 .UNINDENT
@@ -1928,7 +1933,7 @@ pushed on the stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => Z0, ...
+\&... → Z0, ...
 .ft P
 .fi
 .UNINDENT
@@ -1939,18 +1944,20 @@ pushed on the stack into the \fIx\fP register.
 \fBhbar\fP: Reduced Planck constant
 .INDENT 0.0
 .INDENT 3.5
-The reduced Planck constant (1.054571800e\-34 J\-s) is pushed on the stack
+The reduced Planck constant \fIħ\fP (1.054571800e\-34 J\-s) is pushed on the stack
 into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... => h/(2*pi), ...
+\&... → ħ/2π), ...
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
+.sp
+alias: ħ
 .UNINDENT
 .UNINDENT
 .sp
@@ -1964,7 +1971,7 @@ into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => me, ...
+\&... → me, ...
 .ft P
 .fi
 .UNINDENT
@@ -1982,7 +1989,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => mp, ...
+\&... → mp, ...
 .ft P
 .fi
 .UNINDENT
@@ -2000,7 +2007,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => mn, ...
+\&... → mn, ...
 .ft P
 .fi
 .UNINDENT
@@ -2018,7 +2025,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => mh, ...
+\&... → mh, ...
 .ft P
 .fi
 .UNINDENT
@@ -2036,7 +2043,7 @@ into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => amu, ...
+\&... → amu, ...
 .ft P
 .fi
 .UNINDENT
@@ -2054,7 +2061,7 @@ on the stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => G, ...
+\&... → G, ...
 .ft P
 .fi
 .UNINDENT
@@ -2072,7 +2079,7 @@ m/s^2)) is pushed on the stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => g, ...
+\&... → g, ...
 .ft P
 .fi
 .UNINDENT
@@ -2090,7 +2097,7 @@ The Rydberg constant (10973731 m^\-1) is pushed on the stack into the
 .sp
 .nf
 .ft C
-\&... => Ry, ...
+\&... → Ry, ...
 .ft P
 .fi
 .UNINDENT
@@ -2108,7 +2115,7 @@ the stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => sigma, ...
+\&... → sigma, ...
 .ft P
 .fi
 .UNINDENT
@@ -2126,7 +2133,7 @@ the stack into the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => alpha, ...
+\&... → alpha, ...
 .ft P
 .fi
 .UNINDENT
@@ -2144,7 +2151,7 @@ The molar gas constant (8.3144598 J/(mol\-K) [mks] or 83.145 Merg/deg\-mol
 .sp
 .nf
 .ft C
-\&... => R, ...
+\&... → R, ...
 .ft P
 .fi
 .UNINDENT
@@ -2162,7 +2169,7 @@ the \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => NA, ...
+\&... → NA, ...
 .ft P
 .fi
 .UNINDENT
@@ -2185,7 +2192,7 @@ Switch the unit system for constants to ESU CGS.
 .UNINDENT
 .SS Numbers
 .sp
-\fB<N[.M][S[U]]>\fP: a real number
+\fB<N[.M][S][U]>\fP: a real number
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is the
@@ -2198,7 +2205,7 @@ represents 1e7 Hz.
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2218,7 +2225,7 @@ special characters).  For example, 2.2e\-8F represents 22nF.
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2238,7 +2245,7 @@ example, 0xFF represents the hexadecimal number FF or the decimal number
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2257,7 +2264,7 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2276,7 +2283,7 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2296,7 +2303,7 @@ example, \(aqhFF represents the hexadecimal number FF or the decimal number
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2314,7 +2321,7 @@ integer in base 10.  For example, \(aqd99 represents the decimal number 99.
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2333,7 +2340,7 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2352,7 +2359,7 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .sp
 .nf
 .ft C
-\&... => num, ...
+\&... → num, ...
 .ft P
 .fi
 .UNINDENT
@@ -2365,9 +2372,12 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed with a fixed number of digits of precision and the
-SI scale factors are used to convey the exponent when possible.  If an
-optional whole number \fIN\fP immediately follows \fIeng\fP, the precision is
-set to \fIN\fP digits.
+exponent is given explicitly as an integer.  If an optional whole number
+\fIN\fP immediately follows \fIsci\fP, the precision is set to \fIN\fP digits.
+.sp
+Engineering notation differs from scientific notation in that it allows
+1, 2 or 3 digits to precede the decimal point in the mantissa and the
+exponent is always a multiple of 3.
 .UNINDENT
 .UNINDENT
 .sp
@@ -2377,6 +2387,10 @@ set to \fIN\fP digits.
 Numbers are displayed with a fixed number of digits of precision and the
 exponent is given explicitly as an integer.  If an optional whole number
 \fIN\fP immediately follows \fIsci\fP, the precision is set to \fIN\fP digits.
+.sp
+Scientific notation differs from engineering notation in that it allows
+only 1 digit to precede the decimal point in the mantissa and the
+exponent is not constrained to be a multiple of 3.
 .UNINDENT
 .UNINDENT
 .sp
@@ -2466,7 +2480,7 @@ name.
 .sp
 .nf
 .ft C
-\&... => ...
+\&... → ...
 .ft P
 .fi
 .UNINDENT
@@ -2484,7 +2498,7 @@ register.
 .sp
 .nf
 .ft C
-\&... => name, ...
+\&... → name, ...
 .ft P
 .fi
 .UNINDENT
@@ -2509,7 +2523,7 @@ The values in the \fIx\fP and \fIy\fP registers are swapped.
 .sp
 .nf
 .ft C
-x, y, ... => y, x, ...
+x, y, ... → y, x, ...
 .ft P
 .fi
 .UNINDENT
@@ -2526,7 +2540,7 @@ The value in the \fIx\fP register is pushed onto the stack again.
 .sp
 .nf
 .ft C
-x, ... => x, x, ...
+x, ... → x, x, ...
 .ft P
 .fi
 .UNINDENT
@@ -2545,7 +2559,7 @@ The value in the \fIx\fP register is pulled from the stack and discarded.
 .sp
 .nf
 .ft C
-x, ... => ...
+x, ... → ...
 .ft P
 .fi
 .UNINDENT
@@ -2564,7 +2578,7 @@ The previous value of the \fIx\fP register is pushed onto the stack.
 .sp
 .nf
 .ft C
-\&... => lastx, ...
+\&... → lastx, ...
 .ft P
 .fi
 .UNINDENT
@@ -2588,7 +2602,7 @@ Remove all values from the stack.
 .sp
 .nf
 .ft C
-\&... =>
+\&... →
 .ft P
 .fi
 .UNINDENT
@@ -2607,7 +2621,7 @@ the stack into \fIx\fP register.
 .sp
 .nf
 .ft C
-\&... => rand, ...
+\&... → rand, ...
 .ft P
 .fi
 .UNINDENT
@@ -2637,7 +2651,7 @@ The actual value is unchanged.
 .sp
 .nf
 .ft C
-x, ... => x "units", ...
+x, ... → x "units", ...
 .ft P
 .fi
 .UNINDENT
@@ -2668,10 +2682,10 @@ If no topic is given, a list of available topics is listed.
 \fBabout\fP: print information about this calculator
 .SH HELP
 .sp
-You can use help to get a summary of the various features available in EC
+You can use \fIhelp\fP to get a listing of the various features available in EC
 along with a short summary of each feature. For more detailed information,
-you can use \(aq?\(aq.  If you use \(aq?\(aq you will get a list of all available help
-topics. If you use \(aq?<\fItopic\fP>\(aq where \fItopic\fP us either a symbol or a
+you can use \(aq?\(aq.  If you use \(aq?\(aq alone you will get a list of all available
+help topics. If you use \(aq?<\fItopic\fP>\(aq where \fItopic\fP us either a symbol or a
 name, you will get a detailed description of that topic.
 .SH INITIALIZATION
 .sp

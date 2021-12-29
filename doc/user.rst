@@ -156,10 +156,9 @@ you intend the units without a scale factor, add the unit scale factor: '_'.
 Thus, use 300_K to enter 300 Kelvin.
 
 In this case the units must be simple identifiers (must not contain special 
-characters, though use of particular units symbols, °ÅΩƱ. are allowed). For 
-complex units, such as "rads/s", or for numbers that do not have scale 
-factors, it is possible to attach units to a number in the *x* register by 
-entering a quoted string.
+characters). For complex units, such as "rads/s", or for numbers that do not 
+have scale factors, it is possible to attach units to a number in the *x* 
+register by entering a quoted string.
 
    |   **0**: 6.626e-34
    |   **662.6e-36**: "J-s"
@@ -175,6 +174,7 @@ Numbers my also contain commas as digit separators, which are ignored.
    |    $200,000.00
 
 The dollar sign ($) is a special unit that is given before the number.
+
 **ec** takes a conservative approach to units. You can enter them and it
 remembers them, but they do not survive any operation where the resulting
 units would be in doubt.  In this way it displays units when it can, but
@@ -184,25 +184,28 @@ should never display incorrect or misleading units. For example:
    |   **100 MHz**: 2pi*
    |   **628.32M**:
 
-You can display real numbers using one of three available formats, *fix*,
-*sci*, or *eng*. These display numbers using fixed point notation (a fixed
-number of digits to the right of the decimal point), scientific notation (a
-mantissa and an exponent), and engineering notation (a mantissa and an SI
-scale factor).  You can optionally give an integer immediately after the
-display mode to indicate the desired precision.  For example,
+You can display real numbers using one of four available formats, *fix*,
+*sci*, *eng*, or *si*. These display numbers using fixed point notation (a
+fixed number of digits to the right of the decimal point), scientific
+notation (a mantissa and an exponent), engineering notation (a mantissa and
+an exponent, but the exponent is constrained to be a multiple of 3), and SI
+notation (a mantissa and a SI scale factor).  You can optionally give an
+integer immediately after the display mode to indicate the desired
+precision.  For example,
 
-   |   **0**: 1000
-   |   **1K**: fix2
-   |   **1000.00**: sci3
-   |   **1.000e+03**: eng4
-   |   **1K**: 2pi*
-   |   **6.2832K**:
+   |   **0**: 10,000
+   |   **10K**: fix2
+   |   **10,000.00**: sci3
+   |   **1.000e+04**: eng2
+   |   **10.0e+03**: si4
+   |   **10K**: 2pi*
+   |   **62.832K**:
 
-Notice that scientific notation always displays the specified number of
-digits whereas engineering notation suppresses zeros at the end of the
-number.
+Notice that scientific and engineering notations always displays the
+specified number of digits whereas SI notation suppresses zeros at the end
+of the number.
 
-When displaying numbers using engineering notation, **ec** does not use the
+When displaying numbers using SI notation, **ec** does not use the
 full range of available scale factors under the assumption that the largest
 and smallest would be unfamiliar to most people. For this reason, **ec**
 only uses the most common scale factors when outputting numbers (T, G, M, K,
@@ -252,12 +255,18 @@ Complex Numbers
 are available that can be used to construct complex numbers, *j* and
 *j2pi*. In addition, two functions are available for converting complex
 numbers to real, *mag* returns the magnitude and *ph* returns the phase.
-For example,
+They are unusual in that they do not replace the value in the *x* register
+with the result, instead they simply push either the magnitude of phase into
+the *x* register, which pushes the original complex number into the *y*
+register. For example,
 
    |   **0**: 1 j +
    |   **1 + j**: mag
-   |   **1.4142**: lastx
+   |   **1.4142**: pop
    |   **1 + j**: ph
+   |   **45 degs**: stack
+   |      *y*: 1 + j
+   |      *x*: 45 degs
    |   **45 degs**:
 
 You can also add the imaginary unit to real number constants. For example,
@@ -394,9 +403,9 @@ function itself is evaluated.
 Once defined, you can review your function with the *vars* command. It shows 
 both the variable and the function definitions:
 
-    |     **Rref**: 50 Ohms
-    |     **to_freq**: (2pi / "Hz")
-    |     **to_omega**: (2pi * "rads/s")
+    |     *Rref*: 50 Ohms
+    |     *to_freq*: (2pi / "Hz")
+    |     *to_omega*: (2pi * "rads/s")
 
 The value of the functions are delimited with parentheses.
 
@@ -428,7 +437,7 @@ command line (with the **-s** or **--startup** option).  It is common to put
 your generic preferences in '~/.exrc'.  For example, if your are an
 astronomer with a desire for high precision results, you might use::
 
-   # inditialization file for ec (engineering calculator)
+   # initialization file for ec (engineering calculator)
    eng6
    6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
    1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
@@ -567,17 +576,17 @@ Initialization Scripts
 You can use scripts to preload in a set of useful constants and function 
 that can then be used in interactive calculations. To do so, use the **-i** 
 or *--interactive* command line option. For example, replace the earlier 
-'lg' script with the following::
+'lg' script with the following:
 
-   88.3u "V/per" =Kdet
-   9.07G "Hz/V" =Kvco
-   2 =M
-   8 =N
-   2 =F
-   (N F* recip)f
-   (2pi * Kdet * Kvco* M*)a
-   (a f*)T
-   clstack
+   |   88.3u "V/per" =Kdet
+   |   9.07G "Hz/V" =Kvco
+   |   2 =M
+   |   8 =N
+   |   2 =F
+   |   (N F* recip)f
+   |   (2pi * Kdet * Kvco* M*)a
+   |   (a f*)T
+   |   clstack
 
 Now run:
 

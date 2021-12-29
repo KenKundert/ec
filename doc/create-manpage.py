@@ -205,9 +205,12 @@ document = r"""{
        |   2.5_V
        |   4.7e-10F
 
-    Units are only allowed after a scale factor or an exponent, and the units 
-    are optional. In this way, 1m represents 1e-3 rather than 1 meter. If you 
-    wish to enter 1 meter, use 1_m. The underscore is the unity scale factor.
+    Both units and scale factors are optional, which causes a natural ambiguity 
+    as to whether the first letter of a suffix is a scale factor or not. If the 
+    first letter is a valid scale factor, then it is assume to be a scale 
+    factor.  In this way, '300K is treated as 300e3 rather than 300 Kelvin. If 
+    you intend the units without a scale factor, add the unit scale factor: '_'.  
+    Thus, use 300_K to enter 300 Kelvin.
 
     In this case the units must be simple identifiers (must not contain special 
     characters). For complex units, such as "rads/s", or for numbers that do not 
@@ -223,6 +226,12 @@ document = r"""{
 
        |    $100K
 
+    Numbers my also contain commas as digit separators, which are ignored.
+
+       |    $200,000.00
+
+    The dollar sign ($) is a special unit that is given before the number.
+
     **ec** takes a conservative approach to units. You can enter them and it
     remembers them, but they do not survive any operation where the resulting
     units would be in doubt.  In this way it displays units when it can, but
@@ -233,25 +242,28 @@ document = r"""{
        |   **100 MHz**: 2pi*
        |   **628.32M**:
 
-    You can display real numbers using one of three available formats, *fix*,
-    *sci*, or *eng*. These display numbers using fixed point notation (a fixed
-    number of digits to the right of the decimal point), scientific notation (a
-    mantissa and an exponent), and engineering notation (a mantissa and an SI
-    scale factor).  You can optionally give an integer immediately after the
-    display mode to indicate the desired precision.  For example,
+    You can display real numbers using one of four available formats, *fix*,
+    *sci*, *eng*, or *si*. These display numbers using fixed point notation (a
+    fixed number of digits to the right of the decimal point), scientific
+    notation (a mantissa and an exponent), engineering notation (a mantissa and
+    an exponent, but the exponent is constrained to be a multiple of 3), and SI
+    notation (a mantissa and a SI scale factor).  You can optionally give an
+    integer immediately after the display mode to indicate the desired
+    precision.  For example,
 
-       |   **0**: 1000
-       |   **1K**: fix2
-       |   **1000.00**: sci3
-       |   **1.000e+03**: eng4
-       |   **1K**: 2pi*
-       |   **6.2832K**:
+       |   **0**: 10,000
+       |   **10K**: fix2
+       |   **10,000.00**: sci3
+       |   **1.000e+04**: eng2
+       |   **10.0e+03**: si4
+       |   **10K**: 2pi*
+       |   **62.832K**:
 
-    Notice that scientific notation always displays the specified number of
-    digits whereas engineering notation suppresses zeros at the end of the
-    number.
+    Notice that scientific and engineering notations always displays the
+    specified number of digits whereas SI notation suppresses zeros at the end
+    of the number.
 
-    When displaying numbers using engineering notation, **ec** does not use the
+    When displaying numbers using SI notation, **ec** does not use the
     full range of available scale factors under the assumption that the largest
     and smallest would be unfamiliar to most people. For this reason, **ec**
     only uses the most common scale factors when outputting numbers (T, G, M, K,
@@ -409,13 +421,14 @@ document = r"""{
     '~/.ecrc' and runs any commands it contains if it exists.  It then tries
     './.ecrc' if it exists.  Finally it runs the startup file specified on the
     command line (with the **-s** or **--startup** option).  It is common to put
-    your generic preferences in '~/.exrc'.  For example, if your are an astronomer 
-    with a desire for high precision results, you might use:
+    your generic preferences in '~/.exrc'.  For example, if your are an
+    astronomer with a desire for high precision results, you might use::
 
-       |   eng6
-       |   6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
-       |   1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
-       |   1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
+       # initialization file for ec (engineering calculator)
+       eng6
+       6.626070e-27 "erg-s" =h       # Planck's constant in CGS units
+       1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
+       1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
 
     This tells **ec** to use 6 digits of resolution and redefines *h* and *hbar* 
     so that they are given in CGS units. The redefining of the names *h*, 
@@ -424,13 +437,13 @@ document = r"""{
 
     After all of the startup files have been processed, the stack is cleared.
 
-    A typical initialization script (~/.ecrc) for a circuit designer might be:
+    A typical initialization script (~/.ecrc) for a circuit designer might be::
 
-       |   # Initialize Engineering Calculator
-       |   27 "C" =T               # ambient temperature
-       |   (k T 0C + * q/ "V")vt   # thermal voltage
-       |   (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
-       |   (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
+       # Initialize Engineering Calculator
+       27 "C" =T               # ambient temperature
+       (k T 0C + * q/ "V")vt   # thermal voltage
+       (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
+       (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
 
 
     SCRIPTING
@@ -496,22 +509,22 @@ document = r"""{
        |   **628.32 Mrads/s**:
 
     To illustrate its use in a script, assume that a file named *lg* exists and
-    contains a calculation for the loop gain of a PLL,
+    contains a calculation for the loop gain of a PLL::
 
-       |   # computes and displays loop gain of a frequency synthesizer
-       |   # x register is taken to be frequency
-       |   =freq
-       |   88.3u "V/per" =Kdet  # gain of phase detector
-       |   9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
-       |   2 =M                 # divide ratio of divider at output of VCO
-       |   8 =N                 # divide ratio of main divider
-       |   2 =F                 # divide ratio of prescalar
-       |   freq 2pi* "rads/s" =omega
-       |   Kdet Kvco* omega/ M/ =a
-       |   N F* =f
-       |   a f* =T
-       |   \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
-       |   quit
+       # computes and displays loop gain of a frequency synthesizer
+       # x register is taken to be frequency
+       =freq
+       88.3u "V/per" =Kdet  # gain of phase detector
+       9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
+       2 =M                 # divide ratio of divider at output of VCO
+       8 =N                 # divide ratio of main divider
+       2 =F                 # divide ratio of prescalar
+       freq 2pi* "rads/s" =omega
+       Kdet Kvco* omega/ M/ =a
+       N F* =f
+       a f* =T
+       \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
+       quit
 
     When reading scripts from a file, the '#' character introduces a comment. It 
     and anything that follows is ignored until the end of the line.

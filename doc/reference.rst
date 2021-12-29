@@ -36,7 +36,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => x+y, ...
+        x, y, ... → x+y, ...
 
 ``-``: subtraction
 
@@ -46,7 +46,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => x-y, ...
+        x, y, ... → x-y, ...
 
 ``*``: multiplication
 
@@ -56,7 +56,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => x*y, ...
+        x, y, ... → x*y, ...
 
 ``/``: true division
 
@@ -70,7 +70,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => y/x, ...
+        x, y, ... → y/x, ...
 
 ``//``: floor division
 
@@ -86,7 +86,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => y//x, ...
+        x, y, ... → y//x, ...
 
 ``%``: modulus
 
@@ -102,7 +102,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => y%x, ...
+        x, y, ... → y%x, ...
 
 ``chs``: change sign
 
@@ -110,7 +110,7 @@ Arithmetic Operators
 
     ::
 
-        x, ... => -x, ...
+        x, ... → -x, ...
 
 ``recip``: reciprocal
 
@@ -118,7 +118,7 @@ Arithmetic Operators
 
     ::
 
-        x, ... => 1/x, ...
+        x, ... → 1/x, ...
 
 ``ceil``: round towards positive infinity
 
@@ -128,7 +128,7 @@ Arithmetic Operators
 
     ::
 
-        x, ... => ceil(x), ...
+        x, ... → ceil(x), ...
 
 ``floor``: round towards negative infinity
 
@@ -138,15 +138,16 @@ Arithmetic Operators
 
     ::
 
-        x, ... => floor(x), ...
+        x, ... → floor(x), ...
 
 ``!``: factorial
 
-    The value in the *x* register is replaced with its factorial.
+    The value in the *x* register is replaced with the factorial of its
+    value rounded to the nearest integer.
 
     ::
 
-        x, ... => x!, ...
+        x, ... → x!, ...
 
 ``%chg``: percent change
 
@@ -156,7 +157,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => 100*(x-y)/y, ...
+        x, y, ... → 100*(x-y)/y, ...
 
 ``||``: parallel combination
 
@@ -170,7 +171,7 @@ Arithmetic Operators
 
     ::
 
-        x, y, ... => 1/(1/x+1/y), ...
+        x, y, ... → 1/(1/x+1/y), ...
 
 Powers, Roots, Exponentials and Logarithms
 -------------------------------------------
@@ -183,7 +184,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, y, ... => y**x, ...
+        x, y, ... → y**x, ...
 
     aliases: pow, ytox
 
@@ -194,7 +195,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => exp(x), ...
+        x, ... → exp(x), ...
 
     alias: powe
 
@@ -205,7 +206,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => ln(x), ...
+        x, ... → ln(x), ...
 
     alias: loge
 
@@ -215,7 +216,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => 10**x, ...
+        x, ... → 10**x, ...
 
     alias: 10tox
 
@@ -225,7 +226,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => log(x), ...
+        x, ... → log(x), ...
 
     aliases: log10, lg
 
@@ -235,7 +236,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => 2**x, ...
+        x, ... → 2**x, ...
 
     alias: 2tox
 
@@ -245,7 +246,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => log2(x), ...
+        x, ... → log2(x), ...
 
     alias: lb
 
@@ -255,7 +256,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => x**2, ...
+        x, ... → x**2, ...
 
 ``sqrt``: square root
 
@@ -263,7 +264,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => sqrt(x), ...
+        x, ... → sqrt(x), ...
 
     alias: rt
 
@@ -273,7 +274,7 @@ Powers, Roots, Exponentials and Logarithms
 
     ::
 
-        x, ... => cbrt(x), ...
+        x, ... → cbrt(x), ...
 
 Trigonometric Functions
 ------------------------
@@ -284,7 +285,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => sin(x), ...
+        x, ... → sin(x), ...
 
 ``cos``: trigonometric cosine
 
@@ -292,7 +293,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => cos(x), ...
+        x, ... → cos(x), ...
 
 ``tan``: trigonometric tangent
 
@@ -300,7 +301,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => tan(x), ...
+        x, ... → tan(x), ...
 
 ``asin``: trigonometric arc sine
 
@@ -308,7 +309,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => asin(x), ...
+        x, ... → asin(x), ...
 
 ``acos``: trigonometric arc cosine
 
@@ -316,7 +317,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => acos(x), ...
+        x, ... → acos(x), ...
 
 ``atan``: trigonometric arc tangent
 
@@ -324,7 +325,7 @@ Trigonometric Functions
 
     ::
 
-        x, ... => atan(x), ...
+        x, ... → atan(x), ...
 
 ``rads``: use radians
 
@@ -351,7 +352,7 @@ Complex and Vector Functions
 
     ::
 
-        x, ... => abs(x), x, ...
+        x, ... → abs(x), x, ...
 
     alias: mag
 
@@ -363,7 +364,7 @@ Complex and Vector Functions
 
     ::
 
-        x, ... => arg(x), x, ...
+        x, ... → arg(x), x, ...
 
     alias: ph
 
@@ -375,7 +376,7 @@ Complex and Vector Functions
 
     ::
 
-        x, y, ... => sqrt(x**2+y**2), ...
+        x, y, ... → sqrt(x**2+y**2), ...
 
     alias: len
 
@@ -386,7 +387,7 @@ Complex and Vector Functions
 
     ::
 
-        x, y, ... => atan2(y,x), ...
+        x, y, ... → atan2(y,x), ...
 
     alias: angle
 
@@ -399,7 +400,7 @@ Complex and Vector Functions
 
     ::
 
-        x, y, ... => sqrt(x**2+y**2), atan2(y,x), ...
+        x, y, ... → sqrt(x**2+y**2), atan2(y,x), ...
 
 ``ptor``: convert polar to rectangular coordinates
 
@@ -409,7 +410,7 @@ Complex and Vector Functions
 
     ::
 
-        x, y, ... => x*cos(y), x*sin(y), ...
+        x, y, ... → x*cos(y), x*sin(y), ...
 
 Hyperbolic Functions
 ---------------------
@@ -420,7 +421,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => sinh(x), ...
+        x, ... → sinh(x), ...
 
 ``cosh``: hyperbolic cosine
 
@@ -428,7 +429,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => cosh(x), ...
+        x, ... → cosh(x), ...
 
 ``tanh``: hyperbolic tangent
 
@@ -436,7 +437,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => tanh(x), ...
+        x, ... → tanh(x), ...
 
 ``asinh``: hyperbolic arc sine
 
@@ -444,7 +445,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => asinh(x), ...
+        x, ... → asinh(x), ...
 
 ``acosh``: hyperbolic arc cosine
 
@@ -453,7 +454,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => acosh(x), ...
+        x, ... → acosh(x), ...
 
 ``atanh``: hyperbolic arc tangent
 
@@ -462,7 +463,7 @@ Hyperbolic Functions
 
     ::
 
-        x, ... => atanh(x), ...
+        x, ... → atanh(x), ...
 
 Decibel Functions
 ------------------
@@ -475,7 +476,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 20*log(x), ...
+        x, ... → 20*log(x), ...
 
     aliases: db20, v2db, i2db
 
@@ -487,7 +488,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 10**(x/20), ...
+        x, ... → 10**(x/20), ...
 
     aliases: db2v, db2i
 
@@ -499,7 +500,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 10*log(x), ...
+        x, ... → 10*log(x), ...
 
     alias: p2db
 
@@ -511,7 +512,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 10**(x/10), ...
+        x, ... → 10**(x/10), ...
 
     alias: db2p
 
@@ -524,7 +525,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 30+10*log10((x**2)/(2*Rref)), ...
+        x, ... → 30+10*log10((x**2)/(2*Rref)), ...
 
     alias: v2dbm
 
@@ -537,7 +538,7 @@ Decibel Functions
 
     ::
 
-        x, ... => sqrt(2*10**(x - 30)/10)*Rref), ...
+        x, ... → sqrt(2*10**(x - 30)/10)*Rref), ...
 
     alias: dbm2v
 
@@ -550,7 +551,7 @@ Decibel Functions
 
     ::
 
-        x, ... => 30+10*log10(((x**2)*Rref/2), ...
+        x, ... → 30+10*log10(((x**2)*Rref/2), ...
 
     alias: i2dbm
 
@@ -563,7 +564,7 @@ Decibel Functions
 
     ::
 
-        x, ... => sqrt(2*10**(x - 30)/10)/Rref), ...
+        x, ... → sqrt(2*10**(x - 30)/10)/Rref), ...
 
     alias: dbm2i
 
@@ -572,30 +573,32 @@ Constants
 
 ``pi``: the ratio of a circle's circumference to its diameter
 
-    The value of pi (3.141592...) is pushed on the stack into the *x*
+    The value of π (3.141592...) is pushed on the stack into the *x*
     register.
 
     ::
 
-        ... => pi, ...
+        ... → π, ...
+
+    alias: π
 
 ``2pi``: the ratio of a circle's circumference to its radius
 
-    Two times the value of pi (6.283185...) is pushed on the stack into the
-    *x* register.
+    2π (6.283185...) is pushed on the stack into the *x* register.
 
     ::
 
-        ... => 2*pi, ...
+        ... → 2π, ...
+
+    aliases: tau, τ, 2π
 
 ``rt2``: square root of two
 
-    The square root of two (1.4142...) is pushed on the stack into the *x*
-    register.
+    √2 (1.4142...) is pushed on the stack into the *x* register.
 
     ::
 
-        ... => sqrt(2), ...
+        ... → √2, ...
 
 ``0C``: 0 Celsius in Kelvin
 
@@ -604,7 +607,7 @@ Constants
 
     ::
 
-        ... => 0C, ...
+        ... → 0C, ...
 
 ``j``: imaginary unit (square root of -1)
 
@@ -613,72 +616,74 @@ Constants
 
     ::
 
-        ... => j, ...
+        ... → j, ...
 
 ``j2pi``: j*2*pi
 
-    2 pi times the imaginary unit (j6.283185...) is pushed on the stack into
+    2π times the imaginary unit (j6.283185...) is pushed on the stack into
     the *x* register.
 
     ::
 
-        ... => j*2*pi, ...
+        ... → j*2*pi, ...
+
+    aliases: jtau, jτ, j2π
 
 ``k``: Boltzmann constant
 
-    The Boltzmann constant (R/NA or 1.38064852e-23 J/K [mks] or
-    1.38064852e-16 erg/K [cgs]) is pushed on the stack into the *x*
+    The Boltzmann constant (R/NA or 1.38064852×10⁻²³ J/K [mks] or
+    1.38064852×10⁻¹⁶ erg/K [cgs]) is pushed on the stack into the *x*
     register.
 
     ::
 
-        ... => k, ...
+        ... → k, ...
 
 ``h``: Planck constant
 
-    The Planck constant (6.626070e-34 J-s [mks] or 6.626070e-27 erg-s [cgs])
+    The Planck constant *h* (6.626070×10⁻³⁴ J-s [mks] or 6.626070×10⁻²⁷ erg-s [cgs])
     is pushed on the stack into the *x* register.
 
     ::
 
-        ... => h, ...
+        ... → h, ...
 
 ``q``: elementary charge (the charge of an electron)
 
-    The elementary charge (the charge of an electron or 1.6021766208e-19 C
-    [mks] or 4.80320425e-10 statC [cgs]) is pushed on the stack into the
+    The elementary charge (the charge of an electron or 1.6021766208×10⁻¹⁹ C
+    [mks] or 4.80320425×10⁻¹⁰ statC [cgs]) is pushed on the stack into the
     *x* register.
 
     ::
 
-        ... => q, ...
+        ... → q, ...
 
 ``c``: speed of light in a vacuum
 
-    The speed of light in a vacuum (2.99792458e8 m/s) is pushed on the stack
+    The speed of light in a vacuum (2.99792458×10⁸ m/s) is pushed on the stack
     into the *x* register.
 
     ::
 
-        ... => c, ...
+        ... → c, ...
 
 ``eps0``: permittivity of free space
 
-    The permittivity of free space (8.854187817e-12 F/m [mks] or 1/4π [cgs]) is pushed on the
-    stack into the *x* register.
+    The permittivity of free space (8.854187817×10⁻¹² F/m [mks] or 1/4π [cgs])
+    is pushed on the stack into the *x* register.
 
     ::
 
-        ... => eps0, ...
+        ... → eps0, ...
 
 ``mu0``: permeability of free space
 
-    The permeability of free space (4e-7*pi H/m [mks] or 4π/c² s^2/m^2
+    The permeability of free space (4π×10⁻⁷ H/m [mks] or 4π/c² s²/m²
     [cgs]) is pushed on the stack into the *x* register.
 
     ::
 
-        ... => mu0, ...
+        ... → mu0, ...
 
 ``Z0``: Characteristic impedance of free space
 
@@ -687,97 +692,100 @@ Constants
 
     ::
 
-        ... => Z0, ...
+        ... → Z0, ...
 
 ``hbar``: Reduced Planck constant
 
-    The reduced Planck constant (1.054571800e-34 J-s) is pushed on the stack
-    into the *x* register.
+    The reduced Planck constant *ħ* (1.054571800×10⁻³⁴ J-s [mks] or
+    1.054571800×10⁻²⁷ erg-s [cgs]) is pushed on the stack into the *x*
+    register.
 
     ::
 
-        ... => h/(2*pi), ...
+        ... → ħ/2π), ...
+
+    alias: ħ
 
 ``me``: rest mass of an electron
 
-    The rest mass of an electron (9.10938356e-28 g) is pushed on the stack
+    The rest mass of an electron (9.10938356×10⁻²⁸ g) is pushed on the stack
     into the *x* register.
 
     ::
 
-        ... => me, ...
+        ... → me, ...
 
 ``mp``: mass of a proton
 
-    The mass of a proton (1.672621898e-24 g) is pushed on the stack into
+    The mass of a proton (1.672621898×10⁻²⁴ g) is pushed on the stack into
     the *x* register.
 
     ::
 
-        ... => mp, ...
+        ... → mp, ...
 
 ``mn``: mass of a neutron
 
-    The mass of a neutron (1.674927471e-24 g) is pushed on the stack into
+    The mass of a neutron (1.674927471×10⁻²⁴ g) is pushed on the stack into
     the *x* register.
 
     ::
 
-        ... => mn, ...
+        ... → mn, ...
 
 ``mh``: mass of a hydrogen atom
 
-    The mass of a hydrogen atom (1.6735328115e-24 g) is pushed on the stack into
+    The mass of a hydrogen atom (1.6735328115×10⁻²⁴ g) is pushed on the stack into
     the *x* register.
 
     ::
 
-        ... => mh, ...
+        ... → mh, ...
 
 ``amu``: unified atomic mass unit
 
-    The unified atomic mass unit (1.660539040e-24 g) is pushed on the stack
+    The unified atomic mass unit (1.660539040×10⁻²⁴ g) is pushed on the stack
     into the *x* register.
 
     ::
 
-        ... => amu, ...
+        ... → amu, ...
 
 ``G``: universal gravitational constant
 
-    The universal gravitational constant (6.6746e-14 m^3/(g-s^2)) is pushed
+    The universal gravitational constant (6.6746×10⁻¹⁴ m³/(g-s²)) is pushed
     on the stack into the *x* register.
 
     ::
 
-        ... => G, ...
+        ... → G, ...
 
 ``g``: earth gravity
 
     The standard acceleration at sea level due to gravity on earth (9.80665
-    m/s^2)) is pushed on the stack into the *x* register.
+    m/s²)) is pushed on the stack into the *x* register.
 
     ::
 
-        ... => g, ...
+        ... → g, ...
 
 ``Rinf``: Rydberg constant
 
-    The Rydberg constant (10973731 m^-1) is pushed on the stack into the
+    The Rydberg constant (10973731 m⁻¹) is pushed on the stack into the
     *x* register.
 
     ::
 
-        ... => Ry, ...
+        ... → Ry, ...
 
 ``sigma``: Stefan-Boltzmann constant
 
-    The Stefan-Boltzmann constant (5.670367e-8 W m^-2 K^-4) is pushed on
+    The Stefan-Boltzmann constant (5.670367×10⁻⁸ W-m⁻²-K⁻⁴) is pushed on
     the stack into the *x* register.
 
     ::
 
-        ... => sigma, ...
+        ... → sigma, ...
 
 ``alpha``: Fine structure constant
 
@@ -786,7 +794,7 @@ Constants
 
     ::
 
-        ... => alpha, ...
+        ... → alpha, ...
 
 ``R``: molar gas constant
 
@@ -795,16 +803,16 @@ Constants
 
     ::
 
-        ... => R, ...
+        ... → R, ...
 
 ``NA``: Avogadro Number
 
-    Avogadro constant (6.022140857e23 mol^-1) is pushed on the stack into
+    Avogadro constant (6.022140857×10²³ mol⁻¹) is pushed on the stack into
     the *x* register.
 
     ::
 
-        ... => NA, ...
+        ... → NA, ...
 
 ``mks``: use MKS units for constants
 
@@ -823,11 +831,11 @@ Numbers
     integer portion of the mantissa and *M* is an optional fractional part.
     *S* is a letter that represents an SI scale factor. *U* the optional
     units (must not contain special characters).  For example, 10MHz
-    represents 1e7 Hz.
+    represents 10⁷ Hz.
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``<N[.M]>e<E[U]>``: a real number in scientific notation
 
@@ -838,7 +846,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``0x<N>``: a hexadecimal number
 
@@ -849,7 +857,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``0o<N>``: a number in octal
 
@@ -859,7 +867,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``0b<N>``: a number in binary
 
@@ -869,7 +877,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``'h<N>``: a number in Verilog hexadecimal notation
 
@@ -880,7 +888,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``'d<N>``: a number in Verilog decimal
 
@@ -889,7 +897,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``'o<N>``: a number in Verilog octal
 
@@ -899,7 +907,7 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 ``'b<N>``: a number in Verilog binary
 
@@ -909,23 +917,37 @@ Numbers
 
     ::
 
-        ... => num, ...
+        ... → num, ...
 
 Number Formats
 ---------------
 
-``eng[<N>]``: use engineering notation
+``si[<N>]``: use SI notation
 
     Numbers are displayed with a fixed number of digits of precision and the
     SI scale factors are used to convey the exponent when possible.  If an
-    optional whole number *N* immediately follows *eng*, the precision is
+    optional whole number *N* immediately follows *si*, the precision is
     set to *N* digits.
+
+``eng[<N>]``: use engineering notation
+
+    Numbers are displayed with a fixed number of digits of precision and the
+    exponent is given explicitly as an integer.  If an optional whole number
+    *N* immediately follows *sci*, the precision is set to *N* digits.
+    
+    Engineering notation differs from scientific notation in that it allows 
+    1, 2 or 3 digits to precede the decimal point in the mantissa and the
+    exponent is always a multiple of 3.
 
 ``sci[<N>]``: use scientific notation
 
     Numbers are displayed with a fixed number of digits of precision and the
     exponent is given explicitly as an integer.  If an optional whole number
-    *N* immediately follows *sci*, the precision is set to *N* digits.
+    *N* immediately follows *sci*, the precision is set to *N* digits. 
+    
+    Scientific notation differs from engineering notation in that it allows 
+    only 1 digit to precede the decimal point in the mantissa and the
+    exponent is not constrained to be a multiple of 3.
 
 ``fix[<N>]``: use fixed notation
 
@@ -988,7 +1010,7 @@ Variable Commands
 
     ::
 
-        ... => ...
+        ... → ...
 
 ``<name>``: recall value of a variable
 
@@ -997,7 +1019,7 @@ Variable Commands
 
     ::
 
-        ... => name, ...
+        ... → name, ...
 
 ``vars``: print variables
 
@@ -1012,7 +1034,7 @@ Stack Commands
 
     ::
 
-        x, y, ... => y, x, ...
+        x, y, ... → y, x, ...
 
 ``dup``: duplicate *x*
 
@@ -1020,7 +1042,7 @@ Stack Commands
 
     ::
 
-        x, ... => x, x, ...
+        x, ... → x, x, ...
 
     alias: enter
 
@@ -1030,7 +1052,7 @@ Stack Commands
 
     ::
 
-        x, ... => ...
+        x, ... → ...
 
     alias: clrx
 
@@ -1040,7 +1062,7 @@ Stack Commands
 
     ::
 
-        ... => lastx, ...
+        ... → lastx, ...
 
 ``stack``: print stack
 
@@ -1052,7 +1074,7 @@ Stack Commands
 
     ::
 
-        ... =>
+        ... →
 
 Miscellaneous Commands
 -----------------------
@@ -1064,7 +1086,7 @@ Miscellaneous Commands
 
     ::
 
-        ... => rand, ...
+        ... → rand, ...
 
 ```<text>```: print text
 
@@ -1082,7 +1104,7 @@ Miscellaneous Commands
 
     ::
 
-        x, ... => x "units", ...
+        x, ... → x "units", ...
 
 ``functions``: describes how to define and use functions.
 
