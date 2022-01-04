@@ -66,7 +66,7 @@ you will have to unzip the file using the unzip command. For example::
 
 To run the regression tests::
 
-   $ ./test
+   $ tox
 
 To install::
 
