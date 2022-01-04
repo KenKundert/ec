@@ -20,6 +20,8 @@ actions = sansDups
 
 # User's Manual {{{1
 user_manual = r"""
+    .. _usage:
+
     Usage
     =====
 
@@ -35,6 +37,8 @@ user_manual = r"""
     -V, --version        Print the ec version information.
     -h, --help           Print the usage and exit.
 
+
+    .. _description:
 
     Description
     ===========
@@ -53,6 +57,8 @@ user_manual = r"""
     The contents of *~/.ecrc*, *./.ecrc*, and the startup file will be run upon
     startup if they exist, and then the stack is cleared.
 
+
+    .. _stack:
 
     Stack
     =====
@@ -124,6 +130,8 @@ user_manual = r"""
        |   **0**: stack
        |   **0**:
 
+
+    .. _real numbers:
 
     Real Numbers
     ============
@@ -232,10 +240,16 @@ user_manual = r"""
     only uses the most common scale factors when outputting numbers (T, G, M, K,
     m, u, n, p, f, a).
 
+    .. _integers:
+
     {integers}
+
+    .. _complex numbers:
 
     {complexNumbers}
 
+
+    .. _constants:
 
     Constants
     =========
@@ -275,6 +289,8 @@ user_manual = r"""
        |   **0**: k 27 0C + * q/ "V"
        |   **25.865 mV**:
 
+
+    .. _variables:
 
     Variables
     =========
@@ -317,6 +333,8 @@ user_manual = r"""
     its value if you like.
 
 
+    .. _user-defined functions:
+
     User-Defined Functions
     ======================
 
@@ -350,6 +368,8 @@ user_manual = r"""
 
     The value of the functions are delimited with parentheses.
 
+
+    .. _unit conversions:
 
     Unit Conversions
     ================
@@ -474,12 +494,16 @@ user_manual = r"""
         |   **$46,485.00**:
 
 
+    .. _comments:
+
     Comments
     ========
 
     Any text that follows a # is ignored. In this way you can add documentation
     to initialization files and scripts, as shown in the next few sections.
 
+
+    .. _help:
 
     Help
     ====
@@ -490,6 +514,8 @@ user_manual = r"""
     help topics. If you use '?<*topic*>' where *topic* us either a symbol or a
     name, you will get a detailed description of that topic.
 
+
+    .. _initialization:
 
     Initialization
     ==============
@@ -522,6 +548,8 @@ user_manual = r"""
        (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
        (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
 
+
+    .. _scripting:
 
     Scripting
     =========
@@ -634,6 +662,8 @@ user_manual = r"""
        |   10 mV
 
 
+    .. _initialization scripts:
+
     Initialization Scripts
     ======================
 
@@ -672,6 +702,8 @@ user_manual = r"""
     constants in *~/.ecrc* causes them to be declared for every invocation of
     **ec**.
 
+
+    .. _errors:
 
     Errors
     ======

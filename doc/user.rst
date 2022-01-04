@@ -1,4 +1,6 @@
 
+.. _usage:
+
 Usage
 =====
 
@@ -14,6 +16,8 @@ Usage
 -V, --version        Print the ec version information.
 -h, --help           Print the usage and exit.
 
+
+.. _description:
 
 Description
 ===========
@@ -32,6 +36,8 @@ been run.
 The contents of *~/.ecrc*, *./.ecrc*, and the startup file will be run upon
 startup if they exist, and then the stack is cleared.
 
+
+.. _stack:
 
 Stack
 =====
@@ -103,6 +109,8 @@ For example,
    |   **0**: stack
    |   **0**:
 
+
+.. _real numbers:
 
 Real Numbers
 ============
@@ -211,6 +219,8 @@ and smallest would be unfamiliar to most people. For this reason, **ec**
 only uses the most common scale factors when outputting numbers (T, G, M, K,
 m, u, n, p, f, a).
 
+.. _integers:
+
 
 Integers
 ========
@@ -247,6 +257,8 @@ digits. For example:
    |   **'o1750**:
 
 
+.. _complex numbers:
+
 
 Complex Numbers
 ===============
@@ -280,6 +292,8 @@ only *exp* and *sqrt*. However, most of the basic arithmetic operators
 support complex numbers.
 
 
+
+.. _constants:
 
 Constants
 =========
@@ -348,6 +362,8 @@ thermal voltage, kT/q.
    |   **25.865 mV**:
 
 
+.. _variables:
+
 Variables
 =========
 
@@ -389,6 +405,8 @@ predefined variable that is used in dBm calculations. You are free to change
 its value if you like.
 
 
+.. _user-defined functions:
+
 User-Defined Functions
 ======================
 
@@ -422,6 +440,8 @@ both the variable and the function definitions:
 
 The value of the functions are delimited with parentheses.
 
+
+.. _unit conversions:
 
 Unit Conversions
 ================
@@ -546,12 +566,16 @@ directly to the desired units:
     |   **$46,485.00**:
 
 
+.. _comments:
+
 Comments
 ========
 
 Any text that follows a # is ignored. In this way you can add documentation
 to initialization files and scripts, as shown in the next few sections.
 
+
+.. _help:
 
 Help
 ====
@@ -562,6 +586,8 @@ you can use '?'.  If you use '?' alone you will get a list of all available
 help topics. If you use '?<*topic*>' where *topic* us either a symbol or a
 name, you will get a detailed description of that topic.
 
+
+.. _initialization:
 
 Initialization
 ==============
@@ -594,6 +620,8 @@ A typical initialization script (~/.ecrc) for a circuit designer might be::
    (2pi* "rads/s")tw       # to omega - converts Hertz to rads/s
    (2pi/ "Hz")tf           # to freq - converts rads/s to Hertz
 
+
+.. _scripting:
 
 Scripting
 =========
@@ -706,6 +734,8 @@ number in quotes but add a leading space.  For example,
    |   10 mV
 
 
+.. _initialization scripts:
+
 Initialization Scripts
 ======================
 
@@ -744,6 +774,8 @@ Alternatively, you can put the constants you wish to predeclare in
 constants in *~/.ecrc* causes them to be declared for every invocation of
 **ec**.
 
+
+.. _errors:
 
 Errors
 ======
