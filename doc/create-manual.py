@@ -447,25 +447,25 @@ user_manual = r"""
     and temperatures that you can put in your ~/.ecrc file::
 
         # bitcoin
-        (>Ƀ)tb      # convert unitless number to bitcoin
-        (>Ƀ >$)btd  # convert bitcoin to dollars
-        (>Ƀ >ș)bts  # convert bitcoin to satoshis
-        (>ș)ts      # convert unitless number to satoshis
-        (>ș >Ƀ)stb  # convert satoshis to bitcoin
-        (>ș >Ƀ)stb  # convert satoshis to bitcoin
-        (>ș >$)std  # convert bitcoin to dollars
-        (>$ >Ƀ)dtb  # convert dollars to bitcoin
-        (>$ >ș)dts  # convert dollars to satoshis
+        (>Ƀ    )tb    # convert unitless number to bitcoin
+        (>Ƀ  >$)btd   # convert bitcoin to dollars
+        (>Ƀ  >ș)bts   # convert bitcoin to satoshis
+        (>ș    )ts    # convert unitless number to satoshis
+        (>ș  >Ƀ)stb   # convert satoshis to bitcoin
+        (>ș  >Ƀ)stb   # convert satoshis to bitcoin
+        (>ș  >$)std   # convert bitcoin to dollars
+        (>$  >Ƀ)dtb   # convert dollars to bitcoin
+        (>$  >ș)dts   # convert dollars to satoshis
 
         # temperature
-        (>°C)tc       # convert unitless number to Celsius
+        (>°C   )tc    # convert unitless number to Celsius
         (>°C >K)ctk   # convert Celsius to Kelvin
         (>°C >°F)ctf  # convert Celsius to Fahrenheit
-        (>°F)tf       # convert unitless number to Fahrenheit
+        (>°F    )tf   # convert unitless number to Fahrenheit
         (>°F >K)ftk   # convert Fahrenheit to Kelvin
         (>°F >°C)ftc  # convert Fahrenheit to Celsius
-        (>K  >°C)ktc   # convert Kelvin to Celsius
-        (>K  >°F)ktf   # convert Kelvin to Fahrenheit
+        (>K  >°C)ktc  # convert Kelvin to Celsius
+        (>K  >°F)ktf  # convert Kelvin to Fahrenheit
 
     With these function, you can convert a simple number (without units)
     directly to the desired units:
