@@ -381,17 +381,18 @@ document = r"""{
        >«units»
 
     where «units» are the desired units.  «units» must be a simple identifier
-    though the first character is allowed to one of a small number of special
-    characters that typically begin units.  Specifically, ``$°ÅɃș``.  «units»
-    must be immediately adjacent to the >.  If the value in the *x* register has
-    units, the value will be converted to the new units.  If the value does not
-    have units, its units will be set to «units».
+    though the first character is allowed to be one of a small number of special
+    characters that typically begin units.  Specifically, $, °, Å, Ƀ, or ș``.
+    «units» must be immediately adjacent to the >.  If the value in the *x*
+    register has units, the value will be converted to the new units.  If the
+    value does not have units, its units will be set to «units».
 
-    For example, to convert grams to pounds:
+    For example, to convert grams to pounds and back:
 
         |   **0**: 100kg
         |   **100 kg**: >lbs
-        |   **220.46 lbs**:
+        |   **220.46 lbs**: >g
+        |   **100 kg**:
 
     The following example is a little contrived to show two things.  First,
     a value with no units gets assigned the specified units when subject to
@@ -452,8 +453,7 @@ document = r"""{
     are considered equivalent, meaning that there are multiple names for the
     same underlying unit.  For example, *in*, *inch*, and *inches* are all
     considered equivalent. You can convert between equivalent units even though
-    both are found in the second column. This feature was used in the above
-    example where *lbs* was converted to *lb*.
+    both are found in the second column.
 
     Bitcoin conversions are performed by accessing quotes from coingecko.com.
     You must have an internet connection for this feature to work.
@@ -465,24 +465,29 @@ document = r"""{
         |   **$46,485.00**:
 
     You can use user-defined functions to create functions that create units
-    directly.  For example, here a function definitions for converting bitcoin
+    directly.  For example, here are function definitions for converting bitcoin
     and temperatures that you can put in your ~/.ecrc file::
 
         # bitcoin
-        ("Ƀ" >$)btd  # convert bitcoin to dollars
-        ("Ƀ" >ș)bts  # convert bitcoin to satoshis
-        ("ș" >Ƀ)stb  # convert satoshis to bitcoin
-        ("ș" >$)std  # convert bitcoin to dollars
-        ("$" >Ƀ)dtb  # convert dollars to bitcoin
-        ("$" >ș)dts  # convert dollars to satoshis
+        (>Ƀ)tb      # convert unitless number to bitcoin
+        (>Ƀ >$)btd  # convert bitcoin to dollars
+        (>Ƀ >ș)bts  # convert bitcoin to satoshis
+        (>ș)ts      # convert unitless number to satoshis
+        (>ș >Ƀ)stb  # convert satoshis to bitcoin
+        (>ș >Ƀ)stb  # convert satoshis to bitcoin
+        (>ș >$)std  # convert bitcoin to dollars
+        (>$ >Ƀ)dtb  # convert dollars to bitcoin
+        (>$ >ș)dts  # convert dollars to satoshis
 
         # temperature
-        ("°C" >K)ctk   # convert Celsius to Kelvin
-        ("°C" >°F)ctf  # convert Celsius to Fahrenheit
-        ("°F" >K)ftk   # convert Fahrenheit to Kelvin
-        ("°F" >°C)ftc  # convert Fahrenheit to Celsius
-        ("K" >°C)ktc   # convert Kelvin to Celsius
-        ("K" >°F)ktf   # convert Kelvin to Fahrenheit
+        (>°C)tc       # convert unitless number to Celsius
+        (>°C >K)ctk   # convert Celsius to Kelvin
+        (>°C >°F)ctf  # convert Celsius to Fahrenheit
+        (>°F)tf       # convert unitless number to Fahrenheit
+        (>°F >K)ftk   # convert Fahrenheit to Kelvin
+        (>°F >°C)ftc  # convert Fahrenheit to Celsius
+        (>K  >°C)ktc   # convert Kelvin to Celsius
+        (>K  >°F)ktf   # convert Kelvin to Fahrenheit
 
     With these function, you can convert a simple number (without units)
     directly to the desired units:
