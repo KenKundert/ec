@@ -5,25 +5,38 @@
 # Imports {{{1
 from engineering_calculator.calculator import Calculator, Display, CalculatorError
 from engineering_calculator.actions import (
-    allActions, predefinedVariables, defaultFormat, defaultDigits, detailedHelp
+    allActions,
+    predefinedVariables,
+    defaultFormat,
+    defaultDigits,
+    detailedHelp,
 )
 import pytest
 
 # Utility functions {{{1
 messages = []
+
+
 def grab_messages(message, style=None):
     global messages
     messages += [message]
 
+
 warnings = []
+
+
 def grab_warnings(warning):
     global warnings
     warnings += [warning]
 
-reltol=1e-9
+
+reltol = 1e-9
 abstol = 1e-13
+
+
 def close(result, expected):
-    return abs(result-expected) <= (reltol*abs(expected)+abstol)
+    return abs(result - expected) <= (reltol*abs(expected) + abstol)
+
 
 # test_built_ins() {{{1
 def test_built_ins():
@@ -32,8 +45,8 @@ def test_built_ins():
 
     testCases = []
     alreadySeen = set([
-        None,                  # skip categories
-        detailedHelp.getName() # skip detailed help for now
+        None,                   # skip categories
+        detailedHelp.getName()  # skip detailed help for now
     ])
     for action in allActions:
         if not action:
@@ -43,13 +56,10 @@ def test_built_ins():
             alreadySeen.add(actionName)
             # Same action may show up several times because it is in several
             # different personalities. Just test it the first time it is seen.
-            if hasattr(action, 'tests'):
+            if hasattr(action, "tests"):
                 testCases += action.tests
             # Also exercise the detailed help for this action
-            detailedHelp.addTest(
-                stimulus='?%s' % actionName
-            , messages=True
-            )
+            detailedHelp.addTest(stimulus="?%s" % actionName, messages=True)
 
     # Add detailedHelp tests (the originals specified with the action, plus the ones
     # we just added above)
@@ -57,9 +67,10 @@ def test_built_ins():
 
     # Finally, you man manually specify additional tests not tied to any particular
     # action here
-    testCases += [
-        dict(stimulus = '-failure', error = "-failure: unrecognized.")
-    ]
+    testCases += [dict(
+        stimulus = "-failure",
+        error = "-failure: unrecognized.\n-failure\n ↑"
+    )]
 
     calc = Calculator(
         allActions,
@@ -67,20 +78,20 @@ def test_built_ins():
         predefinedVariables = predefinedVariables,
         messagePrinter = grab_messages,
         warningPrinter = grab_warnings,
-        backUpStack = True
+        backUpStack = True,
     )
 
     # Run tests {{{1
     for index, case in enumerate(testCases):
         messages = []
         warnings = []
-        stimulus = case['stimulus']
-        expectedResult = case.get('result', None)
-        expectedUnits = case.get('units', None)
-        expectedFormattedResult = case.get('text', None)
-        expectedError = case.get('error', None)
-        expectedMessages = case.get('messages', [])
-        expectedWarnings = case.get('warnings', [])
+        stimulus = case["stimulus"]
+        expectedResult = case.get("result", None)
+        expectedUnits = case.get("units", None)
+        expectedFormattedResult = case.get("text", None)
+        expectedError = case.get("error", None)
+        expectedMessages = case.get("messages", [])
+        expectedWarnings = case.get("warnings", [])
         calc.clear()
 
         try:
@@ -105,14 +116,14 @@ def test_built_ins():
 
 
 # main {{{1
-if __name__ == '__main__':
+if __name__ == "__main__":
     # As a debugging aid allow the tests to be run on their own, outside pytest.
     # This makes it easier to see and interpret and textual output.
 
     defined = dict(globals())
     for k, v in defined.items():
-        if callable(v) and k.startswith('test_'):
+        if callable(v) and k.startswith("test_"):
             print()
-            print('Calling:', k)
-            print((len(k)+9)*'=')
+            print("Calling:", k)
+            print((len(k) + 9) * "=")
             v()

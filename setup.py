@@ -14,7 +14,13 @@ setup(
     entry_points = {
         'console_scripts': ['ec = engineering_calculator.main:main'],
     },
-    install_requires = 'docopt docutils quantiphy>=2.1.0 inform>=1.9'.split(),
+    install_requires = '''
+        docopt
+        docutils
+        inform>=1.9
+        quantiphy>=2.16.0
+        requests
+    '''.split(),
     python_requires = '>=3.6',
     zip_safe = True,
     classifiers = [

@@ -20,6 +20,11 @@ Install with::
 
 Requires Python version 3.6 or later.
 
+Unusually, there is also a man page.  The Python install process no longer 
+supports man pages, however you can download it from `Github 
+<https://github.com/KenKundert/ec/blob/master/doc/ec.1>`.  Place it in 
+``~/.local/man/man1``.
+
 
 Features
 --------

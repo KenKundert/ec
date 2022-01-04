@@ -32,14 +32,15 @@ Install with::
 
     pip3 install --user engineering-calculator
 
-Requires Python version 3.3 or later. Also supports Python 2.7 with slightly 
-reduced functionality.
+Requires Python version 3.6 or later.
 
-Alternatively, you can use ec0, a slightly less capable version of ec that 
-supports older versions of python.
+Unusually, there is also a man page.  The Python install process no longer 
+supports man pages, however you can download it from `Github 
+<https://github.com/KenKundert/ec/blob/master/doc/ec.1>`.  Place it in 
+``~/.local/man/man1``.
 
-More information on both ec and ec0 can be found at `NurdleTech 
-<http://www.nurdletech.com/ec.html>`_ .
+More information on both *ec* can be found on `ReadTheDocs 
+<https://engineering-calculator.readthedocs.io>`_ .
 
 
 Installing from Source

@@ -5,11 +5,11 @@
 # An RPN calculator that supports numbers with SI scale factors and units.
 
 # Imports {{{1
-from __future__ import division, print_function
 from copy import copy
-from textwrap import wrap, fill, dedent
-from inform import display, warn, full_stop
+from inform import display, warn, full_stop, Error
 from pydoc import pager
+from quantiphy import Quantity, UnitConversion, UnknownConversion
+from textwrap import wrap, fill, dedent
 import math
 import re
 import sys
@@ -23,10 +23,19 @@ italicsRegex = re.compile(r"#\{(\w+)\}")
 boldRegex = re.compile(r"@\{(\w+)\}")
 
 
+# stripFormatting() {{{2
 def stripFormatting(text):
     text = italicsRegex.sub(r"\1", text)
     text = boldRegex.sub(r"\1", text)
     return text
+
+
+# de_quote() {{{2
+def de_quote(text):
+    if (text[0], text[-1]) == ('"', '"'):
+        return text[1:-1]
+    else:
+        return text
 
 
 # Utility classes {{{1
@@ -256,6 +265,7 @@ class Display:
 
 
 # Action classes {{{1
+# Action base class {{{2
 class Action:
     """
     Base class for all actions.
@@ -921,8 +931,12 @@ class Number(Action):
 # SetFormat (pop 0, push 0, match regex) {{{2
 class SetFormat(Action):
     """
-    Operation that is activated by a pattern match of a string and does not
-    affect the stack.
+    Operation that is activated by a pattern match of a string of the form:
+
+        «fmt»«N»
+
+    where «fmt» is a known format identifier and N is a non-negative integer.
+    This command does not affect the stack.
 
     It takes the following arguments:
     pattern:
@@ -1108,22 +1122,21 @@ class Help(Action):
 # Store (peek 1, push 0, match regex) {{{2
 class Store(Action):
     """
-    Operation that is activated by a pattern match of a string. The pattern
-    contains a name that corresponds to a variable (a named value in the heap),
-    the value of the *x* register is stored into that variable.
+    Operation that is activated by a pattern match of a string of the form:
+
+        =«name»
+
+    The pattern contains a name that corresponds to a variable (a named value in
+    the heap), the value of the *x* register is stored into that variable.
 
     It takes the following arguments:
-    pattern:
-        A regular expression pattern that must match for *action* to be activated.
-        It must contain a match group. The text in the match group specifies a
-        variable name.
-    name:
-        The symbol or word used to identify the store action. It is entered by
-        the user when getting more information (help) on the action.
     description (optional):
         The description is a brief half line description of the action.
         It may contain '%(attr)s' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
+    synopsis (optional):
+        The synopsis is a brief one line description of how the stack is
+        affected by this action.
     summary (optional):
         The summary is a complete description of the action.
     """
@@ -1148,9 +1161,12 @@ class Store(Action):
 # Recall (pop 0, push 1, match regex) {{{2
 class Recall(Action):
     """
-    Operation that is activated by a pattern match of a string. The pattern
-    contains a name that corresponds to a variable (a named value in the heap),
-    the value of the variable is pushed into the *x* register.
+    Operation that is activated by a pattern match of a string of the form:
+
+        «name»
+
+    The pattern contains a name that corresponds to a variable (a named value in
+    the heap), the value of the variable is pushed into the *x* register.
 
     It takes the following arguments:
     pattern:
@@ -1226,11 +1242,67 @@ class SetUnits(Action):
         stack.push((x, units))
 
 
+# Convert (pop 1, push 1, match regex) {{{2
+class Convert(Action):
+    """
+    Operation that is activated by a pattern match of a string of the form:
+
+        >«units»
+
+    The pattern contains a units identifier, which is like a normal identifier
+    except that it allows the first character to be a number of special
+    characters, specifically $, °, Å, Ƀ, or ș.
+    The value of the *x* register is converted to the specified units.
+
+    It takes the following arguments:
+    pattern:
+        A regular expression pattern that must match for *action* to be activated.
+        It must contain a match group. The text in the match group specifies a
+        variable name.
+    name:
+        The symbol or word used to identify the convert action. It is entered by
+        the user when getting more information (help) on the action.
+    description (optional):
+        The description is a brief half line description of the action.
+        It may contain '%(attr)s' codes to access the values of attributes of
+        the action. Typically *attr* is 'name'.
+    summary (optional):
+        The summary is a complete description of the action.
+    """
+
+    def __init__(self, name, description=None, synopsis=None, summary=None):
+        self.name = name
+        self.description = description
+        self.synopsis = synopsis
+        self.summary = summary
+        self.regex = re.compile(r'>([a-z$°ÅɃș]\w*)', re.I)
+
+    def _execute(self, matchGroups, calc):
+        to_units = de_quote(matchGroups[0])
+        stack = calc.stack
+        x, xUnits = stack.pop()
+
+        # try QuantiPhy conversions
+        try:
+            if xUnits:
+                x = Quantity(x, xUnits).scale(to_units)
+                xUnits = x.units
+            else:
+                xUnits = to_units
+        except UnknownConversion as e:
+            raise Error(e, culprit=(xUnits, to_units))
+
+        stack.push((x, xUnits))
+
+
 # Print (pop 0, push (Action)0, match regex) {{{2
 class Print(Action):
     """
-    Operation that is activated by a pattern match of a string. The pattern
-    contains a string that is to be printed out for the user.
+    Operation that is activated by a pattern match of a string of the form:
+
+        `«text»`
+
+    The pattern contains a string that is to be printed out for the user.
 
     It takes the following arguments:
     pattern:
@@ -1364,9 +1436,11 @@ class Calculator:
         messagePrinter = None,
         warningPrinter = None,
     ):
-        # Process the actions, pruning out those already seen, assuring that
-        # there are no duplicate names, and partitioning the actions into two
-        # collections, one with simple names, one with regular expressions.
+        # Check and prepare the actions
+        # - pruning out those already seen
+        # - assure that there are no duplicate names
+        # - partitionion the actions into two collections:
+        #   one with simple names, one with regular expressions.
         alreadySeen = set()
         prunedActions = []
         self.smplActions = {}
@@ -1469,7 +1543,7 @@ class Calculator:
         def showLoc(given, index):
             cmds = " ".join(given)
             okay = " ".join(given[:index])
-            return "\n" + cmds + "\n " + " " * len(okay) + "^"
+            return "\n" + cmds + "\n " + " " * len(okay) + "↑"
 
         if self.backUpStack:
             self.prevStack = self.stack.clone()
@@ -1479,18 +1553,18 @@ class Calculator:
                 self.update_last_x = False
                 if self.function is not None:
                     if cmd == "(":
-                        raise CalculatorError("nested function definitions.")
+                        raise Error("nested function definitions.")
                     elif cmd[0] == ")":
                         name = cmd[1:]
                         nameRegex = r"[a-zA-Z_]\w*"
                         if not re.match(nameRegex, name):
-                            raise CalculatorError("%s: invalid function name." % name)
+                            raise Error(f"{name}: invalid function name.")
                         if name in self.heap:
                             # name exists
                             # only replace it if existing version is a function
                             k, v = self.heap[name]
                             if k != "funct":
-                                raise CalculatorError("%s: name is reserved." % name)
+                                raise Error(f"{name}: name is reserved.")
                         self.heap[name] = "funct", self.function
                         self.function = None
                     else:
@@ -1509,22 +1583,22 @@ class Calculator:
                         else:
                             if cmd == "#":
                                 break  # ignore comments
-                            raise CalculatorError("%s: unrecognized." % cmd)
+                            raise Error(f"{cmd}: unrecognized.")
                 if self.update_last_x:
                     self.last_x = last_x
             return self.stack.peek()
-        except (ValueError, OverflowError, TypeError) as err:
-            if isinstance(err, TypeError) and str(err).startswith(
-                "can't convert complex to float"
-            ):
+        except TypeError as e:
+            if str(e).startswith("can't convert complex to float"):
                 raise CalculatorError(
                     "Function does not support a complex argument."
                     + showLoc(given, index)
                 )
             else:
-                raise CalculatorError(full_stop(err) + showLoc(given, index))
-        except ZeroDivisionError as err:
+                raise CalculatorError(full_stop(e) + showLoc(given, index))
+        except ZeroDivisionError as e:
             raise CalculatorError("division by zero." + showLoc(given, index))
+        except (ValueError, OverflowError, Error) as e:
+            raise CalculatorError(full_stop(e) + showLoc(given, index))
 
     # utility methods {{{2
     def clear(self):

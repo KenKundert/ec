@@ -5,7 +5,6 @@
 # An RPN calculator that supports numbers with SI scale factors and units.
 
 # Imports {{{1
-from __future__ import division, print_function
 from .calculator import (
     BinaryIoOp,
     BinaryOp,
@@ -13,23 +12,25 @@ from .calculator import (
     Category,
     Command,
     Constant,
+    Convert,
     Dup,
     Help,
     Number,
     Print,
+    Quantity,
     Recall,
     SetFormat,
     SetUnits,
     Store,
     UnaryOp,
+    UnitConversion,
 )
-from inform import warn
-from quantiphy import Quantity
-import sys
+from inform import warn, Error
 import operator
 import math
 import cmath
 import random
+import requests
 
 
 # Globals {{{1
@@ -233,7 +234,7 @@ negation = UnaryOp(
     operator.neg,
     units = lambda calc, units: units[0],
     description = "%(key)s: change sign",
-    synopsis = "#{x}, ... → -#{x}, ...",
+    synopsis = "#{x}, ... → −#{x}, ...",
     summary = """
         The value in the #{x} register is replaced with its negative. 
     """,
@@ -253,7 +254,7 @@ reciprocal = UnaryOp(
 )
 reciprocal.addTest(stimulus="4 recip", result=1 / 4, units="", text="250m")
 reciprocal.addTest(stimulus="1kOhm recip", result=1 / 1000, units="", text="1m")
-reciprocal.addTest(stimulus="0 recip", error="division by zero.\n0 recip\n  ^")
+reciprocal.addTest(stimulus="0 recip", error="division by zero.\n0 recip\n  ↑")
 reciprocal.addTest(stimulus="j recip", result=-1j, units="", text="-j")
 
 # ceiling {{{3
@@ -274,7 +275,7 @@ ceiling.addTest(stimulus="-1.5 ceil", result=math.ceil(-1.5), units="", text="-1
 ceiling.addTest(stimulus="7.5_Hz ceil", result=math.ceil(7.5), units="Hz", text="8 Hz")
 ceiling.addTest(
     stimulus="j ceil",
-    error="Function does not support a complex argument.\nj ceil\n  ^",
+    error="Function does not support a complex argument.\nj ceil\n  ↑",
 )
 
 # floor {{{3
@@ -295,7 +296,7 @@ floor.addTest(stimulus="-1.5 floor", result=math.floor(-1.5), units="", text="-2
 floor.addTest(stimulus="7.5_Hz floor", result=math.floor(7.5), units="Hz", text="7 Hz")
 floor.addTest(
     stimulus="j floor",
-    error="Function does not support a complex argument.\nj floor\n  ^",
+    error="Function does not support a complex argument.\nj floor\n  ↑",
 )
 
 
@@ -564,7 +565,7 @@ arcSine.addTest(stimulus="1 asin", result=90, units="degs", text="90 degs")
 arcSine.addTest(stimulus="rads 1 sin asin", result=1, units="rads", text="1 rads")
 arcSine.addTest(stimulus="degs -1 asin", result=-90, units="degs", text="-90 degs")
 arcSine.addTest(
-    stimulus="degs 2 asin", error="math domain error.\ndegs 2 asin\n       ^"
+    stimulus="degs 2 asin", error="math domain error.\ndegs 2 asin\n       ↑"
 )
 
 # arc cosine {{{3
@@ -583,7 +584,7 @@ arcCosine.addTest(stimulus="0 acos", result=90, units="degs", text="90 degs")
 arcCosine.addTest(stimulus="rads 1 acos", result=0, units="rads", text="0 rads")
 arcCosine.addTest(stimulus="degs 45 cos acos", result=45, units="degs", text="45 degs")
 arcCosine.addTest(
-    stimulus="degs 2 acos", error="math domain error.\ndegs 2 acos\n       ^"
+    stimulus="degs 2 acos", error="math domain error.\ndegs 2 acos\n       ↑"
 )
 
 # arc tangent {{{3
@@ -1073,7 +1074,7 @@ squareRoot2.addTest(stimulus="rt2", result=math.sqrt(2), units="", text="1.4142"
 imaginaryUnit = Constant(
     "j",
     1j,
-    description = "%(key)s: imaginary unit (square root of -1)",
+    description = "%(key)s: imaginary unit (square root of −1)",
     synopsis = "... → #{j}, ...",
     summary = """
         The imaginary unit (square root of -1) is pushed on the stack into
@@ -1086,7 +1087,7 @@ imaginaryUnit.addTest(stimulus="j", result=1j, units="", text="j")
 imaginaryTwoPi = Constant(
     "j2pi",
     (2j * math.pi, "rads"),
-    description = "%(key)s: j*2*pi",
+    description = "%(key)s: j2π",
     synopsis = "... → #{j}*2*#{pi}, ...",
     summary = """
         2π times the imaginary unit (j6.283185...) is pushed on the stack into
@@ -1130,7 +1131,7 @@ planckConstantReduced = Constant(
     "hbar",
     {"mks": (1.054571800e-34, "J-s"), "cgs": (1.054571800e-27, "erg-s")},
     description = "%(key)s: Reduced Planck constant",
-    synopsis = "... → #{ħ}/2π), ...",
+    synopsis = "... → #{ħ}, ...",
     summary="""
         The reduced Planck constant #{ħ} (1.054571800×10⁻³⁴ J-s [mks] or
         1.054571800×10⁻²⁷ erg-s [cgs]) is pushed on the stack into the #{x}
@@ -1337,16 +1338,16 @@ speedOfLight.addTest(stimulus="c", result=2.99792458e8, units="m/s", text="299.7
 # gravitational constant {{{3
 gravitationalConstant = Constant(
     "G",
-    (6.6746e-14, "m³/(g-s²)"),
+    (6.6746e-14, "m³/g-s²"),
     description = "%(key)s: universal gravitational constant",
     synopsis = "... → #{G}, ...",
     summary = """
-        The universal gravitational constant (6.6746×10⁻¹⁴ m³/(g-s²)) is pushed
+        The universal gravitational constant (6.6746×10⁻¹⁴ m³/g-s²) is pushed
         on the stack into the #{x} register.
     """,
 )
 gravitationalConstant.addTest(
-    stimulus="G", result=6.6746e-14, units="m³/(g-s²)", text="66.746 fm³/(g-s²)"
+    stimulus="G", result=6.6746e-14, units="m³/g-s²", text="66.746 fm³/g-s²"
 )
 
 # acceleration of gravity {{{3
@@ -1380,19 +1381,19 @@ rydbergConstant.addTest(
 # Stephan-Boltzmann constant {{{3
 stefanBoltsmannConstant = Constant(
     "sigma",
-    (5.670367e-8, "W-m⁻²-K⁻⁴"),
+    (5.670367e-8, "W/m²K⁴"),
     description = "%(key)s: Stefan-Boltzmann constant",
     synopsis = "... → #{sigma}, ...",
     summary = """
-        The Stefan-Boltzmann constant (5.670367×10⁻⁸ W-m⁻²-K⁻⁴) is pushed on
+        The Stefan-Boltzmann constant (5.670367×10⁻⁸ W/m²K⁴) is pushed on
         the stack into the #{x} register.
     """,
 )
 stefanBoltsmannConstant.addTest(
     stimulus = "sigma",
     result = 5.670367e-8,
-    units = "W-m⁻²-K⁻⁴",
-    text = "56.704 nW-m⁻²-K⁻⁴",
+    units = "W/m²K⁴",
+    text = "56.704 nW/m²K⁴",
 )
 
 # Fine Structure constant {{{3
@@ -1428,16 +1429,16 @@ avogadroConstant.addTest(
 # gas constant {{{3
 molarGasConstant = Constant(
     "R",
-    {"mks": (8.3144598, "J/(mol-K)"), "cgs": (8.3144598e7, "erg/deg-mol")},
+    {"mks": (8.3144598, "J/mol-K"), "cgs": (8.3144598e7, "erg/deg-mol")},
     description = "%(key)s: molar gas constant",
     synopsis = "... → #{R}, ...",
     summary = """
-        The molar gas constant (8.3144598 J/(mol-K) [mks] or 83.145 Merg/deg-mol
+        The molar gas constant (8.3144598 J/mol-K [mks] or 83.145 Merg/deg-mol
         [cgs]) is pushed on the stack into the #{x} register.
     """,
 )
 molarGasConstant.addTest(
-    stimulus="R", result=8.3144598, units="J/(mol-K)", text="8.3145 J/(mol-K)"
+    stimulus="R", result=8.3144598, units="J/mol-K", text="8.3145 J/mol-K"
 )
 
 # zero celsius {{{3
@@ -1560,7 +1561,7 @@ engineeringNumber = Number(
         # ambiguity with hex numbers.
     action = siNumber,
     name = "engnum",
-    description = "<#{N}[.#{M}][#{S}][#{U}]>: a real number",
+    description = "«#{N}[.#{M}][#{S}][#{U}]»: a real number",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is the
@@ -1634,7 +1635,7 @@ scientificNumber = Number(
     pattern = r"\A([-+]?)(\$?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_°ÅΩƱΩ℧]*)\Z",
     action = sciNumber,
     name = "scinum",
-    description = "<#{N}[.#{M}]>e<#{E}[#{U}]>: a real number in scientific notation",
+    description = "«#{N}[.#{M}]»e«#{E}[#{U}]»: a real number in scientific notation",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is the
@@ -1672,7 +1673,7 @@ hexadecimalNumber = Number(
     pattern = r"\A([-+]?)0[xX]([0-9a-fA-F]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=16), ""),
     name = "hexnum",
-    description = "0x<#{N}>: a hexadecimal number",
+    description = "0x«#{N}»: a hexadecimal number",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1691,7 +1692,7 @@ octalNumber = Number(
     pattern = r"\A([-+]?)0[oO]([0-7]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=8), ""),
     name = "octnum",
-    description = "0o<#{N}>: a number in octal",
+    description = "0o«#{N}»: a number in octal",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1706,7 +1707,7 @@ binaryNumber = Number(
     pattern = r"\A([-+]?)0[bB]([01]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=2), ""),
     name = "binnum",
-    description = "0b<#{N}>: a number in binary",
+    description = "0b«#{N}»: a number in binary",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1725,7 +1726,7 @@ verilogHexadecimalNumber = Number(
     pattern = r"\A([-+]?)'[hH]([0-9a-fA-F_]*[0-9a-fA-F])\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=16), ""),
     name = "vhexnum",
-    description = "'h<#{N}>: a number in Verilog hexadecimal notation",
+    description = "'h«#{N}»: a number in Verilog hexadecimal notation",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1743,7 +1744,7 @@ verilogDecimalNumber = Number(
     pattern = r"\A([-+]?)'[dD]([0-9_]*[0-9]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=10), ""),
     name = "vdecnum",
-    description = "'d<#{N}>: a number in Verilog decimal",
+    description = "'d«#{N}»: a number in Verilog decimal",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1759,7 +1760,7 @@ verilogOctalNumber = Number(
     pattern = r"\A([-+]?)'[oO]([0-7_]*[0-7]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=8), ""),
     name = "voctnum",
-    description = "'o<#{N}>: a number in Verilog octal",
+    description = "'o«#{N}»: a number in Verilog octal",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1776,7 +1777,7 @@ verilogBinaryNumber = Number(
     pattern = r"\A([-+]?)'[bB]([01_]*[01]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base = 2), ""),
     name = "vbinnum",
-    description = "'b<#{N}>: a number in Verilog binary",
+    description = "'b«#{N}»: a number in Verilog binary",
     synopsis = "... → #{num}, ...",
     summary = """
         The number is pushed on the stack into the #{x} register.  #{N} is an
@@ -1795,7 +1796,7 @@ setFixedFormat = SetFormat(
     action = lambda num, digits: "{0:,.{prec}f}".format(num, prec=digits),
     name = "fix",
     actionTakesUnits = False,
-    description = "%(name)s[<#{N}>]: use fixed notation",
+    description = "%(name)s[«#{N}»]: use fixed notation",
     summary = """
         Numbers are displayed with a fixed number of digits to the right of the
         decimal point. If an optional whole number #{N} immediately follows
@@ -1818,7 +1819,7 @@ setSI_Format = SetFormat(
     action = lambda num, units, digits: Quantity(num, units=units).render(prec=digits),
     name = "si",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use SI notation",
+    description = "%(name)s[«#{N}»]: use SI notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         SI scale factors are used to convey the exponent when possible.  If an
@@ -1842,7 +1843,7 @@ setEngineeringFormat = SetFormat(
     action = lambda num, units, digits: EngQuantity(num, units=units).render(prec=digits),
     name = "eng",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use engineering notation",
+    description = "%(name)s[«#{N}»]: use engineering notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         exponent is given explicitly as an integer.  If an optional whole number
@@ -1878,7 +1879,7 @@ setScientificFormat = SetFormat(
     action = lambda num, digits: "{0:.{prec}e}".format(num, prec=digits),
     name = "sci",
     actionTakesUnits = False,
-    description = "%(name)s[<#{N}>]: use scientific notation",
+    description = "%(name)s[«#{N}»]: use scientific notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         exponent is given explicitly as an integer.  If an optional whole number
@@ -1911,7 +1912,7 @@ setHexadecimalFormat = SetFormat(
     ),
     name = "hex",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use hexadecimal notation",
+    description = "%(name)s[«#{N}»]: use hexadecimal notation",
     summary = """
         Numbers are displayed in base 16 (a-f are used to represent digits
         greater than 9) with a fixed number of digits.  If an optional whole
@@ -1935,7 +1936,7 @@ setOctalFormat = SetFormat(
     ),
     name = "oct",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use octal notation",
+    description = "%(name)s[«#{N}»]: use octal notation",
     summary = """
         Numbers are displayed in base 8 with a fixed number of digits.  If an
         optional whole number #{N} immediately follows #{oct}, the number of
@@ -1956,7 +1957,7 @@ setBinaryFormat = SetFormat(
     ),
     name = "bin",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use binary notation",
+    description = "%(name)s[«#{N}»]: use binary notation",
     summary = """
         Numbers are displayed in base 2 with a fixed number of digits.  If an
         optional whole number #{N} immediately follows #{bin}, the number of
@@ -1977,7 +1978,7 @@ setVerilogHexadecimalFormat = SetFormat(
     ),
     name = "vhex",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use Verilog hexadecimal notation",
+    description = "%(name)s[«#{N}»]: use Verilog hexadecimal notation",
     summary = """
         Numbers are displayed in base 16 in Verilog format (a-f are used to
         represent digits greater than 9) with a fixed number of digits.  If an
@@ -2003,7 +2004,7 @@ setVerilogDecimalFormat = SetFormat(
     ),
     name = "vdec",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use Verilog decimal notation",
+    description = "%(name)s[«#{N}»]: use Verilog decimal notation",
     summary = """
         Numbers are displayed in base 10 in Verilog format with a fixed number
         of digits.  If an optional whole number #{N} immediately follows
@@ -2026,7 +2027,7 @@ setVerilogOctalFormat = SetFormat(
     ),
     name = "voct",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use Verilog octal notation",
+    description = "%(name)s[«#{N}»]: use Verilog octal notation",
     summary = """
         Numbers are displayed in base 8 in Verilog format with a fixed number of
         digits.  If an optional whole number #{N} immediately follows #{voct},
@@ -2049,7 +2050,7 @@ setVerilogBinaryFormat = SetFormat(
     ),
     name = "vbin",
     actionTakesUnits = True,
-    description = "%(name)s[<#{N}>]: use Verilog binary notation",
+    description = "%(name)s[«#{N}»]: use Verilog binary notation",
     summary = """
         Numbers are displayed in base 2 in Verilog format with a fixed number of
         digits.  If an optional whole number #{N} immediately follows #{vbin},
@@ -2072,7 +2073,7 @@ variableCommands = Category("Variable Commands")
 # store to variable {{{3
 storeToVariable = Store(
     "store",
-    description = "=<#{name}>: store value into a variable",
+    description = "=«#{name}»: store value into a variable",
     synopsis = "... → ...",
     summary = """
         Store the value in the #{x} register into a variable with the given
@@ -2093,7 +2094,7 @@ storeToVariable.addTest(
 # recall from variable {{{3
 recallFromVariable = Recall(
     "recall",
-    description = "<#{name}>: recall value of a variable",
+    description = "«#{name}»: recall value of a variable",
     synopsis = "... → #{name}, ...",
     summary = """
         Place the value of the variable with the given name into the #{x}
@@ -2239,9 +2240,10 @@ clearStack.addTest(stimulus="1MHz 10us clstack stack", result=0, units="", text=
 # Miscellaneous {{{2
 miscellaneousCommands = Category("Miscellaneous Commands")
 
+# printText {{{3
 printText = Print(
     name = "print",
-    description = "`<text>`: print text",
+    description = "`«text»`: print text",
     summary = """
         Print "text" (the contents of the back-quotes) to the terminal.
         Generally used in scripts to report and annotate results.  Any instances
@@ -2320,9 +2322,10 @@ printText.addTest(
     stimulus="$100 ``", result=100, units="$", text="$100", messages=["$100"]
 )
 
+# setUnits {{{3
 setUnits = SetUnits(
     name = "units",
-    description = '"<units>": set the units of the x register',
+    description = '"«units»": set the units of the x register',
     synopsis = 'x, ... → x "units", ...',
     summary = """
         The units given are applied to the value in the #{x} register.
@@ -2337,6 +2340,26 @@ setUnits.addTest(
     text = "6.2832e-27 erg s",
 )
 
+# convertUnits {{{3
+convertUnits = Convert(
+    "convert",
+    description = ">«#{units}»: convert value to given units",
+    synopsis = "#{x}, ... → convert(#{x}, units), ...",
+    summary = """
+        The value in the #{x} is popped from the stack, converted to the desired
+        units, and pushed back on to the stack.
+    """,
+)
+convertUnits.addTest(stimulus='100 "°C" >F', result=212, units="F", text="212 F")
+convertUnits.addTest(stimulus='100 "°C" >°F', result=212, units="°F", text="212 °F")
+convertUnits.addTest(
+    stimulus = '0.01μm >Å',
+    result = 100,
+    units = "Å",
+    text = "100 Å",
+)
+
+# printAbout {{{3
 printAbout = Command(
     "about",
     Calculator.aboutMsg,
@@ -2344,6 +2367,7 @@ printAbout = Command(
 )
 printAbout.addTest(stimulus="about", messages=True)
 
+# describeFunctions {{{3
 describeFunctions = Command(
     "functions",
     Calculator.describeFunctions,
@@ -2351,6 +2375,7 @@ describeFunctions = Command(
 )
 printAbout.addTest(stimulus="about", messages=True)
 
+# terminate {{{3
 terminate = Command(
     "quit",
     Calculator.quit,
@@ -2358,6 +2383,7 @@ terminate = Command(
     aliases = [":q"],
 )
 
+# printHelp {{{3
 printHelp = Command(
     "help",
     Calculator.displayHelp,
@@ -2594,6 +2620,7 @@ miscellaneousActions = [
     randomNumber,
     printText,
     setUnits,
+    convertUnits,
     describeFunctions,
     terminate,
     printHelp,
@@ -2664,6 +2691,29 @@ chemistryActions = (
     + stackActions
     + miscellaneousActions
 )
+
+# Unit Convertions {{{1
+# Bitcoin {{{2
+# get the current bitcoin price from coingecko.com
+url = 'https://api.coingecko.com/api/v3/simple/price'
+params = dict(ids='bitcoin', vs_currencies='usd')
+def get_btc_price():
+    try:
+        resp = requests.get(url=url, params=params)
+        prices = resp.json()
+        return prices['bitcoin']['usd']
+    except Exception as e:
+        raise Error('cannot connect to coingecko.com.')
+
+# use UnitConversion from QuantiPhy to perform the conversion
+# here we define the conversions, which then become available in calculator
+bitcoin_units = ['BTC', 'btc', 'Ƀ']
+satoshi_units = ['sat', 'sats', 'ș']
+dollar_units = ['USD', 'usd', '$']
+UnitConversion(dollar_units, bitcoin_units, get_btc_price)
+UnitConversion(satoshi_units, bitcoin_units, 1e8)
+UnitConversion(dollar_units, satoshi_units, lambda s: s*get_btc_price()/1e8)
+
 
 # Configure Calculator {{{1
 # To modify the personality of the calculator, chose the set of actions to use

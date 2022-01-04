@@ -36,7 +36,7 @@ Options:
 
 # License {{{1
 #
-# Copyright (C) 2013-16 Kenneth S. Kundert
+# Copyright (C) 2013-2022 Kenneth S. Kundert
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,13 +52,12 @@ Options:
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
 # Imports {{{1
-from __future__ import division
 from .actions import (
     actionsToUse,
-    predefinedVariables,
     defaultFormat,
     defaultDigits,
     defaultSpacer,
+    predefinedVariables,
 )
 from .calculator import Calculator, Display, CalculatorError, __version__, __released__
 from docopt import docopt
@@ -86,29 +85,32 @@ def main():
         try:
             result = calc.evaluate(calc.split(line))
             prompt = calc.format(result)
-        except CalculatorError as err:
+        except CalculatorError as e:
             if interactiveSession:
-                error(err.message)
+                error(e.message)
                 prompt = calc.restoreStack()
             else:
-                fatal(err.message)
+                fatal(e.message)
         return prompt
 
     # Create calculator {{{1
     calc = Calculator(
-        actionsToUse,
-        Display(formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer),
-        predefinedVariables,
-        backUpStack=interactiveSession,
-        warningPrinter=lambda warning: None,
-        # Disable the warning printer initially to suppress warnings from scripts.
-        # Will add true warning printer when starting interactive session.
-        # This allows users to override built in constants without seeing warnings.
+        actions = actionsToUse,
+        formatter = Display(
+            formatter=defaultFormat, digits=defaultDigits, spacer=defaultSpacer
+        ),
+        predefinedVariables = predefinedVariables,
+        backUpStack = interactiveSession,
+        warningPrinter = lambda warning: None,
+            # Disable the warning printer initially to suppress warnings from
+            # scripts.  Will add true warning printer before starting
+            # interactive session.  This allows users to override built in
+            # constants without seeing warnings.
     )
     prompt = "0"
 
     # Run start up files {{{1
-    rcFiles = ["%s/.ecrc" % each for each in ["~", "."]]
+    rcFiles = [f"{d}/.ecrc" for d in ["~", "."]]
     for each in rcFiles + startUpFile:
         lineno = None
         try:
@@ -118,11 +120,11 @@ def main():
                     prompt = evaluateLine(calc, line, prompt)
                     if verbose:
                         display(
-                            "%s %s: %s ==> %s" % (cmdFile, lineno, line.strip(), prompt)
+                            f"{cmdFile} {lineno}: {line.strip()} ==> {prompt}"
                         )
-        except (IOError, OSError) as err:
+        except OSError as e:
             if each not in rcFiles:
-                fatal(os_error(err), culprit=(each, lineno))
+                fatal(os_error(e), culprit=(each, lineno))
 
     calc.stack.clear()
     prompt = "0"
@@ -134,20 +136,19 @@ def main():
             if os.path.exists(cmdFile):
                 with open(cmdFile) as pFile:
                     for lineno, line in enumerate(pFile):
-                        loc = "%s.%s: " % (cmdFile, lineno + 1)
+                        loc = f"{cmdFile}s.{lineno + 1}: "
                         prompt = evaluateLine(calc, line, prompt)
                         if verbose:
                             display(
-                                "%s %s: %s ==> %s"
-                                % (cmdFile, lineno, line.strip(), prompt)
+                                f"{cmdFile} {lineno}: {line.strip()} ==> {prompt}"
                             )
             else:
                 loc = ""
                 prompt = evaluateLine(calc, arg, prompt)
                 if verbose:
-                    display("%s ==> %s" % (arg, prompt))
-        except (IOError, OSError) as err:
-            fatal(os_error(err), culprit=(each, lineno))
+                    display(f"{arg} ==> {prompt}")
+        except OSError as e:
+            fatal(os_error(e), culprit=(each, lineno))
 
     # Interact with user {{{1
     if interactiveSession:
@@ -156,16 +157,10 @@ def main():
 
         while True:
             try:
-                entered = raw_input("%s: " % highlight(prompt))  # python 2
+                entered = input(f"{highlight(prompt)}: ")
             except (EOFError, KeyboardInterrupt, SystemError):
                 display()
                 terminate()
-            except NameError:
-                try:
-                    entered = input("%s: " % highlight(prompt))  # python 3
-                except (EOFError, KeyboardInterrupt, SystemError):
-                    display()
-                    terminate()
             prompt = evaluateLine(calc, entered, prompt)
 
     display(prompt)

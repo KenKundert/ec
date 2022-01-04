@@ -7,22 +7,22 @@ and values given in angle brackets (<>) are not to be taken literally (you
 are expected to choose a suitable value). For example "fix[<*N*>]" can
 represent "fix" or "fix4", but not "fixN".
 
-For each action that changes the stack a synopsis of those changes is given 
-in the form of two lists separated by ``=>``. The list on the left 
-represents the stack before the action is applied, and the list on the right 
-represents the stack after the action was applied. In both of these lists, 
-the *x* register is given first (on the left). Those registers that are 
-involved in the action are listed explicitly, and the rest are represented 
-by ``...``. In the before picture, the names of the registers involved in 
-the action are simply named. In the after picture, the new values of the 
-registers are described. Those values represented by ``...`` on the right 
-side of ``=>`` are the same as represented by ``...`` on the left, though 
+For each action that changes the stack a synopsis of those changes is given
+in the form of two lists separated by ``=>``. The list on the left
+represents the stack before the action is applied, and the list on the right
+represents the stack after the action was applied. In both of these lists,
+the *x* register is given first (on the left). Those registers that are
+involved in the action are listed explicitly, and the rest are represented
+by ``...``. In the before picture, the names of the registers involved in
+the action are simply named. In the after picture, the new values of the
+registers are described. Those values represented by ``...`` on the right
+side of ``=>`` are the same as represented by ``...`` on the left, though
 they may have moved. For example::
 
     x, y, ... => x+y, ...
 
-This represents addition. In this case the values in the *x* and *y* 
-registers are summed and placed into the *x* register. All other values move 
+This represents addition. In this case the values in the *x* and *y*
+registers are summed and placed into the *x* register. All other values move
 to the left one place.
 
 Arithmetic Operators
@@ -110,7 +110,7 @@ Arithmetic Operators
 
     ::
 
-        x, ... → -x, ...
+        x, ... → −x, ...
 
 ``recip``: reciprocal
 
@@ -609,7 +609,7 @@ Constants
 
         ... → 0C, ...
 
-``j``: imaginary unit (square root of -1)
+``j``: imaginary unit (square root of −1)
 
     The imaginary unit (square root of -1) is pushed on the stack into
     the *x* register.
@@ -618,7 +618,7 @@ Constants
 
         ... → j, ...
 
-``j2pi``: j*2*pi
+``j2pi``: j2π
 
     2π times the imaginary unit (j6.283185...) is pushed on the stack into
     the *x* register.
@@ -702,7 +702,7 @@ Constants
 
     ::
 
-        ... → ħ/2π), ...
+        ... → ħ, ...
 
     alias: ħ
 
@@ -753,7 +753,7 @@ Constants
 
 ``G``: universal gravitational constant
 
-    The universal gravitational constant (6.6746×10⁻¹⁴ m³/(g-s²)) is pushed
+    The universal gravitational constant (6.6746×10⁻¹⁴ m³/g-s²) is pushed
     on the stack into the *x* register.
 
     ::
@@ -780,7 +780,7 @@ Constants
 
 ``sigma``: Stefan-Boltzmann constant
 
-    The Stefan-Boltzmann constant (5.670367×10⁻⁸ W-m⁻²-K⁻⁴) is pushed on
+    The Stefan-Boltzmann constant (5.670367×10⁻⁸ W/m²K⁴) is pushed on
     the stack into the *x* register.
 
     ::
@@ -798,7 +798,7 @@ Constants
 
 ``R``: molar gas constant
 
-    The molar gas constant (8.3144598 J/(mol-K) [mks] or 83.145 Merg/deg-mol
+    The molar gas constant (8.3144598 J/mol-K [mks] or 83.145 Merg/deg-mol
     [cgs]) is pushed on the stack into the *x* register.
 
     ::
@@ -825,7 +825,7 @@ Constants
 Numbers
 --------
 
-``<N[.M][S][U]>``: a real number
+``«N[.M][S][U]»``: a real number
 
     The number is pushed on the stack into the *x* register.  *N* is the
     integer portion of the mantissa and *M* is an optional fractional part.
@@ -837,7 +837,7 @@ Numbers
 
         ... → num, ...
 
-``<N[.M]>e<E[U]>``: a real number in scientific notation
+``«N[.M]»e«E[U]»``: a real number in scientific notation
 
     The number is pushed on the stack into the *x* register.  *N* is the
     integer portion of the mantissa and *M* is an optional fractional part.
@@ -848,7 +848,7 @@ Numbers
 
         ... → num, ...
 
-``0x<N>``: a hexadecimal number
+``0x«N»``: a hexadecimal number
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 16 (use a-f to represent digits greater than 9).  For
@@ -859,7 +859,7 @@ Numbers
 
         ... → num, ...
 
-``0o<N>``: a number in octal
+``0o«N»``: a number in octal
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 8 (it must not contain the digits 8 or 9).  For example,
@@ -869,7 +869,7 @@ Numbers
 
         ... → num, ...
 
-``0b<N>``: a number in binary
+``0b«N»``: a number in binary
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 2 (it may contain only the digits 0 or 1).  For example,
@@ -879,7 +879,7 @@ Numbers
 
         ... → num, ...
 
-``'h<N>``: a number in Verilog hexadecimal notation
+``'h«N»``: a number in Verilog hexadecimal notation
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 16 (use a-f to represent digits greater than 9).  For
@@ -890,7 +890,7 @@ Numbers
 
         ... → num, ...
 
-``'d<N>``: a number in Verilog decimal
+``'d«N»``: a number in Verilog decimal
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 10.  For example, 'd99 represents the decimal number 99.
@@ -899,7 +899,7 @@ Numbers
 
         ... → num, ...
 
-``'o<N>``: a number in Verilog octal
+``'o«N»``: a number in Verilog octal
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 8 (it must not contain the digits 8 or 9).  For example,
@@ -909,7 +909,7 @@ Numbers
 
         ... → num, ...
 
-``'b<N>``: a number in Verilog binary
+``'b«N»``: a number in Verilog binary
 
     The number is pushed on the stack into the *x* register.  *N* is an
     integer in base 2 (it may contain only the digits 0 or 1).  For example,
@@ -922,14 +922,14 @@ Numbers
 Number Formats
 ---------------
 
-``si[<N>]``: use SI notation
+``si[«N»]``: use SI notation
 
     Numbers are displayed with a fixed number of digits of precision and the
     SI scale factors are used to convey the exponent when possible.  If an
     optional whole number *N* immediately follows *si*, the precision is
     set to *N* digits.
 
-``eng[<N>]``: use engineering notation
+``eng[«N»]``: use engineering notation
 
     Numbers are displayed with a fixed number of digits of precision and the
     exponent is given explicitly as an integer.  If an optional whole number
@@ -939,7 +939,7 @@ Number Formats
     1, 2 or 3 digits to precede the decimal point in the mantissa and the
     exponent is always a multiple of 3.
 
-``sci[<N>]``: use scientific notation
+``sci[«N»]``: use scientific notation
 
     Numbers are displayed with a fixed number of digits of precision and the
     exponent is given explicitly as an integer.  If an optional whole number
@@ -949,52 +949,52 @@ Number Formats
     only 1 digit to precede the decimal point in the mantissa and the
     exponent is not constrained to be a multiple of 3.
 
-``fix[<N>]``: use fixed notation
+``fix[«N»]``: use fixed notation
 
     Numbers are displayed with a fixed number of digits to the right of the
     decimal point. If an optional whole number *N* immediately follows
     *fix*, the number of digits to the right of the decimal point is set to
     *N*.
 
-``hex[<N>]``: use hexadecimal notation
+``hex[«N»]``: use hexadecimal notation
 
     Numbers are displayed in base 16 (a-f are used to represent digits
     greater than 9) with a fixed number of digits.  If an optional whole
     number *N* immediately follows *hex*, the number of digits displayed
     is set to *N*.
 
-``oct[<N>]``: use octal notation
+``oct[«N»]``: use octal notation
 
     Numbers are displayed in base 8 with a fixed number of digits.  If an
     optional whole number *N* immediately follows *oct*, the number of
     digits displayed is set to *N*.
 
-``bin[<N>]``: use binary notation
+``bin[«N»]``: use binary notation
 
     Numbers are displayed in base 2 with a fixed number of digits.  If an
     optional whole number *N* immediately follows *bin*, the number of
     digits displayed is set to *N*.
 
-``vhex[<N>]``: use Verilog hexadecimal notation
+``vhex[«N»]``: use Verilog hexadecimal notation
 
     Numbers are displayed in base 16 in Verilog format (a-f are used to
     represent digits greater than 9) with a fixed number of digits.  If an
     optional whole number *N* immediately follows *vhex*, the number of
     digits displayed is set to *N*.
 
-``vdec[<N>]``: use Verilog decimal notation
+``vdec[«N»]``: use Verilog decimal notation
 
     Numbers are displayed in base 10 in Verilog format with a fixed number
     of digits.  If an optional whole number *N* immediately follows
     *vdec*, the number of digits displayed is set to *N*.
 
-``voct[<N>]``: use Verilog octal notation
+``voct[«N»]``: use Verilog octal notation
 
     Numbers are displayed in base 8 in Verilog format with a fixed number of
     digits.  If an optional whole number *N* immediately follows *voct*,
     the number of digits displayed is set to *N*.
 
-``vbin[<N>]``: use Verilog binary notation
+``vbin[«N»]``: use Verilog binary notation
 
     Numbers are displayed in base 2 in Verilog format with a fixed number of
     digits.  If an optional whole number *N* immediately follows *vbin*,
@@ -1003,7 +1003,7 @@ Number Formats
 Variable Commands
 ------------------
 
-``=<name>``: store value into a variable
+``=«name»``: store value into a variable
 
     Store the value in the *x* register into a variable with the given
     name.
@@ -1012,7 +1012,7 @@ Variable Commands
 
         ... → ...
 
-``<name>``: recall value of a variable
+``«name»``: recall value of a variable
 
     Place the value of the variable with the given name into the *x*
     register.
@@ -1088,7 +1088,7 @@ Miscellaneous Commands
 
         ... → rand, ...
 
-```<text>```: print text
+```«text»```: print text
 
     Print "text" (the contents of the back-quotes) to the terminal.
     Generally used in scripts to report and annotate results.  Any instances
@@ -1097,7 +1097,7 @@ Miscellaneous Commands
     instances of $Var or ${Var} are replaced by the value of the variable
     *Var*.
 
-``"<units>"``: set the units of the x register
+``"«units»"``: set the units of the x register
 
     The units given are applied to the value in the *x* register.
     The actual value is unchanged.
@@ -1105,6 +1105,15 @@ Miscellaneous Commands
     ::
 
         x, ... → x "units", ...
+
+``>«units»``: convert value to given units
+
+    The value in the *x* is popped from the stack, converted to the desired
+    units, and pushed back on to the stack.
+
+    ::
+
+        x, ... → convert(x, units), ...
 
 ``functions``: describes how to define and use functions.
 

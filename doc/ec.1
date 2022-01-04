@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH EC 1 "2021-11-10" "1.8.0" ""
+.TH EC 1 "2021-12-28" "1.8.1" ""
 .SH NAME
 ec \- engineering calculator
 .
@@ -74,8 +74,8 @@ this case an interactive session would not normally be started, but if the
 interactive option is specified, it would be started after all scripts have
 been run.
 .sp
-The contents of \fI~/.ecrc\fP, \fI\&./.ecrc\fP, and the start up file will be run upon
-start up if they exist, and then the stack is cleared.
+The contents of \fI~/.ecrc\fP, \fI\&./.ecrc\fP, and the startup file will be run upon
+startup if they exist, and then the stack is cleared.
 .SH STACK
 .sp
 As you enter numbers they are pushed onto a stack.  The most recent member
@@ -205,59 +205,113 @@ In addition, you can also use the normal SI scale factors to represent
 either large or small numbers without using scientific notation.
 .INDENT 0.0
 .INDENT 3.5
-.INDENT 0.0
-.TP
-.B Y
+.TS
+center;
+|l|l|.
+_
+T{
+Y
+T}	T{
 1e24 (yotta)
-.TP
-.B Z
+T}
+_
+T{
+Z
+T}	T{
 1e21 (zetta)
-.TP
-.B E
+T}
+_
+T{
+E
+T}	T{
 1e18 (exa)
-.TP
-.B P
+T}
+_
+T{
+P
+T}	T{
 1e15 (peta)
-.TP
-.B T
+T}
+_
+T{
+T
+T}	T{
 1e12 (terra)
-.TP
-.B G
+T}
+_
+T{
+G
+T}	T{
 1e9 (giga)
-.TP
-.B M
+T}
+_
+T{
+M
+T}	T{
 1e6 (mega)
-.TP
-.B k, K
+T}
+_
+T{
+k, K
+T}	T{
 1e3 (kilo)
-.TP
-.B _
+T}
+_
+T{
+_
+T}	T{
 unity (1)
-.TP
-.B m
+T}
+_
+T{
+m
+T}	T{
 1e\-3 (milli)
-.TP
-.B u
+T}
+_
+T{
+u
+T}	T{
 1e\-6 (micro)
-.TP
-.B n
+T}
+_
+T{
+n
+T}	T{
 1e\-9 (nano)
-.TP
-.B p
+T}
+_
+T{
+p
+T}	T{
 1e\-12 (pico)
-.TP
-.B f
+T}
+_
+T{
+f
+T}	T{
 1e\-15 (fempto)
-.TP
-.B a
+T}
+_
+T{
+a
+T}	T{
 1e\-18 (atto)
-.TP
-.B z
+T}
+_
+T{
+z
+T}	T{
 1e\-21 (zepto)
-.TP
-.B y
+T}
+_
+T{
+y
+T}	T{
 1e\-24 (yocto)
-.UNINDENT
+T}
+_
+.TE
 .UNINDENT
 .UNINDENT
 .sp
@@ -276,9 +330,12 @@ Optionally, numbers can be combined with simple units. For example,
 .UNINDENT
 .UNINDENT
 .sp
-Units are only allowed after a scale factor or an exponent, and the units
-are optional. In this way, 1m represents 1e\-3 rather than 1 meter. If you
-wish to enter 1 meter, use 1_m. The underscore is the unity scale factor.
+Both units and scale factors are optional, which causes a natural ambiguity
+as to whether the first letter of a suffix is a scale factor or not. If the
+first letter is a valid scale factor, then it is assume to be a scale
+factor.  In this way, \(aq300K is treated as 300e3 rather than 300 Kelvin. If
+you intend the units without a scale factor, add the unit scale factor: \(aq_\(aq.
+Thus, use 300_K to enter 300 Kelvin.
 .sp
 In this case the units must be simple identifiers (must not contain special
 characters). For complex units, such as "rads/s", or for numbers that do not
@@ -306,6 +363,18 @@ $100K
 .UNINDENT
 .UNINDENT
 .sp
+Numbers my also contain commas as digit separators, which are ignored.
+.INDENT 0.0
+.INDENT 3.5
+.nf
+$200,000.00
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The dollar sign ($) is a special unit that is given before the number.
+.sp
 \fBec\fP takes a conservative approach to units. You can enter them and it
 remembers them, but they do not survive any operation where the resulting
 units would be in doubt.  In this way it displays units when it can, but
@@ -321,31 +390,34 @@ should never display incorrect or misleading units. For example:
 .UNINDENT
 .UNINDENT
 .sp
-You can display real numbers using one of three available formats, \fIfix\fP,
-\fIsci\fP, or \fIeng\fP\&. These display numbers using fixed point notation (a fixed
-number of digits to the right of the decimal point), scientific notation (a
-mantissa and an exponent), and engineering notation (a mantissa and an SI
-scale factor).  You can optionally give an integer immediately after the
-display mode to indicate the desired precision.  For example,
+You can display real numbers using one of four available formats, \fIfix\fP,
+\fIsci\fP, \fIeng\fP, or \fIsi\fP\&. These display numbers using fixed point notation (a
+fixed number of digits to the right of the decimal point), scientific
+notation (a mantissa and an exponent), engineering notation (a mantissa and
+an exponent, but the exponent is constrained to be a multiple of 3), and SI
+notation (a mantissa and a SI scale factor).  You can optionally give an
+integer immediately after the display mode to indicate the desired
+precision.  For example,
 .INDENT 0.0
 .INDENT 3.5
 .nf
-\fB0\fP: 1000
-\fB1K\fP: fix2
-\fB1000.00\fP: sci3
-\fB1.000e+03\fP: eng4
-\fB1K\fP: 2pi*
-\fB6.2832K\fP:
+\fB0\fP: 10,000
+\fB10K\fP: fix2
+\fB10,000.00\fP: sci3
+\fB1.000e+04\fP: eng2
+\fB10.0e+03\fP: si4
+\fB10K\fP: 2pi*
+\fB62.832K\fP:
 .fi
 .sp
 .UNINDENT
 .UNINDENT
 .sp
-Notice that scientific notation always displays the specified number of
-digits whereas engineering notation suppresses zeros at the end of the
-number.
+Notice that scientific and engineering notations always displays the
+specified number of digits whereas SI notation suppresses zeros at the end
+of the number.
 .sp
-When displaying numbers using engineering notation, \fBec\fP does not use the
+When displaying numbers using SI notation, \fBec\fP does not use the
 full range of available scale factors under the assumption that the largest
 and smallest would be unfamiliar to most people. For this reason, \fBec\fP
 only uses the most common scale factors when outputting numbers (T, G, M, K,
@@ -357,32 +429,59 @@ octal (base 8), or binary (base 2). You can use either programmers notation
 (leading 0) or Verilog notation (leading \(aq) as shown in the examples below:
 .INDENT 0.0
 .INDENT 3.5
-.INDENT 0.0
-.TP
-.B 0xFF
+.TS
+center;
+|l|l|.
+_
+T{
+0xFF
+T}	T{
 hexadecimal
-.TP
-.B 99
+T}
+_
+T{
+99
+T}	T{
 decimal
-.TP
-.B 0o77
+T}
+_
+T{
+0o77
+T}	T{
 octal
-.TP
-.B 0b1101
+T}
+_
+T{
+0b1101
+T}	T{
 binary
-.TP
-.B \(aqhFF
+T}
+_
+T{
+\(aqhFF
+T}	T{
 Verilog hexadecimal
-.TP
-.B \(aqd99
+T}
+_
+T{
+\(aqd99
+T}	T{
 Verilog decimal
-.TP
-.B \(aqo77
+T}
+_
+T{
+\(aqo77
+T}	T{
 Verilog octal
-.TP
-.B \(aqb1101
+T}
+_
+T{
+\(aqb1101
+T}	T{
 Verilog binary
-.UNINDENT
+T}
+_
+.TE
 .UNINDENT
 .UNINDENT
 .sp
@@ -486,89 +585,173 @@ tailored for one specific unit system.
 The 2014 NIST values are used.  The available constants include:
 .INDENT 0.0
 .INDENT 3.5
-.INDENT 0.0
-.TP
-.B pi
+.TS
+center;
+|l|l|.
+_
+T{
+pi
+T}	T{
 the ratio of a circle\(aqs circumference to its diameter
-.TP
-.B 2pi
+T}
+_
+T{
+2pi
+T}	T{
 the ratio of a circle\(aqs circumference to its radius
-.TP
-.B rt2
+T}
+_
+T{
+rt2
+T}	T{
 square root of two
-.TP
-.B 0C
+T}
+_
+T{
+0C
+T}	T{
 0 Celsius in Kelvin
-.TP
-.B j
-imaginary unit (square root of \-1)
-.TP
-.B j2pi
-j*2*pi
-.TP
-.B k
+T}
+_
+T{
+j
+T}	T{
+imaginary unit (square root of −1)
+T}
+_
+T{
+j2pi
+T}	T{
+j2π
+T}
+_
+T{
+k
+T}	T{
 Boltzmann constant
-.TP
-.B h
+T}
+_
+T{
+h
+T}	T{
 Planck constant
-.TP
-.B q
+T}
+_
+T{
+q
+T}	T{
 elementary charge (the charge of an electron)
-.TP
-.B c
+T}
+_
+T{
+c
+T}	T{
 speed of light in a vacuum
-.TP
-.B eps0
+T}
+_
+T{
+eps0
+T}	T{
 permittivity of free space
-.TP
-.B mu0
+T}
+_
+T{
+mu0
+T}	T{
 permeability of free space
-.TP
-.B Z0
+T}
+_
+T{
+Z0
+T}	T{
 Characteristic impedance of free space
-.TP
-.B hbar
+T}
+_
+T{
+hbar
+T}	T{
 Reduced Planck constant
-.TP
-.B me
+T}
+_
+T{
+me
+T}	T{
 rest mass of an electron
-.TP
-.B mp
+T}
+_
+T{
+mp
+T}	T{
 mass of a proton
-.TP
-.B mn
+T}
+_
+T{
+mn
+T}	T{
 mass of a neutron
-.TP
-.B mh
+T}
+_
+T{
+mh
+T}	T{
 mass of a hydrogen atom
-.TP
-.B amu
+T}
+_
+T{
+amu
+T}	T{
 unified atomic mass unit
-.TP
-.B G
+T}
+_
+T{
+G
+T}	T{
 universal gravitational constant
-.TP
-.B g
+T}
+_
+T{
+g
+T}	T{
 earth gravity
-.TP
-.B Rinf
+T}
+_
+T{
+Rinf
+T}	T{
 Rydberg constant
-.TP
-.B sigma
+T}
+_
+T{
+sigma
+T}	T{
 Stefan\-Boltzmann constant
-.TP
-.B alpha
+T}
+_
+T{
+alpha
+T}	T{
 Fine structure constant
-.TP
-.B R
+T}
+_
+T{
+R
+T}	T{
 molar gas constant
-.TP
-.B NA
+T}
+_
+T{
+NA
+T}	T{
 Avogadro Number
-.TP
-.B rand
+T}
+_
+T{
+rand
+T}	T{
 random number between 0 and 1
-.UNINDENT
+T}
+_
+.TE
 .UNINDENT
 .UNINDENT
 .sp
@@ -586,8 +769,34 @@ thermal voltage, kT/q.
 .SH VARIABLES
 .sp
 You can store the contents of the \fIx\fP register to a variable by using an
-equal sign followed immediately by the name of the variable. To recall it,
-simply use the name. For example,
+equal sign followed immediately by the name of the variable:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+=«name»
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where «name» represents the desired name of the variable. It must be
+a simple identifer and must be immediately adjacent to the =.
+.sp
+To recall it, simply use the name:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+«name»
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For example,
 .INDENT 0.0
 .INDENT 3.5
 .nf
@@ -633,15 +842,18 @@ You can define functions in the following way:
 .sp
 .nf
 .ft C
-( ... )name
+( … )«name»
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
 .sp
-Here \(aq(\(aq starts the function definition and \(aq)name\(aq ends it. The name must
-be immediately adjacent to the name. The \(aq...\(aq represents a sequence of
-calculator actions. For example:
+Here \(aq(\(aq starts the function definition and \(aq)«name»\(aq ends it. «name»
+represents the desired name of the function. It must be a simple identifer
+and must be immediately adjacent to the ).  The \(aq…\(aq represents a sequence of
+calculator actions.
+.sp
+For example:
 .INDENT 0.0
 .INDENT 3.5
 .nf
@@ -673,6 +885,208 @@ both the variable and the function definitions:
 .UNINDENT
 .sp
 The value of the functions are delimited with parentheses.
+.SH UNIT CONVERSIONS
+.sp
+You can perform unit conversions using:
+.INDENT 0.0
+.INDENT 3.5
+>«units»
+.UNINDENT
+.UNINDENT
+.sp
+where «units» are the desired units.  «units» must be a simple identifier
+though the first character is allowed to one of a small number of special
+characters that typically begin units.  Specifically, \fB$°ÅɃș\fP\&.  «units»
+must be immediately adjacent to the >.  If the value in the \fIx\fP register has
+units, the value will be converted to the new units.  If the value does not
+have units, its units will be set to «units».
+.sp
+For example, to convert grams to pounds:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 100kg
+\fB100 kg\fP: >lbs
+\fB220.46 lbs\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+The following example is a little contrived to show two things.  First,
+a value with no units gets assigned the specified units when subject to
+a conversion.  Second, several names are known for the same units and the
+name assigned to the result is the name specified on the convert command.
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 100
+\fB100\fP: >kg
+\fB100 kg\fP: >lb
+\fB220.46 lb\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+Converters are provides for the following units:
+.sp
+Temperature:
+.TS
+center;
+|l|l|.
+_
+T{
+K:
+T}	T{
+K, F °F, R °R
+T}
+_
+T{
+C °C:
+T}	T{
+K, C °C, F °F, R °R
+T}
+_
+.TE
+.sp
+Distance:
+.TS
+center;
+|l|l|.
+_
+T{
+m:
+T}	T{
+km, m, cm, mm, um μm micron, nm, Å angstrom,
+mi mile miles, in inch inches
+T}
+_
+.TE
+.sp
+Mass/Weight:
+.TS
+center;
+|l|l|.
+_
+T{
+g:
+T}	T{
+oz, lb lbs
+T}
+_
+.TE
+.sp
+Time:
+.TS
+center;
+|l|l|.
+_
+T{
+s:
+T}	T{
+sec second seconds, min minute minutes, hour hours hr, day days
+T}
+_
+.TE
+.sp
+Bits/Bytes:
+.TS
+center;
+|l|l|.
+_
+T{
+b:
+T}	T{
+B
+T}
+_
+.TE
+.sp
+Bitcoin:
+.TS
+center;
+|l|l|.
+_
+T{
+BTC btc Ƀ:
+T}	T{
+USD usd $, sats sat ș
+T}
+_
+T{
+sats sat ș:
+T}	T{
+USD usd $, BTC btc Ƀ
+T}
+_
+.TE
+.sp
+The conversions can occur between a pair of units, one from the first column
+and one from the second. They do not occur when both units are only in the
+second column. So for example, it is possible to convert between \fIg\fP and
+\fIlbs\fP, but not between \fIoz\fP and \fIlb\fP\&.  However, if you notice, the units in
+the second column are grouped using commas.  A set of units within commas
+are considered equivalent, meaning that there are multiple names for the
+same underlying unit.  For example, \fIin\fP, \fIinch\fP, and \fIinches\fP are all
+considered equivalent. You can convert between equivalent units even though
+both are found in the second column. This feature was used in the above
+example where \fIlbs\fP was converted to \fIlb\fP\&.
+.sp
+Bitcoin conversions are performed by accessing quotes from coingecko.com.
+You must have an internet connection for this feature to work.
+.sp
+For example:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1BTC
+\fB1 BTC\fP: >$
+\fB$46,485.00\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
+.sp
+You can use user\-defined functions to create functions that create units
+directly.  For example, here a function definitions for converting bitcoin
+and temperatures that you can put in your ~/.ecrc file:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# bitcoin
+("Ƀ" >$)btd  # convert bitcoin to dollars
+("Ƀ" >ș)bts  # convert bitcoin to satoshis
+("ș" >Ƀ)stb  # convert satoshis to bitcoin
+("ș" >$)std  # convert bitcoin to dollars
+("$" >Ƀ)dtb  # convert dollars to bitcoin
+("$" >ș)dts  # convert dollars to satoshis
+
+# temperature
+("°C" >K)ctk   # convert Celsius to Kelvin
+("°C" >°F)ctf  # convert Celsius to Fahrenheit
+("°F" >K)ftk   # convert Fahrenheit to Kelvin
+("°F" >°C)ftc  # convert Fahrenheit to Celsius
+("K" >°C)ktc   # convert Kelvin to Celsius
+("K" >°F)ktf   # convert Kelvin to Fahrenheit
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+With these function, you can convert a simple number (without units)
+directly to the desired units:
+.INDENT 0.0
+.INDENT 3.5
+.nf
+\fB0\fP: 1 btd
+\fB$46,485.00\fP:
+.fi
+.sp
+.UNINDENT
+.UNINDENT
 .SH OPERATORS, FUNCTIONS, NUMBERS AND COMMANDS
 .sp
 In the following descriptions, optional values are given in brackets ([])
@@ -862,7 +1276,7 @@ The value in the \fIx\fP register is replaced with its negative.
 .sp
 .nf
 .ft C
-x, ... → \-x, ...
+x, ... → −x, ...
 .ft P
 .fi
 .UNINDENT
@@ -1775,7 +2189,7 @@ the \fIx\fP register.
 .UNINDENT
 .UNINDENT
 .sp
-\fBj\fP: imaginary unit (square root of \-1)
+\fBj\fP: imaginary unit (square root of −1)
 .INDENT 0.0
 .INDENT 3.5
 The imaginary unit (square root of \-1) is pushed on the stack into
@@ -1793,7 +2207,7 @@ the \fIx\fP register.
 .UNINDENT
 .UNINDENT
 .sp
-\fBj2pi\fP: j*2*pi
+\fBj2pi\fP: j2π
 .INDENT 0.0
 .INDENT 3.5
 2π times the imaginary unit (j6.283185...) is pushed on the stack into
@@ -1816,8 +2230,8 @@ aliases: jtau, jτ, j2π
 \fBk\fP: Boltzmann constant
 .INDENT 0.0
 .INDENT 3.5
-The Boltzmann constant (R/NA or 1.38064852e\-23 J/K [mks] or
-1.38064852e\-16 erg/K [cgs]) is pushed on the stack into the \fIx\fP
+The Boltzmann constant (R/NA or 1.38064852×10⁻²³ J/K [mks] or
+1.38064852×10⁻¹⁶ erg/K [cgs]) is pushed on the stack into the \fIx\fP
 register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1835,7 +2249,7 @@ register.
 \fBh\fP: Planck constant
 .INDENT 0.0
 .INDENT 3.5
-The Planck constant \fIh\fP (6.626070e\-34 J\-s [mks] or 6.626070e\-27 erg\-s [cgs])
+The Planck constant \fIh\fP (6.626070×10⁻³⁴ J\-s [mks] or 6.626070×10⁻²⁷ erg\-s [cgs])
 is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1853,8 +2267,8 @@ is pushed on the stack into the \fIx\fP register.
 \fBq\fP: elementary charge (the charge of an electron)
 .INDENT 0.0
 .INDENT 3.5
-The elementary charge (the charge of an electron or 1.6021766208e\-19 C
-[mks] or 4.80320425e\-10 statC [cgs]) is pushed on the stack into the
+The elementary charge (the charge of an electron or 1.6021766208×10⁻¹⁹ C
+[mks] or 4.80320425×10⁻¹⁰ statC [cgs]) is pushed on the stack into the
 \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1872,7 +2286,7 @@ The elementary charge (the charge of an electron or 1.6021766208e\-19 C
 \fBc\fP: speed of light in a vacuum
 .INDENT 0.0
 .INDENT 3.5
-The speed of light in a vacuum (2.99792458e8 m/s) is pushed on the stack
+The speed of light in a vacuum (2.99792458×10⁸ m/s) is pushed on the stack
 into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1890,8 +2304,8 @@ into the \fIx\fP register.
 \fBeps0\fP: permittivity of free space
 .INDENT 0.0
 .INDENT 3.5
-The permittivity of free space (8.854187817e\-12 F/m [mks] or 1/4π [cgs]) is pushed on the
-stack into the \fIx\fP register.
+The permittivity of free space (8.854187817×10⁻¹² F/m [mks] or 1/4π [cgs])
+is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -1908,7 +2322,7 @@ stack into the \fIx\fP register.
 \fBmu0\fP: permeability of free space
 .INDENT 0.0
 .INDENT 3.5
-The permeability of free space (4e\-7*pi H/m [mks] or 4π/c² s^2/m^2
+The permeability of free space (4π×10⁻⁷ H/m [mks] or 4π/c² s²/m²
 [cgs]) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1944,14 +2358,15 @@ pushed on the stack into the \fIx\fP register.
 \fBhbar\fP: Reduced Planck constant
 .INDENT 0.0
 .INDENT 3.5
-The reduced Planck constant \fIħ\fP (1.054571800e\-34 J\-s) is pushed on the stack
-into the \fIx\fP register.
+The reduced Planck constant \fIħ\fP (1.054571800×10⁻³⁴ J\-s [mks] or
+1.054571800×10⁻²⁷ erg\-s [cgs]) is pushed on the stack into the \fIx\fP
+register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
 .nf
 .ft C
-\&... → ħ/2π), ...
+\&... → ħ, ...
 .ft P
 .fi
 .UNINDENT
@@ -1964,7 +2379,7 @@ alias: ħ
 \fBme\fP: rest mass of an electron
 .INDENT 0.0
 .INDENT 3.5
-The rest mass of an electron (9.10938356e\-28 g) is pushed on the stack
+The rest mass of an electron (9.10938356×10⁻²⁸ g) is pushed on the stack
 into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -1982,7 +2397,7 @@ into the \fIx\fP register.
 \fBmp\fP: mass of a proton
 .INDENT 0.0
 .INDENT 3.5
-The mass of a proton (1.672621898e\-24 g) is pushed on the stack into
+The mass of a proton (1.672621898×10⁻²⁴ g) is pushed on the stack into
 the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2000,7 +2415,7 @@ the \fIx\fP register.
 \fBmn\fP: mass of a neutron
 .INDENT 0.0
 .INDENT 3.5
-The mass of a neutron (1.674927471e\-24 g) is pushed on the stack into
+The mass of a neutron (1.674927471×10⁻²⁴ g) is pushed on the stack into
 the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2018,7 +2433,7 @@ the \fIx\fP register.
 \fBmh\fP: mass of a hydrogen atom
 .INDENT 0.0
 .INDENT 3.5
-The mass of a hydrogen atom (1.6735328115e\-24 g) is pushed on the stack into
+The mass of a hydrogen atom (1.6735328115×10⁻²⁴ g) is pushed on the stack into
 the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2036,7 +2451,7 @@ the \fIx\fP register.
 \fBamu\fP: unified atomic mass unit
 .INDENT 0.0
 .INDENT 3.5
-The unified atomic mass unit (1.660539040e\-24 g) is pushed on the stack
+The unified atomic mass unit (1.660539040×10⁻²⁴ g) is pushed on the stack
 into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2054,7 +2469,7 @@ into the \fIx\fP register.
 \fBG\fP: universal gravitational constant
 .INDENT 0.0
 .INDENT 3.5
-The universal gravitational constant (6.6746e\-14 m^3/(g\-s^2)) is pushed
+The universal gravitational constant (6.6746×10⁻¹⁴ m³/g\-s²) is pushed
 on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2073,7 +2488,7 @@ on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 The standard acceleration at sea level due to gravity on earth (9.80665
-m/s^2)) is pushed on the stack into the \fIx\fP register.
+m/s²)) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -2090,7 +2505,7 @@ m/s^2)) is pushed on the stack into the \fIx\fP register.
 \fBRinf\fP: Rydberg constant
 .INDENT 0.0
 .INDENT 3.5
-The Rydberg constant (10973731 m^\-1) is pushed on the stack into the
+The Rydberg constant (10973731 m⁻¹) is pushed on the stack into the
 \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2108,7 +2523,7 @@ The Rydberg constant (10973731 m^\-1) is pushed on the stack into the
 \fBsigma\fP: Stefan\-Boltzmann constant
 .INDENT 0.0
 .INDENT 3.5
-The Stefan\-Boltzmann constant (5.670367e\-8 W m^\-2 K^\-4) is pushed on
+The Stefan\-Boltzmann constant (5.670367×10⁻⁸ W/m²K⁴) is pushed on
 the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2144,7 +2559,7 @@ the stack into the \fIx\fP register.
 \fBR\fP: molar gas constant
 .INDENT 0.0
 .INDENT 3.5
-The molar gas constant (8.3144598 J/(mol\-K) [mks] or 83.145 Merg/deg\-mol
+The molar gas constant (8.3144598 J/mol\-K [mks] or 83.145 Merg/deg\-mol
 [cgs]) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2162,7 +2577,7 @@ The molar gas constant (8.3144598 J/(mol\-K) [mks] or 83.145 Merg/deg\-mol
 \fBNA\fP: Avogadro Number
 .INDENT 0.0
 .INDENT 3.5
-Avogadro constant (6.022140857e23 mol^\-1) is pushed on the stack into
+Avogadro constant (6.022140857×10²³ mol⁻¹) is pushed on the stack into
 the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
@@ -2192,14 +2607,14 @@ Switch the unit system for constants to ESU CGS.
 .UNINDENT
 .SS Numbers
 .sp
-\fB<N[.M][S][U]>\fP: a real number
+\fB«N[.M][S][U]»\fP: a real number
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is the
 integer portion of the mantissa and \fIM\fP is an optional fractional part.
 \fIS\fP is a letter that represents an SI scale factor. \fIU\fP the optional
 units (must not contain special characters).  For example, 10MHz
-represents 1e7 Hz.
+represents 10⁷ Hz.
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -2213,7 +2628,7 @@ represents 1e7 Hz.
 .UNINDENT
 .UNINDENT
 .sp
-\fB<N[.M]>e<E[U]>\fP: a real number in scientific notation
+\fB«N[.M]»e«E[U]»\fP: a real number in scientific notation
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is the
@@ -2233,7 +2648,7 @@ special characters).  For example, 2.2e\-8F represents 22nF.
 .UNINDENT
 .UNINDENT
 .sp
-\fB0x<N>\fP: a hexadecimal number
+\fB0x«N»\fP: a hexadecimal number
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2253,7 +2668,7 @@ example, 0xFF represents the hexadecimal number FF or the decimal number
 .UNINDENT
 .UNINDENT
 .sp
-\fB0o<N>\fP: a number in octal
+\fB0o«N»\fP: a number in octal
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2272,7 +2687,7 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .UNINDENT
 .UNINDENT
 .sp
-\fB0b<N>\fP: a number in binary
+\fB0b«N»\fP: a number in binary
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2291,7 +2706,7 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .UNINDENT
 .UNINDENT
 .sp
-\fB\(aqh<N>\fP: a number in Verilog hexadecimal notation
+\fB\(aqh«N»\fP: a number in Verilog hexadecimal notation
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2311,7 +2726,7 @@ example, \(aqhFF represents the hexadecimal number FF or the decimal number
 .UNINDENT
 .UNINDENT
 .sp
-\fB\(aqd<N>\fP: a number in Verilog decimal
+\fB\(aqd«N»\fP: a number in Verilog decimal
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2329,7 +2744,7 @@ integer in base 10.  For example, \(aqd99 represents the decimal number 99.
 .UNINDENT
 .UNINDENT
 .sp
-\fB\(aqo<N>\fP: a number in Verilog octal
+\fB\(aqo«N»\fP: a number in Verilog octal
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2348,7 +2763,7 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .UNINDENT
 .UNINDENT
 .sp
-\fB\(aqb<N>\fP: a number in Verilog binary
+\fB\(aqb«N»\fP: a number in Verilog binary
 .INDENT 0.0
 .INDENT 3.5
 The number is pushed on the stack into the \fIx\fP register.  \fIN\fP is an
@@ -2368,7 +2783,17 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .UNINDENT
 .SS Number Formats
 .sp
-\fBeng[<N>]\fP: use engineering notation
+\fBsi[«N»]\fP: use SI notation
+.INDENT 0.0
+.INDENT 3.5
+Numbers are displayed with a fixed number of digits of precision and the
+SI scale factors are used to convey the exponent when possible.  If an
+optional whole number \fIN\fP immediately follows \fIsi\fP, the precision is
+set to \fIN\fP digits.
+.UNINDENT
+.UNINDENT
+.sp
+\fBeng[«N»]\fP: use engineering notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed with a fixed number of digits of precision and the
@@ -2381,7 +2806,7 @@ exponent is always a multiple of 3.
 .UNINDENT
 .UNINDENT
 .sp
-\fBsci[<N>]\fP: use scientific notation
+\fBsci[«N»]\fP: use scientific notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed with a fixed number of digits of precision and the
@@ -2394,7 +2819,7 @@ exponent is not constrained to be a multiple of 3.
 .UNINDENT
 .UNINDENT
 .sp
-\fBfix[<N>]\fP: use fixed notation
+\fBfix[«N»]\fP: use fixed notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed with a fixed number of digits to the right of the
@@ -2404,7 +2829,7 @@ decimal point. If an optional whole number \fIN\fP immediately follows
 .UNINDENT
 .UNINDENT
 .sp
-\fBhex[<N>]\fP: use hexadecimal notation
+\fBhex[«N»]\fP: use hexadecimal notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 16 (a\-f are used to represent digits
@@ -2414,7 +2839,7 @@ is set to \fIN\fP\&.
 .UNINDENT
 .UNINDENT
 .sp
-\fBoct[<N>]\fP: use octal notation
+\fBoct[«N»]\fP: use octal notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 8 with a fixed number of digits.  If an
@@ -2423,7 +2848,7 @@ digits displayed is set to \fIN\fP\&.
 .UNINDENT
 .UNINDENT
 .sp
-\fBbin[<N>]\fP: use binary notation
+\fBbin[«N»]\fP: use binary notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 2 with a fixed number of digits.  If an
@@ -2432,7 +2857,7 @@ digits displayed is set to \fIN\fP\&.
 .UNINDENT
 .UNINDENT
 .sp
-\fBvhex[<N>]\fP: use Verilog hexadecimal notation
+\fBvhex[«N»]\fP: use Verilog hexadecimal notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 16 in Verilog format (a\-f are used to
@@ -2442,7 +2867,7 @@ digits displayed is set to \fIN\fP\&.
 .UNINDENT
 .UNINDENT
 .sp
-\fBvdec[<N>]\fP: use Verilog decimal notation
+\fBvdec[«N»]\fP: use Verilog decimal notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 10 in Verilog format with a fixed number
@@ -2451,7 +2876,7 @@ of digits.  If an optional whole number \fIN\fP immediately follows
 .UNINDENT
 .UNINDENT
 .sp
-\fBvoct[<N>]\fP: use Verilog octal notation
+\fBvoct[«N»]\fP: use Verilog octal notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 8 in Verilog format with a fixed number of
@@ -2460,7 +2885,7 @@ the number of digits displayed is set to \fIN\fP\&.
 .UNINDENT
 .UNINDENT
 .sp
-\fBvbin[<N>]\fP: use Verilog binary notation
+\fBvbin[«N»]\fP: use Verilog binary notation
 .INDENT 0.0
 .INDENT 3.5
 Numbers are displayed in base 2 in Verilog format with a fixed number of
@@ -2470,7 +2895,7 @@ the number of digits displayed is set to \fIN\fP\&.
 .UNINDENT
 .SS Variable Commands
 .sp
-\fB=<name>\fP: store value into a variable
+\fB=«name»\fP: store value into a variable
 .INDENT 0.0
 .INDENT 3.5
 Store the value in the \fIx\fP register into a variable with the given
@@ -2488,7 +2913,7 @@ name.
 .UNINDENT
 .UNINDENT
 .sp
-\fB<name>\fP: recall value of a variable
+\fB«name»\fP: recall value of a variable
 .INDENT 0.0
 .INDENT 3.5
 Place the value of the variable with the given name into the \fIx\fP
@@ -2629,7 +3054,7 @@ the stack into \fIx\fP register.
 .UNINDENT
 .UNINDENT
 .sp
-\fB\(ga<text>\(ga\fP: print text
+\fB\(ga«text»\(ga\fP: print text
 .INDENT 0.0
 .INDENT 3.5
 Print "text" (the contents of the back\-quotes) to the terminal.
@@ -2641,7 +3066,7 @@ instances of $Var or ${Var} are replaced by the value of the variable
 .UNINDENT
 .UNINDENT
 .sp
-\fB"<units>"\fP: set the units of the x register
+\fB"«units»"\fP: set the units of the x register
 .INDENT 0.0
 .INDENT 3.5
 The units given are applied to the value in the \fIx\fP register.
@@ -2652,6 +3077,24 @@ The actual value is unchanged.
 .nf
 .ft C
 x, ... → x "units", ...
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB>«units»\fP: convert value to given units
+.INDENT 0.0
+.INDENT 3.5
+The value in the \fIx\fP is popped from the stack, converted to the desired
+units, and pushed back on to the stack.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+x, ... → convert(x, units), ...
 .ft P
 .fi
 .UNINDENT
@@ -2693,17 +3136,20 @@ At start up \fBec\fP reads and executes commands from files.  It first tries
 \(aq~/.ecrc\(aq and runs any commands it contains if it exists.  It then tries
 \(aq./.ecrc\(aq if it exists.  Finally it runs the startup file specified on the
 command line (with the \fB\-s\fP or \fB\-\-startup\fP option).  It is common to put
-your generic preferences in \(aq~/.exrc\(aq.  For example, if your are an astronomer
-with a desire for high precision results, you might use:
+your generic preferences in \(aq~/.exrc\(aq.  For example, if your are an
+astronomer with a desire for high precision results, you might use:
 .INDENT 0.0
 .INDENT 3.5
+.sp
 .nf
+.ft C
+# initialization file for ec (engineering calculator)
 eng6
 6.626070e\-27 "erg\-s" =h       # Planck\(aqs constant in CGS units
 1.054571800e\-27 "erg\-s" =hbar # Reduced Planck\(aqs constant in CGS units
 1.38064852e\-16 "erg/K" =k     # Boltzmann\(aqs constant in CGS units
+.ft P
 .fi
-.sp
 .UNINDENT
 .UNINDENT
 .sp
@@ -2717,14 +3163,16 @@ After all of the startup files have been processed, the stack is cleared.
 A typical initialization script (~/.ecrc) for a circuit designer might be:
 .INDENT 0.0
 .INDENT 3.5
+.sp
 .nf
+.ft C
 # Initialize Engineering Calculator
 27 "C" =T               # ambient temperature
 (k T 0C + * q/ "V")vt   # thermal voltage
 (2pi* "rads/s")tw       # to omega \- converts Hertz to rads/s
 (2pi/ "Hz")tf           # to freq \- converts rads/s to Hertz
+.ft P
 .fi
-.sp
 .UNINDENT
 .UNINDENT
 .SH SCRIPTING
@@ -2776,7 +3224,7 @@ $ ec \(aq22k 1pF\(aq bw
 .UNINDENT
 .UNINDENT
 .sp
-Normally \fIec\fP only prints the value of the \fIx\fP register and only as it
+Normally \fBec\fP only prints the value of the \fIx\fP register and only as it
 exits.  It is possible to get more control of the output using back\-quoted
 strings.  For example:
 .INDENT 0.0
@@ -2794,7 +3242,7 @@ Whatever is found within back\-quotes is printed to the output. Notice that
 the value of the \fIx\fP register is also output, which may not be desired when
 you are generating your own output. You can stop the value of the \fIx\fP
 register from being printed by finishing with the \fIquit\fP command, which
-tells \fIec\fP to exit immediately:
+tells \fBec\fP to exit immediately:
 .INDENT 0.0
 .INDENT 3.5
 .nf
@@ -2825,10 +3273,12 @@ print a newline or a tab, use \fI\en\fP and \fI\et\fP\&. For example,
 .UNINDENT
 .sp
 To illustrate its use in a script, assume that a file named \fIlg\fP exists and
-contains a calculation for the loop gain of a PLL,
+contains a calculation for the loop gain of a PLL:
 .INDENT 0.0
 .INDENT 3.5
+.sp
 .nf
+.ft C
 # computes and displays loop gain of a frequency synthesizer
 # x register is taken to be frequency
 =freq
@@ -2841,10 +3291,10 @@ freq 2pi* "rads/s" =omega
 Kdet Kvco* omega/ M/ =a
 N F* =f
 a f* =T
-\(gaOpen loop gain = $a\enFeedback factor = $f\enLoop gain = $T\(ga
+\e\(gaOpen loop gain = $a\e\enFeedback factor = $f\e\enLoop gain = $T\e\(ga
 quit
+.ft P
 .fi
-.sp
 .UNINDENT
 .UNINDENT
 .sp
@@ -2934,8 +3384,9 @@ does this for you automatically.
 .sp
 Alternatively, you can put the constants you wish to predeclare in
 \fI\&./.ecrc\fP, in which case they are automatically loaded whenever you invoke
-\fIec\fP in the directory that contains the file.  Similarly, placing constants
-in \fI~/.ecrc\fP causes them to be declared for every invocation of \fIec\fP\&.
+\fBec\fP in the directory that contains the file.  Similarly, placing
+constants in \fI~/.ecrc\fP causes them to be declared for every invocation of
+\fBec\fP\&.
 .SH DIAGNOSTICS
 .sp
 If an error occurs on a line, an error message is printed and the stack is

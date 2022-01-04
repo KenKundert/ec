@@ -38,7 +38,7 @@ user_manual = r"""
 
     Description
     ===========
-    **ec** is a stack-based (RPN) engineering calculator with a text-based user 
+    **ec** is a stack-based (RPN) engineering calculator with a text-based user
     interface that is intended to be used interactively.
 
     If run with no arguments, an interactive session is started.  If arguments
@@ -50,8 +50,8 @@ user_manual = r"""
     interactive option is specified, it would be started after all scripts have
     been run.
 
-    The contents of *~/.ecrc*, *./.ecrc*, and the start up file will be run upon 
-    start up if they exist, and then the stack is cleared.
+    The contents of *~/.ecrc*, *./.ecrc*, and the startup file will be run upon
+    startup if they exist, and then the stack is cleared.
 
 
     Stack
@@ -74,7 +74,7 @@ user_manual = r"""
     both off the stack, sums them, and then pushes the result of 10 back onto
     the stack.  The stack is left with only one number on it, 10.
 
-    After each line **ec** responds by printing the value of the *x* register.  
+    After each line **ec** responds by printing the value of the *x* register.
     Thus the above example would actually look like this:
 
        |   **0**: 4
@@ -169,16 +169,16 @@ user_manual = r"""
        |   2.5_V
        |   4.7e-10F
 
-    Both units and scale factors are optional, which causes a natural ambiguity 
-    as to whether the first letter of a suffix is a scale factor or not. If the 
-    first letter is a valid scale factor, then it is assume to be a scale 
-    factor.  In this way, '300K is treated as 300e3 rather than 300 Kelvin. If 
-    you intend the units without a scale factor, add the unit scale factor: '_'.  
+    Both units and scale factors are optional, which causes a natural ambiguity
+    as to whether the first letter of a suffix is a scale factor or not. If the
+    first letter is a valid scale factor, then it is assume to be a scale
+    factor.  In this way, '300K is treated as 300e3 rather than 300 Kelvin. If
+    you intend the units without a scale factor, add the unit scale factor: '_'.
     Thus, use 300_K to enter 300 Kelvin.
 
-    In this case the units must be simple identifiers (must not contain special 
-    characters). For complex units, such as "rads/s", or for numbers that do not 
-    have scale factors, it is possible to attach units to a number in the *x* 
+    In this case the units must be simple identifiers (must not contain special
+    characters). For complex units, such as "rads/s", or for numbers that do not
+    have scale factors, it is possible to attach units to a number in the *x*
     register by entering a quoted string.
 
        |   **0**: 6.626e-34
@@ -241,8 +241,8 @@ user_manual = r"""
     =========
 
     **ec** provides several useful mathematical and physical constants that are
-    accessed by specifying them by name. Several of the constants have both MKS 
-    and CGS forms (ec uses ESU-CGS). You can set which version you want by 
+    accessed by specifying them by name. Several of the constants have both MKS
+    and CGS forms (ec uses ESU-CGS). You can set which version you want by
     setting the desired unit system as follows:
 
        |   **0**: mks
@@ -253,16 +253,16 @@ user_manual = r"""
        |   **6.6261e-27 erg-s**: k
        |   **138.06 aerg/K**:
 
-    Notice that the unit-system is sticky, meaning that it remains in force 
+    Notice that the unit-system is sticky, meaning that it remains in force
     until explicitly changed. 'mks' is the default unit system.
 
-    The physical constants are given in base units (meters, grams, seconds).  
-    For example, the mass of an electron is given in grams rather than kilograms 
-    as would be expected for MKS units.  Similarly, the speed of light is given 
-    in meters per second rather than centimeters per second as would be expected 
-    of CGS units.  This is necessary so that numbers are not displayed with two 
-    scale factors (ex. 1 mkg).  Thus, it may be necessary for you to explicitly 
-    convert to kg (MKS) or cm (CGS) before using values in formulas that are 
+    The physical constants are given in base units (meters, grams, seconds).
+    For example, the mass of an electron is given in grams rather than kilograms
+    as would be expected for MKS units.  Similarly, the speed of light is given
+    in meters per second rather than centimeters per second as would be expected
+    of CGS units.  This is necessary so that numbers are not displayed with two
+    scale factors (ex. 1 mkg).  Thus, it may be necessary for you to explicitly
+    convert to kg (MKS) or cm (CGS) before using values in formulas that are
     tailored for one specific unit system.
 
     The 2014 NIST values are used.  The available constants include:
@@ -280,8 +280,18 @@ user_manual = r"""
     =========
 
     You can store the contents of the *x* register to a variable by using an
-    equal sign followed immediately by the name of the variable. To recall it,
-    simply use the name. For example,
+    equal sign followed immediately by the name of the variable::
+
+       =«name»
+
+    where «name» represents the desired name of the variable. It must be
+    a simple identifer and must be immediately adjacent to the =.
+
+    To recall it, simply use the name::
+
+       «name»
+
+    For example,
 
        |   **0**: 100MHz =freq
        |   **100 MHz**: 2pi* "rads/s" =omega
@@ -289,7 +299,7 @@ user_manual = r"""
        |   **1 pF**: 1 omega cin* /
        |   **1.5915K**:
 
-    You can display all known variables using *vars*. If you did so immediately 
+    You can display all known variables using *vars*. If you did so immediately
     after entering the lines above, you would see:
 
        |   **1.5915K**: vars
@@ -300,7 +310,7 @@ user_manual = r"""
 
     Choosing a variable name that is the same as a one of a built-in command or
     constant causes the built-in name to be overridden. Be careful when doing
-    this as once a built-in name is overridden it can no longer be accessed. 
+    this as once a built-in name is overridden it can no longer be accessed.
 
     Notice that a variable *Rref* exists that you did not create. This is a
     predefined variable that is used in dBm calculations. You are free to change
@@ -312,11 +322,14 @@ user_manual = r"""
 
     You can define functions in the following way::
 
-       ( ... )name
+       ( … )«name»
 
-    Here '(' starts the function definition and ')name' ends it. The name must 
-    be immediately adjacent to the name. The '...' represents a sequence of 
-    calculator actions. For example:
+    Here '(' starts the function definition and ')«name»' ends it. «name»
+    represents the desired name of the function. It must be a simple identifer
+    and must be immediately adjacent to the ).  The '…' represents a sequence of
+    calculator actions.
+
+    For example:
 
         |   **0**: (2pi * "rads/s")to_omega
         |   **0**: (2pi / "Hz")to_freq
@@ -325,10 +338,10 @@ user_manual = r"""
         |   **628.32 Mrads/s**: to_freq
         |   **100 MHz**:
 
-    The actions entered while defining the function are not evaluated until the 
+    The actions entered while defining the function are not evaluated until the
     function itself is evaluated.
 
-    Once defined, you can review your function with the *vars* command. It shows 
+    Once defined, you can review your function with the *vars* command. It shows
     both the variable and the function definitions:
 
         |     *Rref*: 50 Ohms
@@ -336,6 +349,124 @@ user_manual = r"""
         |     *to_omega*: (2pi * "rads/s")
 
     The value of the functions are delimited with parentheses.
+
+
+    Unit Conversions
+    ================
+
+    You can perform unit conversions using:
+
+       >«units»
+
+    where «units» are the desired units.  «units» must be a simple identifier
+    though the first character is allowed to one of a small number of special
+    characters that typically begin units.  Specifically, ``$°ÅɃș``.  «units»
+    must be immediately adjacent to the >.  If the value in the *x* register has
+    units, the value will be converted to the new units.  If the value does not
+    have units, its units will be set to «units».
+
+    For example, to convert grams to pounds:
+
+        |   **0**: 100kg
+        |   **100 kg**: >lbs
+        |   **220.46 lbs**:
+
+    The following example is a little contrived to show two things.  First,
+    a value with no units gets assigned the specified units when subject to
+    a conversion.  Second, several names are known for the same units and the
+    name assigned to the result is the name specified on the convert command.
+
+        |   **0**: 100
+        |   **100**: >kg
+        |   **100 kg**: >lb
+        |   **220.46 lb**:
+
+    Converters are provides for the following units:
+
+    Temperature:
+
+    ====== ================================================================
+    K:     K, F °F, R °R
+    C °C:  K, C °C, F °F, R °R
+    ====== ================================================================
+
+    Distance:
+
+    ====== ================================================================
+    m:     km, m, cm, mm, um μm micron, nm, Å angstrom,
+           mi mile miles, in inch inches
+    ====== ================================================================
+
+    Mass/Weight:
+
+    ====== ================================================================
+    g:     oz, lb lbs
+    ====== ================================================================
+
+    Time:
+
+    ====== ================================================================
+    s:     sec second seconds, min minute minutes, hour hours hr, day days
+    ====== ================================================================
+
+    Bits/Bytes:
+
+    ====== ================================================================
+    b:     B
+    ====== ================================================================
+
+    Bitcoin:
+
+    ============ ==========================================================
+    BTC btc Ƀ:   USD usd $, sats sat ș
+    sats sat ș:  USD usd $, BTC btc Ƀ
+    ============ ==========================================================
+
+    The conversions can occur between a pair of units, one from the first column
+    and one from the second. They do not occur when both units are only in the
+    second column. So for example, it is possible to convert between *g* and
+    *lbs*, but not between *oz* and *lb*.  However, if you notice, the units in
+    the second column are grouped using commas.  A set of units within commas
+    are considered equivalent, meaning that there are multiple names for the
+    same underlying unit.  For example, *in*, *inch*, and *inches* are all
+    considered equivalent. You can convert between equivalent units even though
+    both are found in the second column. This feature was used in the above
+    example where *lbs* was converted to *lb*.
+
+    Bitcoin conversions are performed by accessing quotes from coingecko.com.
+    You must have an internet connection for this feature to work.
+
+    For example:
+
+        |   **0**: 1BTC
+        |   **1 BTC**: >$
+        |   **$46,485.00**:
+
+    You can use user-defined functions to create functions that create units
+    directly.  For example, here a function definitions for converting bitcoin
+    and temperatures that you can put in your ~/.ecrc file::
+
+        # bitcoin
+        ("Ƀ" >$)btd  # convert bitcoin to dollars
+        ("Ƀ" >ș)bts  # convert bitcoin to satoshis
+        ("ș" >Ƀ)stb  # convert satoshis to bitcoin
+        ("ș" >$)std  # convert bitcoin to dollars
+        ("$" >Ƀ)dtb  # convert dollars to bitcoin
+        ("$" >ș)dts  # convert dollars to satoshis
+
+        # temperature
+        ("°C" >K)ctk   # convert Celsius to Kelvin
+        ("°C" >°F)ctf  # convert Celsius to Fahrenheit
+        ("°F" >K)ftk   # convert Fahrenheit to Kelvin
+        ("°F" >°C)ftc  # convert Fahrenheit to Celsius
+        ("K" >°C)ktc   # convert Kelvin to Celsius
+        ("K" >°F)ktf   # convert Kelvin to Fahrenheit
+
+    With these function, you can convert a simple number (without units)
+    directly to the desired units:
+
+        |   **0**: 1 btd
+        |   **$46,485.00**:
 
 
     Comments
@@ -371,9 +502,9 @@ user_manual = r"""
        1.054571800e-27 "erg-s" =hbar # Reduced Planck's constant in CGS units
        1.38064852e-16 "erg/K" =k     # Boltzmann's constant in CGS units
 
-    This tells **ec** to use 6 digits of resolution and redefines *h* and *hbar* 
-    so that they are given in CGS units. The redefining of the names *h*, 
-    *hbar*, and *k* would normally cause **ec** to print a warning, but such 
+    This tells **ec** to use 6 digits of resolution and redefines *h* and *hbar*
+    so that they are given in CGS units. The redefining of the names *h*,
+    *hbar*, and *k* would normally cause **ec** to print a warning, but such
     warnings are suppressed when reading initialization files and scripts.
 
     After all of the startup files have been processed, the stack is cleared.
@@ -390,48 +521,48 @@ user_manual = r"""
     Scripting
     =========
 
-    Command line arguments are evaluated as if they were typed into an 
-    interactive session with the exception of filename arguments.  If an 
-    argument corresponds to an existing file, the file treated as a script, 
-    meaning it is is opened its contents are evaluated.  Otherwise, the argument 
-    itself is evaluate (often it needs to be quoted to protect its contents from 
-    being interpreted by the shell). When arguments are given the calculator by 
-    default does not start an interactive session. For example: to compute an RC 
+    Command line arguments are evaluated as if they were typed into an
+    interactive session with the exception of filename arguments.  If an
+    argument corresponds to an existing file, the file treated as a script,
+    meaning it is is opened its contents are evaluated.  Otherwise, the argument
+    itself is evaluate (often it needs to be quoted to protect its contents from
+    being interpreted by the shell). When arguments are given the calculator by
+    default does not start an interactive session. For example: to compute an RC
     time constant you could use:
 
        | $ ec 22k 1pF*
        | 22n
 
-    Notice that the \* in the above command is interpreted as glob character, 
-    which is generally not what you want, so it is often best to quote the 
+    Notice that the \* in the above command is interpreted as glob character,
+    which is generally not what you want, so it is often best to quote the
     script:
 
        | $ ec '22k 1pF*'
        | 22n
 
-    Only the calculator commands would be quoted in this manner. If you included 
-    a file name on the command line to run a script, it would have to be given 
-    alone.  For example, assume that the file 'bw' exists and contains '* 2pi* 
-    recip "Hz"'. This is a script that assumes that the value of R and C are 
-    present in the *x* and *y* resisters, and then computes the 3dB bandwith of 
+    Only the calculator commands would be quoted in this manner. If you included
+    a file name on the command line to run a script, it would have to be given
+    alone.  For example, assume that the file 'bw' exists and contains '* 2pi*
+    recip "Hz"'. This is a script that assumes that the value of R and C are
+    present in the *x* and *y* resisters, and then computes the 3dB bandwith of
     the corresponding RC filter. You could run the script with:
 
        | $ ec '22k 1pF' bw
        | 7.2343 MHz
 
-    Normally *ec* only prints the value of the *x* register and only as it 
-    exits.  It is possible to get more control of the output using back-quoted 
+    Normally **ec** only prints the value of the *x* register and only as it
+    exits.  It is possible to get more control of the output using back-quoted
     strings.  For example:
 
        | $  ec '\`Hello world!\`'
        | Hello world!
        | 0
 
-    Whatever is found within back-quotes is printed to the output. Notice that 
-    the value of the *x* register is also output, which may not be desired when 
-    you are generating your own output. You can stop the value of the *x* 
-    register from being printed by finishing with the *quit* command, which 
-    tells *ec* to exit immediately:
+    Whatever is found within back-quotes is printed to the output. Notice that
+    the value of the *x* register is also output, which may not be desired when
+    you are generating your own output. You can stop the value of the *x*
+    register from being printed by finishing with the *quit* command, which
+    tells **ec** to exit immediately:
 
        | $  ec '\`Hello world!\` quit'
        | Hello world!
@@ -467,7 +598,7 @@ user_manual = r"""
        \`Open loop gain = $a\\nFeedback factor = $f\\nLoop gain = $T\`
        quit
 
-    When reading scripts from a file, the '#' character introduces a comment. It 
+    When reading scripts from a file, the '#' character introduces a comment. It
     and anything that follows is ignored until the end of the line.
 
     Notice that the script starts by saving the value in the *x* register to the
@@ -484,10 +615,10 @@ user_manual = r"""
     print command, so the results are printed to standard output as the script
     terminates.
 
-    One issue with command line scripting that you need to be careful of is that 
-    if an argument is a number with a leading minus sign it will be mistaken to 
-    be a command line option. To avoid this issue, specify the number without 
-    the minus sign and follow it with *chs*.  Alternatively, you can embed the 
+    One issue with command line scripting that you need to be careful of is that
+    if an argument is a number with a leading minus sign it will be mistaken to
+    be a command line option. To avoid this issue, specify the number without
+    the minus sign and follow it with *chs*.  Alternatively, you can embed the
     number in quotes but add a leading space.  For example,
 
        |   $ ec -30 dbmv
@@ -501,9 +632,9 @@ user_manual = r"""
     Initialization Scripts
     ======================
 
-    You can use scripts to preload in a set of useful constants and function 
-    that can then be used in interactive calculations. To do so, use the **-i** 
-    or *--interactive* command line option. For example, replace the earlier 
+    You can use scripts to preload in a set of useful constants and function
+    that can then be used in interactive calculations. To do so, use the **-i**
+    or *--interactive* command line option. For example, replace the earlier
     'lg' script with the following:
 
        |   88.3u "V/per" =Kdet
@@ -522,18 +653,19 @@ user_manual = r"""
        |   0: 1kHz T
        |   629.01M:
 
-    Doing so runs lg, which loads values into the various variables, and then 
+    Doing so runs lg, which loads values into the various variables, and then
     they can be accessed in further calculations.
 
-    Notice that the script ends with *clstack* so that you start fresh in your 
-    interactive session. It simply clears the stack so that the only effect of 
-    the script is to initialize the variables.  Using **-s** or **--startup** 
+    Notice that the script ends with *clstack* so that you start fresh in your
+    interactive session. It simply clears the stack so that the only effect of
+    the script is to initialize the variables.  Using **-s** or **--startup**
     does this for you automatically.
 
-    Alternatively, you can put the constants you wish to predeclare in 
-    *./.ecrc*, in which case they are automatically loaded whenever you invoke 
-    *ec* in the directory that contains the file.  Similarly, placing constants 
-    in *~/.ecrc* causes them to be declared for every invocation of *ec*.
+    Alternatively, you can put the constants you wish to predeclare in
+    *./.ecrc*, in which case they are automatically loaded whenever you invoke
+    **ec** in the directory that contains the file.  Similarly, placing
+    constants in *~/.ecrc* causes them to be declared for every invocation of
+    **ec**.
 
 
     Errors
@@ -571,22 +703,22 @@ reference_manual = r"""
     are expected to choose a suitable value). For example "fix[<*N*>]" can
     represent "fix" or "fix4", but not "fixN".
 
-    For each action that changes the stack a synopsis of those changes is given 
-    in the form of two lists separated by ``=>``. The list on the left 
-    represents the stack before the action is applied, and the list on the right 
-    represents the stack after the action was applied. In both of these lists, 
-    the *x* register is given first (on the left). Those registers that are 
-    involved in the action are listed explicitly, and the rest are represented 
-    by ``...``. In the before picture, the names of the registers involved in 
-    the action are simply named. In the after picture, the new values of the 
-    registers are described. Those values represented by ``...`` on the right 
-    side of ``=>`` are the same as represented by ``...`` on the left, though 
+    For each action that changes the stack a synopsis of those changes is given
+    in the form of two lists separated by ``=>``. The list on the left
+    represents the stack before the action is applied, and the list on the right
+    represents the stack after the action was applied. In both of these lists,
+    the *x* register is given first (on the left). Those registers that are
+    involved in the action are listed explicitly, and the rest are represented
+    by ``...``. In the before picture, the names of the registers involved in
+    the action are simply named. In the after picture, the new values of the
+    registers are described. Those values represented by ``...`` on the right
+    side of ``=>`` are the same as represented by ``...`` on the left, though
     they may have moved. For example::
 
         x, y, ... => x+y, ...
 
-    This represents addition. In this case the values in the *x* and *y* 
-    registers are summed and placed into the *x* register. All other values move 
+    This represents addition. In this case the values in the *x* and *y*
+    registers are summed and placed into the *x* register. All other values move
     to the left one place.
 
     {actions}
@@ -634,7 +766,7 @@ integerSectionWithoutVerilog = r"""{
     ========
 
     You can enter integers in either hexadecimal (base 16), decimal (base 10),
-    octal (base 8), or binary (base 2) using programmers notation as shown in 
+    octal (base 8), or binary (base 2) using programmers notation as shown in
     the examples below:
 
         0xFF
@@ -650,8 +782,8 @@ integerSectionWithoutVerilog = r"""{
     To display them as decimal integers, use *fix0*. However, you can display
     the numbers in either base 16 (hexadecimal), base 10 (decimal), base 8
     (octal) or base 2 (binary)  by setting the display mode.  Use either *hex*,
-    *fix0*, *oct*, or *bin*. In each of these cases the number is rounded to the 
-    closest integer before it is displayed. Add an integer after the display 
+    *fix0*, *oct*, or *bin*. In each of these cases the number is rounded to the
+    closest integer before it is displayed. Add an integer after the display
     mode to control the number of digits. For example:
 
        |   **0**: 1000
@@ -720,7 +852,7 @@ for action in actions:
         description = action.description.split(':', 1)[1].strip()
         # add the value to the description
         # actually, do not add the value, it makes text too wide and in the case
-        # of rand is misleading, also value can be a number, a tuple, a dict, or 
+        # of rand is misleading, also value can be a number, a tuple, a dict, or
         # a function, would need to accommodate all of these.
         #if value and action.units:
         #    desc = '%s (%s %s)' % (description, value, action.units)
@@ -789,7 +921,7 @@ def formatText(text, indent=''):
 
 def formatDescription(desc):
     '''
-    Separate the key/name from the description, quote the key/name, format the 
+    Separate the key/name from the description, quote the key/name, format the
     description, rejoin them, and return the results.
     '''
     components = desc.split(':', 1)
@@ -855,4 +987,4 @@ def write(user_filename=None, reference_filename=None):
 if __name__ == '__main__':
     write('user.rst', 'reference.rst')
 
-# vim: set sw=4 sts=4 tw=80 formatoptions=ntcqwa12 et spell: 
+# vim: set sw=4 sts=4 tw=80 formatoptions=ntcqwa12 et spell:
