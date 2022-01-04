@@ -7,6 +7,8 @@ Latest development release
     | Version: 1.8.2
     | Released: 2022-01-04
 
+    - add convert command
+    - add bitcoin quotes via convert command
     - rename *eng* to *si*
     - add new *eng* that uses exponential notation with exponent constrained to 
       be a multiple of 3.
