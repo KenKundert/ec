@@ -4,8 +4,8 @@ Releases
 Latest development release
 --------------------------
 
-    | Version: 1.8.1
-    | Released: 2021-12-28
+    | Version: 1.8.2
+    | Released: 2022-01-04
 
     - rename *eng* to *si*
     - add new *eng* that uses exponential notation with exponent constrained to 
