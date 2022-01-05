@@ -15,7 +15,7 @@ import re
 import sys
 
 # Set the version information {{{1
-__version__ = "1.8.2"
+__version__ = "1.9.0"
 __released__ = "2022-01-04"
 
 # Utility functions {{{1
