@@ -1422,7 +1422,7 @@ x, y, ... → y**x, ...
 .UNINDENT
 .UNINDENT
 .sp
-aliases: pow, ytox
+aliases: pow,ytox
 .UNINDENT
 .UNINDENT
 .sp
@@ -1500,7 +1500,7 @@ x, ... → log(x), ...
 .UNINDENT
 .UNINDENT
 .sp
-aliases: log10, lg
+aliases: log10,lg
 .UNINDENT
 .UNINDENT
 .sp
@@ -1964,7 +1964,7 @@ x, ... → 20*log(x), ...
 .UNINDENT
 .UNINDENT
 .sp
-aliases: db20, v2db, i2db
+aliases: db20,v2db,i2db
 .UNINDENT
 .UNINDENT
 .sp
@@ -1985,7 +1985,7 @@ x, ... → 10**(x/20), ...
 .UNINDENT
 .UNINDENT
 .sp
-aliases: db2v, db2i
+aliases: db2v,db2i
 .UNINDENT
 .UNINDENT
 .sp
@@ -2155,7 +2155,7 @@ alias: π
 .UNINDENT
 .UNINDENT
 .sp
-aliases: tau, τ, 2π
+aliases: tau,τ,2π
 .UNINDENT
 .UNINDENT
 .sp
@@ -2228,7 +2228,7 @@ the \fIx\fP register.
 .UNINDENT
 .UNINDENT
 .sp
-aliases: jtau, jτ, j2π
+aliases: jtau,jτ,j2π
 .UNINDENT
 .UNINDENT
 .sp
@@ -2928,7 +2928,7 @@ register.
 .sp
 .nf
 .ft C
-\&... → name, ...
+\&... → value of «name», ...
 .ft P
 .fi
 .UNINDENT
@@ -3099,7 +3099,7 @@ units, and pushed back on to the stack.
 .sp
 .nf
 .ft C
-x, ... → convert(x, units), ...
+x, ... → x converted to new desired units, ...
 .ft P
 .fi
 .UNINDENT
@@ -3107,7 +3107,14 @@ x, ... → convert(x, units), ...
 .UNINDENT
 .UNINDENT
 .sp
-\fBfunctions\fP: describes how to define and use functions.
+\fB(…)«name»\fP: a user\-defined function or macro.
+.INDENT 0.0
+.INDENT 3.5
+A function is defined with the name «name» where … is a list of commands.
+When «name» is entered as a command, it is replaced by the list of
+commands.
+.UNINDENT
+.UNINDENT
 .sp
 \fBquit\fP: quit (:q or ^D also works)
 .INDENT 0.0
@@ -3118,7 +3125,7 @@ alias: :q
 .sp
 \fBhelp\fP: print a summary of the available features
 .sp
-\fB?[<topic>]\fP: detailed help on a particular topic
+\fB?[«topic»]\fP: detailed help on a particular topic
 .INDENT 0.0
 .INDENT 3.5
 A topic, in the form of a symbol or name, may follow the question mark,

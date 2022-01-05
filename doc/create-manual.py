@@ -8,6 +8,7 @@ from engineering_calculator.actions import (
 )
 from engineering_calculator.calculator import __released__, __version__
 from textwrap import dedent
+from inform import plural
 import re
 
 # Remove duplicates from action list
@@ -892,15 +893,15 @@ for action in actions:
         # of rand is misleading, also value can be a number, a tuple, a dict, or
         # a function, would need to accommodate all of these.
         #if value and action.units:
-        #    desc = '%s (%s %s)' % (description, value, action.units)
+        #    desc = f'{description} ({value} {action.units})'
         #elif value:
-        #    desc = '%s (%s)' % (description, value)
+        #    desc = f'{description} ({value})'
         #elif action.units:
-        #    desc = '%s (%s)' % (description, action.units)
+        #    desc = f'{description} ({action.units})'
         #else:
         #    desc = description
         if action.units:
-            description = '%s (%s)' % (description, action.units)
+            description = f'{description} ({ action.units})'
         pair = (action.key, description)
         if pair not in constants:
             constants += [pair]
@@ -908,13 +909,19 @@ for action in actions:
         descWidth = max(descWidth, len(description))
 
 # convert the constants into a restructured text table
-#delimiter = '%s %s' % (keyWidth*'=', descWidth*'=')
+#delimiter = f"{keyWidth*'='}{descWidth*'=')}"
 #constants = [delimiter] + [
 #    "{const[0]:{kw}} {const[1]:{dw}}".format(
 #        const=constant, kw=keyWidth, dw=descWidth
 #    ) for constant in constants
 #] + [delimiter]
 # convert the constants into a restructured text definition list
+# constants = [
+#     f"    {contants[0]}\n        {contants[1]}"
+# ]
+# constantsTable = '\n'.join(constants)
+
+# convert the constants into a restructured text table
 constants = [
     "   {:<7}  {}".format(*constant) for constant in constants
 ]
@@ -923,27 +930,27 @@ constants = [decorator] + constants + [decorator]
 constantsTable = '\n'.join(constants)
 
 # Actions {{{1
-italicsRegex = re.compile(r'#\{([^}]+)\}')
-boldRegex = re.compile(r'@\{([^}]+)\}')
+italicsRegex = re.compile(r'#⟪([^}]+?)⟫')
+boldRegex = re.compile(r'@⟪([^}]+?)⟫')
 def formatText(text, indent=''):
     '''
     Process the simple in-line macros that are allowed in the text:
-    #{text}: italics
-    @{text}: bold
-    \verb{
+    #⟪text⟫: italics
+    @⟪text⟫: bold
+    \verb⟪
         text
-    }: do not fill
+    ⟫: do not fill
     '''
     # get rid of leading indentation and break into individual lines
     lines = dedent(text).strip().splitlines()
     gatheredLines = []
     fill = True
     for line in lines:
-        if line.strip() == r'\verb{':
+        if line.strip() == r'\verb⟪':
             # start of no-fill region
             gatheredLines += ['']
             fill = False
-        elif line.strip() == '}':
+        elif line.strip() == '⟫':
             # end of no-fill region
             gatheredLines += ['']
             fill = True
@@ -967,9 +974,9 @@ def formatDescription(desc):
     name, description = components
     name = italicsRegex.sub(r'\1', name)
     name = boldRegex.sub(r'\1', name)
-    name = '``%s``' % name.strip()
+    name = f'``{name.strip()}``'
     description = formatText(description.strip())
-    return "%s: %s" % (name, description)
+    return f"{name}: {description}"
 
 def formatSynopsis(synopsis):
     '''
@@ -981,20 +988,15 @@ actionText = []
 for action in actions:
     if action.description:
         if hasattr(action, 'category'):
-            text = formatDescription(action.description % (action.__dict__))
+            text = formatDescription(action.description.format(**action.__dict__))
             text = [text + '-'*len(text) + '\n']
         else:
             summary = action.getSummary()
             synopsis = action.getSynopsis()
             aliases = action.getAliases()
             if aliases:
-                if len(aliases) > 1:
-                    aliases = 'aliases: %s' % ', '.join(aliases)
-                else:
-                    aliases = 'alias: %s' % ', '.join(aliases)
-            else:
-                aliases = ''
-            text = [formatDescription(action.description % (action.__dict__))]
+                aliases = f"{plural(aliases):alias/es}: {','.join(aliases)}"
+            text = [formatDescription(action.description.format(**action.__dict__))]
             text += [formatText(summary, '    ')]
             if synopsis:
                 text += [formatSynopsis(synopsis)]

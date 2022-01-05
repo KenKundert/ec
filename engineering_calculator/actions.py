@@ -47,11 +47,11 @@ EngQuantity.set_prefs(output_sf='')
 #
 # the synopsis and summary fields are processed when creating the documentation
 # to process the following text hintsL
-#    #{text}: italics
-#    @{text}: bold
-#    \verb{
+#    #⟪text⟫: italics
+#    @⟪text⟫: bold
+#    \verb⟪
 #        text
-#    }: do not fill
+#    ⟫: do not fill
 
 # Arithmetic Operators {{{2
 arithmeticOperators = Category("Arithmetic Operators")
@@ -60,13 +60,13 @@ arithmeticOperators = Category("Arithmetic Operators")
 addition = BinaryOp(
     "+",
     operator.add,
-    description = "%(key)s: addition",
+    description = "{key}: addition",
     units = lambda calc, units: units[0] if units[0] == units[1] else "",
         # keep units of x if they are the same as units of y
-    synopsis = "#{x}, #{y}, ... → #{x}+#{y}, ...",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪x⟫+#⟪y⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the
-        stack and the sum is placed back on the stack into the #{x}
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the
+        stack and the sum is placed back on the stack into the #⟪x⟫
         register.
     """,
 )
@@ -82,13 +82,13 @@ addition.addTest(stimulus="1 j +", result=1 + 1j, units="", text="1 + j")
 subtraction = BinaryOp(
     "-",
     operator.sub,
-    description = "%(key)s: subtraction",
+    description = "{key}: subtraction",
     units = lambda calc, units: units[0] if units[0] == units[1] else "",
         # keep units of x if they are the same as units of y
-    synopsis = "#{x}, #{y}, ... → #{x}-#{y}, ...",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪x⟫-#⟪y⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the
-        stack and the difference is placed back on the stack into the #{x}
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the
+        stack and the difference is placed back on the stack into the #⟪x⟫
         register.
     """,
 )
@@ -104,11 +104,11 @@ subtraction.addTest(stimulus="1 j -", result=1 - 1j, units="", text="1 - j")
 multiplication = BinaryOp(
     "*",
     operator.mul,
-    description = "%(key)s: multiplication",
-    synopsis = "#{x}, #{y}, ... → #{x}*#{y}, ...",
+    description = "{key}: multiplication",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪x⟫*#⟪y⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the
-        stack and the product is placed back on the stack into the #{x}
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the
+        stack and the product is placed back on the stack into the #⟪x⟫
         register.
     """,
 )
@@ -126,16 +126,16 @@ multiplication.addTest(stimulus="j j *", result=-1, units="", text="-1")
 trueDivision = BinaryOp(
     "/",
     operator.truediv,
-    description = "%(key)s: true division",
-    synopsis = "#{x}, #{y}, ... → #{y}/#{x}, ...",
+    description = "{key}: true division",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪y⟫/#⟪x⟫, ...",
     summary = r"""
-        The values in the #{x} and #{y} registers are popped from the stack and
-        the quotient is placed back on the stack into the #{x} register.  Both
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and
+        the quotient is placed back on the stack into the #⟪x⟫ register.  Both
         values are treated as real numbers and the result is a real number. So
-        \verb{
-            @{0}: 1 2/
-            @{500m}:
-        }
+        \verb⟪
+            @⟪0⟫: 1 2/
+            @⟪500m⟫:
+        ⟫
     """,
 )
 trueDivision.addTest(stimulus="1 2/", result=1 / 2, units="", text="500m")
@@ -145,18 +145,18 @@ trueDivision.addTest(stimulus="1 j /", result=-1j, units="", text="-j")
 floorDivision = BinaryOp(
     "//",
     operator.floordiv,
-    description = "%(key)s: floor division",
-    synopsis = "#{x}, #{y}, ... → #{y}//#{x}, ...",
+    description = "{key}: floor division",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪y⟫//#⟪x⟫, ...",
     summary = r"""
-        The values in the #{x} and #{y} registers are popped from the
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the
         stack, the quotient is computed and then converted to an integer using
         the floor operation (it is replaced by the largest integer that is
         smaller than the quotient), and that is placed back on the stack into
-        the #{x} register.  So
-        \verb{
-            @{0}: 1 2//
-            @{0}:
-        }
+        the #⟪x⟫ register.  So
+        \verb⟪
+            @⟪0⟫: 1 2//
+            @⟪0⟫:
+        ⟫
     """,
 )
 floorDivision.addTest(stimulus="5 2//", result=5 // 2, units="", text="2")
@@ -165,16 +165,16 @@ floorDivision.addTest(stimulus="5 2//", result=5 // 2, units="", text="2")
 modulus = BinaryOp(
     "%",
     operator.mod,
-    description = "%(key)s: modulus",
-    synopsis = "#{x}, #{y}, ... → #{y}%#{x}, ...",
+    description = "{key}: modulus",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪y⟫%#⟪x⟫, ...",
     summary = r"""
-        The values in the #{x} and #{y} registers are popped from the stack, the
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack, the
         quotient is computed and the remainder is placed back on the stack into
-        the #{x} register.  So
-        \verb{
-            @{0}: 14 3%
-            @{2}:
-        }
+        the #⟪x⟫ register.  So
+        \verb⟪
+            @⟪0⟫: 14 3%
+            @⟪2⟫:
+        ⟫
         In this case 2 is the remainder because 3 goes evenly into 14 three
         times, which leaves a remainder of 2.
     """,
@@ -185,12 +185,12 @@ modulus.addTest(stimulus="5 2%", result=5 % 2, units="", text="1")
 percentChange = BinaryOp(
     "%chg",
     lambda y, x: 100 * (x - y) / y,
-    description = "%(key)s: percent change",
-    synopsis = "#{x}, #{y}, ... → 100*(#{x}-#{y})/#{y}, ...",
+    description = "{key}: percent change",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → 100*(#⟪x⟫-#⟪y⟫)/#⟪y⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the stack and 
-        the percent difference between #{x} and #{y} relative to #{y} is pushed 
-        back into the #{x} register.
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and 
+        the percent difference between #⟪x⟫ and #⟪y⟫ relative to #⟪y⟫ is pushed 
+        back into the #⟪x⟫ register.
     """,
 )
 percentChange.addTest(
@@ -203,12 +203,12 @@ parallel = BinaryOp(
     lambda y, x: (x / (x + y)) * y,
     units = lambda calc, units: units[0] if units[0] == units[1] else "",
         # keep units of x if they are the same as units of y
-    description = "%(key)s: parallel combination",
-    synopsis = "#{x}, #{y}, ... → 1/(1/#{x}+1/#{y}), ...",
+    description = "{key}: parallel combination",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → 1/(1/#⟪x⟫+1/#⟪y⟫), ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the stack and
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and
         replaced with the reciprocal of the sum of their reciprocals.  If the
-        values in the #{x} and #{y} registers are both resistances, both
+        values in the #⟪x⟫ and #⟪y⟫ registers are both resistances, both
         elastances, or both inductances, then the result is the resistance,
         elastance or inductance of the two in parallel. If the values are
         conductances, capacitances or susceptances, then the result is the
@@ -233,10 +233,10 @@ negation = UnaryOp(
     "chs",
     operator.neg,
     units = lambda calc, units: units[0],
-    description = "%(key)s: change sign",
-    synopsis = "#{x}, ... → −#{x}, ...",
+    description = "{key}: change sign",
+    synopsis = "#⟪x⟫, ... → −#⟪x⟫, ...",
     summary = """
-        The value in the #{x} register is replaced with its negative. 
+        The value in the #⟪x⟫ register is replaced with its negative. 
     """,
 )
 negation.addTest(stimulus="-3 chs", result=3, units="", text="3")
@@ -246,10 +246,10 @@ negation.addTest(stimulus="330pF chs", result=-330e-12, units="F", text="-330 pF
 reciprocal = UnaryOp(
     "recip",
     lambda x: 1 / x,
-    description = "%(key)s: reciprocal",
-    synopsis = "#{x}, ... → 1/#{x}, ...",
+    description = "{key}: reciprocal",
+    synopsis = "#⟪x⟫, ... → 1/#⟪x⟫, ...",
     summary = """
-        The value in the #{x} register is replaced with its reciprocal. 
+        The value in the #⟪x⟫ register is replaced with its reciprocal. 
     """,
 )
 reciprocal.addTest(stimulus="4 recip", result=1 / 4, units="", text="250m")
@@ -262,10 +262,10 @@ ceiling = UnaryOp(
     "ceil",
     math.ceil,
     units = lambda calc, units: units[0],
-    description = "%(key)s: round towards positive infinity",
-    synopsis = "#{x}, ... → ceil(#{x}), ...",
+    description = "{key}: round towards positive infinity",
+    synopsis = "#⟪x⟫, ... → ceil(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its value rounded
+        The value in the #⟪x⟫ register is replaced with its value rounded
         towards infinity (replaced with the smallest integer greater than its
         value).
     """,
@@ -283,10 +283,10 @@ floor = UnaryOp(
     "floor",
     math.floor,
     units = lambda calc, units: units[0],
-    description = "%(key)s: round towards negative infinity",
-    synopsis = "#{x}, ... → floor(#{x}), ...",
+    description = "{key}: round towards negative infinity",
+    synopsis = "#⟪x⟫, ... → floor(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its value rounded
+        The value in the #⟪x⟫ register is replaced with its value rounded
         towards negative infinity (replaced with the largest integer smaller
         than its value).
     """,
@@ -305,10 +305,10 @@ try:
     factorial = UnaryOp(
         "!",
         lambda arg: math.factorial(round(arg)),
-        description = "%(key)s: factorial",
-        synopsis = "#{x}, ... → #{x}!, ...",
+        description = "{key}: factorial",
+        synopsis = "#⟪x⟫, ... → #⟪x⟫!, ...",
         summary = """
-            The value in the #{x} register is replaced with the factorial of its
+            The value in the #⟪x⟫ register is replaced with the factorial of its
             value rounded to the nearest integer.
         """,
     )
@@ -320,11 +320,11 @@ except AttributeError:
 randomNumber = Constant(
     "rand",
     random.random,
-    description = "%(key)s: random number between 0 and 1",
-    synopsis = "... → #{rand}, ...",
+    description = "{key}: random number between 0 and 1",
+    synopsis = "... → #⟪rand⟫, ...",
     summary = """
         A number between 0 and 1 is chosen at random and its value is pushed on
-        the stack into #{x} register.
+        the stack into #⟪x⟫ register.
     """,
 )
 randomNumber.addTest("rand", units="")
@@ -337,12 +337,12 @@ powersAndLogs = Category("Powers, Roots, Exponentials and Logarithms")
 power = BinaryOp(
     "**",
     operator.pow,
-    description = "%(key)s: raise y to the power of x",
-    synopsis = "#{x}, #{y}, ... → #{y}**#{x}, ...",
+    description = "{key}: raise y to the power of x",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪y⟫**#⟪x⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the
-        stack and replaced with the value of #{y} raised to the power of
-        #{x}. 
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the
+        stack and replaced with the value of #⟪y⟫ raised to the power of
+        #⟪x⟫. 
     """,
     aliases = ["pow", "ytox"],
 )
@@ -359,10 +359,10 @@ power.addTest(
 exponential = UnaryOp(
     "exp",
     lambda x: cmath.exp(x) if type(x) == complex else math.exp(x),
-    description = "%(key)s: natural exponential",
-    synopsis = "#{x}, ... → exp(#{x}), ...",
+    description = "{key}: natural exponential",
+    synopsis = "#⟪x⟫, ... → exp(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its exponential. 
+        The value in the #⟪x⟫ register is replaced with its exponential. 
         Supports a complex argument.
     """,
     aliases = ["powe"],
@@ -375,10 +375,10 @@ exponential.addTest(stimulus="j pi * exp", result=-1, units="")
 naturalLog = UnaryOp(
     "ln",
     lambda x: cmath.log(x) if (type(x) == complex or x < 0) else math.log(x),
-    description = "%(key)s: natural logarithm",
-    synopsis = "#{x}, ... → ln(#{x}), ...",
+    description = "{key}: natural logarithm",
+    synopsis = "#⟪x⟫, ... → ln(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its natural logarithm. 
+        The value in the #⟪x⟫ register is replaced with its natural logarithm. 
         Supports a complex argument.
     """,
     aliases = ["loge"],
@@ -396,10 +396,10 @@ naturalLog.addTest(stimulus="j ln", result=1.57079632679j, units="", text="j1.57
 tenPower = UnaryOp(
     "pow10",
     lambda x: 10 ** x,
-    description = "%(key)s: raise 10 to the power of x",
-    synopsis = "#{x}, ... → 10**#{x}, ...",
+    description = "{key}: raise 10 to the power of x",
+    synopsis = "#⟪x⟫, ... → 10**#⟪x⟫, ...",
     summary = """
-        The value in the #{x} register is replaced with 10 raised to #{x}.
+        The value in the #⟪x⟫ register is replaced with 10 raised to #⟪x⟫.
     """,
     aliases = ["10tox"],
 )
@@ -410,10 +410,10 @@ tenPower.addTest(stimulus="-10 10tox log", result=-10, units="", text="-10")
 commonLog = UnaryOp(
     "log",
     math.log10,
-    description = "%(key)s: base 10 logarithm",
-    synopsis = "#{x}, ... → log(#{x}), ...",
+    description = "{key}: base 10 logarithm",
+    synopsis = "#⟪x⟫, ... → log(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its common logarithm. 
+        The value in the #⟪x⟫ register is replaced with its common logarithm. 
     """,
     aliases = ["log10", "lg"],
 )
@@ -423,10 +423,10 @@ commonLog.addTest(stimulus="100 log pow10", result=100, units="", text="100")
 twoPower = UnaryOp(
     "pow2",
     lambda x: 2 ** x,
-    description = "%(key)s: raise 2 to the power of x",
-    synopsis = "#{x}, ... → 2**#{x}, ...",
+    description = "{key}: raise 2 to the power of x",
+    synopsis = "#⟪x⟫, ... → 2**#⟪x⟫, ...",
     summary = """
-        The value in the #{x} register is replaced with 2 raised to #{x}.
+        The value in the #⟪x⟫ register is replaced with 2 raised to #⟪x⟫.
     """,
     aliases = ["2tox"],
 )
@@ -437,10 +437,10 @@ twoPower.addTest(stimulus="-2 2tox", result=0.25, units="", text="250m")
 binaryLog = UnaryOp(
     "log2",
     lambda x: math.log(x) / math.log(2),
-    description = "%(key)s: base 2 logarithm",
-    synopsis = "#{x}, ... → log2(#{x}), ...",
+    description = "{key}: base 2 logarithm",
+    synopsis = "#⟪x⟫, ... → log2(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its base 2 logarithm. 
+        The value in the #⟪x⟫ register is replaced with its base 2 logarithm. 
     """,
     aliases = ["lb"],
 )
@@ -451,10 +451,10 @@ binaryLog.addTest(stimulus="0.25 lb", result=-2, units="", text="-2")
 square = UnaryOp(
     "sqr",
     lambda x: x * x,
-    description = "%(key)s: square",
-    synopsis = "#{x}, ... → #{x}**2, ...",
+    description = "{key}: square",
+    synopsis = "#⟪x⟫, ... → #⟪x⟫**2, ...",
     summary = """
-        The value in the #{x} register is replaced with its square. 
+        The value in the #⟪x⟫ register is replaced with its square. 
     """,
 )
 square.addTest(stimulus="4 sqr", result=4 * 4, units="", text="16")
@@ -464,10 +464,10 @@ square.addTest(stimulus="j sqr", result=-1, units="", text="-1")
 squareRoot = UnaryOp(
     "sqrt",
     lambda x: cmath.sqrt(x) if (type(x) == complex or x < 0) else math.sqrt(x),
-    description = "%(key)s: square root",
-    synopsis = "#{x}, ... → sqrt(#{x}), ...",
+    description = "{key}: square root",
+    synopsis = "#⟪x⟫, ... → sqrt(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its square root.
+        The value in the #⟪x⟫ register is replaced with its square root.
     """,
     aliases = ["rt"],
 )
@@ -490,10 +490,10 @@ try:
     cubeRoot = UnaryOp(
         "cbrt",
         lambda x: libm.cbrt(x),
-        description = "%(key)s: cube root",
-        synopsis = "#{x}, ... → cbrt(#{x}), ...",
+        description = "{key}: cube root",
+        synopsis = "#⟪x⟫, ... → cbrt(#⟪x⟫), ...",
         summary = """
-            The value in the #{x} register is replaced with its cube root.
+            The value in the #⟪x⟫ register is replaced with its cube root.
         """,
     )
     cubeRoot.addTest(stimulus="64 cbrt", result=4, units="", text="4")
@@ -508,11 +508,11 @@ trigFunctions = Category("Trigonometric Functions")
 sine = UnaryOp(
     "sin",
     lambda x, calc: math.sin(calc.toRadians(x)),
-    description = "%(key)s: trigonometric sine",
+    description = "{key}: trigonometric sine",
     needCalc = True,
-    synopsis = "#{x}, ... → sin(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → sin(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its sine.
+        The value in the #⟪x⟫ register is replaced with its sine.
     """,
 )
 sine.addTest(stimulus="90 sin", result=1, units="", text="1")
@@ -523,11 +523,11 @@ sine.addTest(stimulus="rads pi 2/ sin", result=1, units="", text="1")
 cosine = UnaryOp(
     "cos",
     lambda x, calc: math.cos(calc.toRadians(x)),
-    description = "%(key)s: trigonometric cosine",
+    description = "{key}: trigonometric cosine",
     needCalc = True,
-    synopsis = "#{x}, ... → cos(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → cos(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its cosine.
+        The value in the #⟪x⟫ register is replaced with its cosine.
     """,
 )
 cosine.addTest(stimulus="180 cos", result=-1, units="", text="-1")
@@ -538,11 +538,11 @@ cosine.addTest(stimulus="degs 360 cos", result=1, units="", text="1")
 tangent = UnaryOp(
     "tan",
     lambda x, calc: math.tan(calc.toRadians(x)),
-    description = "%(key)s: trigonometric tangent",
+    description = "{key}: trigonometric tangent",
     needCalc = True,
-    synopsis = "#{x}, ... → tan(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → tan(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its tangent.
+        The value in the #⟪x⟫ register is replaced with its tangent.
     """,
 )
 tangent.addTest(stimulus="45 tan", result=1, units="", text="1")
@@ -553,12 +553,12 @@ tangent.addTest(stimulus="degs -45 tan", result=-1, units="", text="-1")
 arcSine = UnaryOp(
     "asin",
     lambda x, calc: calc.fromRadians(math.asin(x)),
-    description = "%(key)s: trigonometric arc sine",
+    description = "{key}: trigonometric arc sine",
     needCalc = True,
     units = lambda calc, units: calc.angleUnits(),
-    synopsis = "#{x}, ... → asin(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → asin(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its arc sine.
+        The value in the #⟪x⟫ register is replaced with its arc sine.
     """,
 )
 arcSine.addTest(stimulus="1 asin", result=90, units="degs", text="90 degs")
@@ -572,12 +572,12 @@ arcSine.addTest(
 arcCosine = UnaryOp(
     "acos",
     lambda x, calc: calc.fromRadians(math.acos(x)),
-    description = "%(key)s: trigonometric arc cosine",
+    description = "{key}: trigonometric arc cosine",
     needCalc = True,
     units = lambda calc, units: calc.angleUnits(),
-    synopsis = "#{x}, ... → acos(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → acos(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its arc cosine.
+        The value in the #⟪x⟫ register is replaced with its arc cosine.
     """,
 )
 arcCosine.addTest(stimulus="0 acos", result=90, units="degs", text="90 degs")
@@ -591,12 +591,12 @@ arcCosine.addTest(
 arcTangent = UnaryOp(
     "atan",
     lambda x, calc: calc.fromRadians(math.atan(x)),
-    description = "%(key)s: trigonometric arc tangent",
+    description = "{key}: trigonometric arc tangent",
     needCalc = True,
     units = lambda calc, units: calc.angleUnits(),
-    synopsis = "#{x}, ... → atan(#{x}), ...",
+    synopsis = "#⟪x⟫, ... → atan(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its arc tangent.
+        The value in the #⟪x⟫ register is replaced with its arc tangent.
     """,
 )
 arcTangent.addTest(stimulus="0 atan", result=0, units="degs", text="0 degs")
@@ -607,12 +607,12 @@ arcTangent.addTest(stimulus="degs 45 tan atan", result=45, units="degs", text="4
 setRadiansMode = Command(
     "rads",
     Calculator.useRadians,
-    description = "%(key)s: use radians",
+    description = "{key}: use radians",
     summary = """
-        Switch the trigonometric mode to radians (functions such as #{sin},
-        #{cos}, #{tan}, and #{ptor} expect angles to be given in radians;
-        functions such as #{arg}, #{asin}, #{acos}, #{atan}, #{atan2}, and
-        #{rtop} should produce angles in radians).
+        Switch the trigonometric mode to radians (functions such as #⟪sin⟫,
+        #⟪cos⟫, #⟪tan⟫, and #⟪ptor⟫ expect angles to be given in radians;
+        functions such as #⟪arg⟫, #⟪asin⟫, #⟪acos⟫, #⟪atan⟫, #⟪atan2⟫, and
+        #⟪rtop⟫ should produce angles in radians).
     """,
 )
 
@@ -620,12 +620,12 @@ setRadiansMode = Command(
 setDegreesMode = Command(
     "degs",
     Calculator.useDegrees,
-    description = "%(key)s: use degrees",
+    description = "{key}: use degrees",
     summary = """
-        Switch the trigonometric mode to degrees (functions such as #{sin},
-        #{cos}, #{tan}, and #{ptor} expect angles to be given in degrees;
-        functions such as #{arg}, #{asin}, #{acos}, #{atan}, #{atan2}, and
-        #{rtop} should produce angles in degrees).
+        Switch the trigonometric mode to degrees (functions such as #⟪sin⟫,
+        #⟪cos⟫, #⟪tan⟫, and #⟪ptor⟫ expect angles to be given in degrees;
+        functions such as #⟪arg⟫, #⟪asin⟫, #⟪acos⟫, #⟪atan⟫, #⟪atan2⟫, and
+        #⟪rtop⟫ should produce angles in degrees).
     """,
 )
 
@@ -638,11 +638,11 @@ complexAndVectorFunctions = Category("Complex and Vector Functions")
 absoluteValue = UnaryOp(
     "abs",
     lambda x: abs(x),
-    description = "%(key)s: magnitude of complex number",
+    description = "{key}: magnitude of complex number",
     units = lambda calc, units: units[0],
-    synopsis = "#{x}, ... → abs(#{x}), #{x}, ...",
+    synopsis = "#⟪x⟫, ... → abs(#⟪x⟫), #⟪x⟫, ...",
     summary = """
-        The absolute value of the number in the #{x} register is pushed onto the
+        The absolute value of the number in the #⟪x⟫ register is pushed onto the
         stack if it is real. If the value is complex, the magnitude is pushed
         onto the stack.
     """,
@@ -662,12 +662,12 @@ argument = UnaryOp(
     lambda x, calc: (
         calc.fromRadians(math.atan2(x.imag, x.real)) if type(x) == complex else 0
     ),
-    description = "%(key)s: phase of complex number",
+    description = "{key}: phase of complex number",
     needCalc = True,
     units = lambda calc, units: calc.angleUnits(),
-    synopsis = "#{x}, ... → arg(#{x}), #{x}, ...",
+    synopsis = "#⟪x⟫, ... → arg(#⟪x⟫), #⟪x⟫, ...",
     summary = """
-        The argument of the number in the #{x} register is pushed onto the
+        The argument of the number in the #⟪x⟫ register is pushed onto the
         stack if it is complex. If the value is real, zero is pushed
         onto the stack.
     """,
@@ -689,12 +689,12 @@ hypotenuse = BinaryOp(
     # keep units of x if they are the same as units of y
     ,
     units = lambda calc, units: units[0] if units[0] == units[1] else "",
-    description = "%(key)s: hypotenuse",
-    synopsis = "#{x}, #{y}, ... → sqrt(#{x}**2+#{y}**2), ...",
+    description = "{key}: hypotenuse",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → sqrt(#⟪x⟫**2+#⟪y⟫**2), ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the stack and 
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point
-        (#{x}, #{y}).
+        (#⟪x⟫, #⟪y⟫).
     """,
     aliases = ["len"],
 )
@@ -705,12 +705,12 @@ hypotenuse.addTest(stimulus="3mm 4mm len", result=5e-3, units="m", text="5 mm")
 arcTangent2 = BinaryOp(
     "atan2",
     lambda y, x, calc: calc.fromRadians(math.atan2(y, x)),
-    description = "%(key)s: two-argument arc tangent",
+    description = "{key}: two-argument arc tangent",
     needCalc = True,
     units = lambda calc, units: calc.angleUnits(),
-    synopsis = "#{x}, #{y}, ... → atan2(#{y},#{x}), ...",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → atan2(#⟪y⟫,#⟪x⟫), ...",
     summary="""
-        The values in the #{x} and #{y} registers are popped from the stack and 
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and 
         replaced with the angle of the vector from the origin to the point.
     """,
     aliases = ["angle"],
@@ -731,14 +731,14 @@ rectangularToPolar = BinaryIoOp(
     ,
     xUnits = lambda calc, units: units[0] if units[0] == units[1] else "",
     yUnits = lambda calc, units: calc.angleUnits(),
-    description = "%(key)s: convert rectangular to polar coordinates",
+    description = "{key}: convert rectangular to polar coordinates",
     needCalc = True,
-    synopsis = "#{x}, #{y}, ... → sqrt(#{x}**2+#{y}**2), atan2(#{y},#{x}), ...",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → sqrt(#⟪x⟫**2+#⟪y⟫**2), atan2(#⟪y⟫,#⟪x⟫), ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the stack and 
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and 
         replaced with the length of the vector from the origin to the point 
-        (#{x}, #{y}) and with the angle of the vector from the origin to the 
-        point (#{x}, #{y}).
+        (#⟪x⟫, #⟪y⟫) and with the angle of the vector from the origin to the 
+        point (#⟪x⟫, #⟪y⟫).
     """,
 )
 rectangularToPolar.addTest(stimulus="3 4 rtop", result=5, units="", text="5")
@@ -762,13 +762,13 @@ polarToRectangular = BinaryIoOp(
         mag * math.cos(calc.toRadians(ph)),
         mag * math.sin(calc.toRadians(ph)),
     ),
-    description = "%(key)s: convert polar to rectangular coordinates",
+    description = "{key}: convert polar to rectangular coordinates",
     needCalc = True,
     xUnits = lambda calc, units: units[0],
     yUnits = lambda calc, units: units[0],
-    synopsis = "#{x}, #{y}, ... → #{x}*cos(#{y}), #{x}*sin(#{y}), ...",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪x⟫*cos(#⟪y⟫), #⟪x⟫*sin(#⟪y⟫), ...",
     summary = """
-        The values in the #{x} and #{y} registers are popped from the stack and
+        The values in the #⟪x⟫ and #⟪y⟫ registers are popped from the stack and
         interpreted as the length and angle of a vector and are replaced with
         the coordinates of the end-point of that vector.
     """,
@@ -793,10 +793,10 @@ hyperbolicFunctions = Category("Hyperbolic Functions")
 hyperbolicSine = UnaryOp(
     "sinh",
     math.sinh,
-    description = "%(key)s: hyperbolic sine",
-    synopsis = "#{x}, ... → sinh(#{x}), ...",
+    description = "{key}: hyperbolic sine",
+    synopsis = "#⟪x⟫, ... → sinh(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its hyperbolic sine.
+        The value in the #⟪x⟫ register is replaced with its hyperbolic sine.
     """,
 )
 hyperbolicSine.addTest(stimulus="1 sinh", result=math.sinh(1), units="", text="1.1752")
@@ -805,10 +805,10 @@ hyperbolicSine.addTest(stimulus="1 sinh", result=math.sinh(1), units="", text="1
 hyperbolicCosine = UnaryOp(
     "cosh",
     math.cosh,
-    description = "%(key)s: hyperbolic cosine",
-    synopsis = "#{x}, ... → cosh(#{x}), ...",
+    description = "{key}: hyperbolic cosine",
+    synopsis = "#⟪x⟫, ... → cosh(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its hyperbolic cosine.
+        The value in the #⟪x⟫ register is replaced with its hyperbolic cosine.
     """,
 )
 hyperbolicCosine.addTest(
@@ -819,10 +819,10 @@ hyperbolicCosine.addTest(
 hyperbolicTangent = UnaryOp(
     "tanh",
     math.tanh,
-    description = "%(key)s: hyperbolic tangent",
-    synopsis = "#{x}, ... → tanh(#{x}), ...",
+    description = "{key}: hyperbolic tangent",
+    synopsis = "#⟪x⟫, ... → tanh(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its hyperbolic tangent.
+        The value in the #⟪x⟫ register is replaced with its hyperbolic tangent.
     """,
 )
 hyperbolicTangent.addTest(
@@ -834,10 +834,10 @@ try:
     hyperbolicArcSine = UnaryOp(
         "asinh",
         math.asinh,
-        description = "%(key)s: hyperbolic arc sine",
-        synopsis = "#{x}, ... → asinh(#{x}), ...",
+        description = "{key}: hyperbolic arc sine",
+        synopsis = "#⟪x⟫, ... → asinh(#⟪x⟫), ...",
         summary = """
-            The value in the #{x} register is replaced with its hyperbolic arc sine.
+            The value in the #⟪x⟫ register is replaced with its hyperbolic arc sine.
         """,
     )
     hyperbolicArcSine.addTest(stimulus="1 sinh asinh", result=1, units="", text="1")
@@ -849,10 +849,10 @@ try:
     hyperbolicArcCosine = UnaryOp(
         "acosh",
         math.acosh,
-        description = "%(key)s: hyperbolic arc cosine",
-        synopsis = "#{x}, ... → acosh(#{x}), ...",
+        description = "{key}: hyperbolic arc cosine",
+        synopsis = "#⟪x⟫, ... → acosh(#⟪x⟫), ...",
         summary = """
-            The value in the #{x} register is replaced with its hyperbolic arc
+            The value in the #⟪x⟫ register is replaced with its hyperbolic arc
             cosine.
         """,
     )
@@ -865,10 +865,10 @@ try:
     hyperbolicArcTangent = UnaryOp(
         "atanh",
         math.atanh,
-        description = "%(key)s: hyperbolic arc tangent",
-        synopsis = "#{x}, ... → atanh(#{x}), ...",
+        description = "{key}: hyperbolic arc tangent",
+        synopsis = "#⟪x⟫, ... → atanh(#⟪x⟫), ...",
         summary = """
-            The value in the #{x} register is replaced with its hyperbolic arc
+            The value in the #⟪x⟫ register is replaced with its hyperbolic arc
             tangent.
         """,
     )
@@ -883,10 +883,10 @@ decibelFunctions = Category("Decibel Functions")
 decibels20 = UnaryOp(
     "db",
     lambda x: 20 * math.log10(x),
-    description = "%(key)s: convert voltage or current to dB",
-    synopsis = "#{x}, ... → 20*log(#{x}), ...",
+    description = "{key}: convert voltage or current to dB",
+    synopsis = "#⟪x⟫, ... → 20*log(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is replaced with its value in 
+        The value in the #⟪x⟫ register is replaced with its value in 
         decibels. It is appropriate to apply this form when 
         converting voltage or current to decibels.
     """,
@@ -901,11 +901,11 @@ decibels20.addTest(stimulus="1m i2db", result=-60, units="", text="-60")
 antiDecibels20 = UnaryOp(
     "adb",
     lambda x: 10 ** (x / 20),
-    description = "%(key)s: convert dB to voltage or current",
-    synopsis = "#{x}, ... → 10**(#{x}/20), ...",
+    description = "{key}: convert dB to voltage or current",
+    synopsis = "#⟪x⟫, ... → 10**(#⟪x⟫/20), ...",
     summary = """
-        The value in the #{x} register is converted from decibels and that value
-        is placed back into the #{x} register.  It is appropriate to apply this
+        The value in the #⟪x⟫ register is converted from decibels and that value
+        is placed back into the #⟪x⟫ register.  It is appropriate to apply this
         form when converting decibels to voltage or current.  
     """,
     aliases = ["db2v", "db2i"],
@@ -918,11 +918,11 @@ antiDecibels20.addTest(stimulus="40 db2i", result=100, units="", text="100")
 decibels10 = UnaryOp(
     "db10",
     lambda x: 10 * math.log10(x),
-    description = "%(key)s: convert power to dB",
-    synopsis = "#{x}, ... → 10*log(#{x}), ...",
+    description = "{key}: convert power to dB",
+    synopsis = "#⟪x⟫, ... → 10*log(#⟪x⟫), ...",
     summary = """
-        The value in the #{x} register is converted from decibels and that
-        value is placed back into the #{x} register.  It is appropriate to
+        The value in the #⟪x⟫ register is converted from decibels and that
+        value is placed back into the #⟪x⟫ register.  It is appropriate to
         apply this form when converting power to decibels.
     """,
     aliases = ["p2db"],
@@ -934,11 +934,11 @@ decibels10.addTest(stimulus="100 p2db", result=20, units="", text="20")
 antiDecibels10 = UnaryOp(
     "adb10",
     lambda x: 10 ** (x / 10),
-    description = "%(key)s: convert dB to power",
-    synopsis = "#{x}, ... → 10**(#{x}/10), ...",
+    description = "{key}: convert dB to power",
+    synopsis = "#⟪x⟫, ... → 10**(#⟪x⟫/10), ...",
     summary = """
-        The value in the #{x} register is converted from decibels and that value
-        is placed back into the #{x} register.  It is appropriate to apply this
+        The value in the #⟪x⟫ register is converted from decibels and that value
+        is placed back into the #⟪x⟫ register.  It is appropriate to apply this
         form when converting decibels to voltage or current.  
     """,
     aliases = ["db2p"],
@@ -950,12 +950,12 @@ antiDecibels10.addTest(stimulus="20 db2p", result=100, units="", text="100")
 voltageToDbm = UnaryOp(
     "vdbm",
     lambda x, calc: 30 + 10 * math.log10(x * x / calc.heap["Rref"][1][0] / 2),
-    description = "%(key)s: convert peak voltage to dBm",
+    description = "{key}: convert peak voltage to dBm",
     needCalc = True,
-    synopsis = "#{x}, ... → 30+10*log10((#{x}**2)/(2*#{Rref})), ...",
+    synopsis = "#⟪x⟫, ... → 30+10*log10((#⟪x⟫**2)/(2*#⟪Rref⟫)), ...",
     summary = """
-        The value in the #{x} register is expected to be the peak voltage of a
-        sinusoid that is driving a load resistor equal to #{Rref} (a predefined
+        The value in the #⟪x⟫ register is expected to be the peak voltage of a
+        sinusoid that is driving a load resistor equal to #⟪Rref⟫ (a predefined
         variable).  It is replaced with the power delivered to the resistor in
         decibels relative to 1 milliwatt.  
     """,
@@ -969,15 +969,15 @@ voltageToDbm.addTest(stimulus='5 "Ohms" =Rref 1 vdbm', result=20, units="", text
 dbmToVoltage = UnaryOp(
     "dbmv",
     lambda x, calc: math.sqrt(2 * pow(10, (x - 30) / 10) * calc.heap["Rref"][1][0]),
-    description = "%(key)s: dBm to peak voltage",
+    description = "{key}: dBm to peak voltage",
     needCalc = True,
     units = "V",
-    synopsis = "#{x}, ... → sqrt(2*10**(#{x} - 30)/10)*#{Rref}), ...",
+    synopsis = "#⟪x⟫, ... → sqrt(2*10**(#⟪x⟫ - 30)/10)*#⟪Rref⟫), ...",
     summary = """
-        The value in the #{x} register is expected to be a power in decibels
+        The value in the #⟪x⟫ register is expected to be a power in decibels
         relative to one milliwatt. It is replaced with the peak voltage of a
         sinusoid that would be needed to deliver the same power to a load
-        resistor equal to #{Rref} (a predefined variable).
+        resistor equal to #⟪Rref⟫ (a predefined variable).
     """,
     aliases = ["dbm2v"],
 )
@@ -989,12 +989,12 @@ dbmToVoltage.addTest(stimulus='5 "Ohms" =Rref 20 dbmv', result=1, units="V", tex
 currentToDbm = UnaryOp(
     "idbm",
     lambda x, calc: 30 + 10 * math.log10(x * x * calc.heap["Rref"][1][0] / 2),
-    description = "%(key)s: peak current to dBm",
+    description = "{key}: peak current to dBm",
     needCalc = True,
-    synopsis = "#{x}, ... → 30+10*log10(((#{x}**2)*#{Rref}/2), ...",
+    synopsis = "#⟪x⟫, ... → 30+10*log10(((#⟪x⟫**2)*#⟪Rref⟫/2), ...",
     summary = """
-        The value in the #{x} register is expected to be the peak current of a
-        sinusoid that is driving a load resistor equal to #{Rref} (a predefined
+        The value in the #⟪x⟫ register is expected to be the peak current of a
+        sinusoid that is driving a load resistor equal to #⟪Rref⟫ (a predefined
         variable).  It is replaced with the power delivered to the resistor in
         decibels relative to 1 milliwatt.
     """,
@@ -1010,15 +1010,15 @@ currentToDbm.addTest(
 dbmToCurrent = UnaryOp(
     "dbmi",
     lambda x, calc: math.sqrt(2 * pow(10, (x - 30) / 10) / calc.heap["Rref"][1][0]),
-    description = "%(key)s: dBm to peak current",
+    description = "{key}: dBm to peak current",
     needCalc = True,
     units = "A",
-    synopsis = "#{x}, ... → sqrt(2*10**(#{x} - 30)/10)/#{Rref}), ...",
+    synopsis = "#⟪x⟫, ... → sqrt(2*10**(#⟪x⟫ - 30)/10)/#⟪Rref⟫), ...",
     summary = """
-        The value in the #{x} register is expected to be a power in decibels
+        The value in the #⟪x⟫ register is expected to be a power in decibels
         relative to one milliwatt. It is replaced with the peak current of a
         sinusoid that would be needed to deliver the same power to a load
-        resistor equal to #{Rref} (a predefined variable).
+        resistor equal to #⟪Rref⟫ (a predefined variable).
     """,
     aliases = ["dbm2i"],
 )
@@ -1035,10 +1035,10 @@ constants = Category("Constants")
 pi = Constant(
     "pi",
     (math.pi, "rads"),
-    description = "%(key)s: the ratio of a circle's circumference to its diameter",
+    description = "{key}: the ratio of a circle's circumference to its diameter",
     synopsis = "... → π, ...",
     summary = """
-        The value of π (3.141592...) is pushed on the stack into the #{x}
+        The value of π (3.141592...) is pushed on the stack into the #⟪x⟫
         register.
     """,
     aliases = ["π"],
@@ -1050,9 +1050,9 @@ pi.addTest(stimulus="π", result=math.pi, units="rads", text="3.1416 rads")
 twoPi = Constant(
     "2pi",
     (2 * math.pi, "rads"),
-    description = "%(key)s: the ratio of a circle's circumference to its radius",
+    description = "{key}: the ratio of a circle's circumference to its radius",
     synopsis = "... → 2π, ...",
-    summary = "2π (6.283185...) is pushed on the stack into the #{x} register.",
+    summary = "2π (6.283185...) is pushed on the stack into the #⟪x⟫ register.",
     aliases = ["tau", "τ", "2π"],
 )
 twoPi.addTest(stimulus="2pi", result=2 * math.pi, units="rads", text="6.2832 rads")
@@ -1064,9 +1064,9 @@ twoPi.addTest(stimulus="2π", result=2 * math.pi, units="rads", text="6.2832 rad
 squareRoot2 = Constant(
     "rt2",
     math.sqrt(2),
-    description = "%(key)s: square root of two",
+    description = "{key}: square root of two",
     synopsis = "... → √2, ...",
-    summary = "√2 (1.4142...) is pushed on the stack into the #{x} register.",
+    summary = "√2 (1.4142...) is pushed on the stack into the #⟪x⟫ register.",
 )
 squareRoot2.addTest(stimulus="rt2", result=math.sqrt(2), units="", text="1.4142")
 
@@ -1074,11 +1074,11 @@ squareRoot2.addTest(stimulus="rt2", result=math.sqrt(2), units="", text="1.4142"
 imaginaryUnit = Constant(
     "j",
     1j,
-    description = "%(key)s: imaginary unit (square root of −1)",
-    synopsis = "... → #{j}, ...",
+    description = "{key}: imaginary unit (square root of −1)",
+    synopsis = "... → #⟪j⟫, ...",
     summary = """
         The imaginary unit (square root of -1) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 imaginaryUnit.addTest(stimulus="j", result=1j, units="", text="j")
@@ -1087,11 +1087,11 @@ imaginaryUnit.addTest(stimulus="j", result=1j, units="", text="j")
 imaginaryTwoPi = Constant(
     "j2pi",
     (2j * math.pi, "rads"),
-    description = "%(key)s: j2π",
-    synopsis = "... → #{j}*2*#{pi}, ...",
+    description = "{key}: j2π",
+    synopsis = "... → #⟪j⟫*2*#⟪pi⟫, ...",
     summary = """
         2π times the imaginary unit (j6.283185...) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
     aliases = ["jtau", "jτ", "j2π"],
 )
@@ -1112,11 +1112,11 @@ imaginaryTwoPi.addTest(
 planckConstant = Constant(
     "h",
     {"mks": (6.626070e-34, "J-s"), "cgs": (6.626070e-27, "erg-s")},
-    description = "%(key)s: Planck constant",
-    synopsis = "... → #{h}, ...",
+    description = "{key}: Planck constant",
+    synopsis = "... → #⟪h⟫, ...",
     summary = """
-        The Planck constant #{h} (6.626070×10⁻³⁴ J-s [mks] or 6.626070×10⁻²⁷ erg-s [cgs])
-        is pushed on the stack into the #{x} register.
+        The Planck constant #⟪h⟫ (6.626070×10⁻³⁴ J-s [mks] or 6.626070×10⁻²⁷ erg-s [cgs])
+        is pushed on the stack into the #⟪x⟫ register.
     """,
 )
 planckConstant.addTest(
@@ -1130,11 +1130,11 @@ planckConstant.addTest(
 planckConstantReduced = Constant(
     "hbar",
     {"mks": (1.054571800e-34, "J-s"), "cgs": (1.054571800e-27, "erg-s")},
-    description = "%(key)s: Reduced Planck constant",
-    synopsis = "... → #{ħ}, ...",
+    description = "{key}: Reduced Planck constant",
+    synopsis = "... → #⟪ħ⟫, ...",
     summary="""
-        The reduced Planck constant #{ħ} (1.054571800×10⁻³⁴ J-s [mks] or
-        1.054571800×10⁻²⁷ erg-s [cgs]) is pushed on the stack into the #{x}
+        The reduced Planck constant #⟪ħ⟫ (1.054571800×10⁻³⁴ J-s [mks] or
+        1.054571800×10⁻²⁷ erg-s [cgs]) is pushed on the stack into the #⟪x⟫
         register.
     """,
     aliases = ["ħ"],
@@ -1156,11 +1156,11 @@ planckConstantReduced.addTest(
 planckLength = Constant(
     "lP",
     (1.616229e-35, "m"),
-    description = "%(key)s: Planck length",
-    synopsis = "... → #{lP}, ...",
+    description = "{key}: Planck length",
+    synopsis = "... → #⟪lP⟫, ...",
     summary = """
         The Planck length (√(hG/(2πc³)) or 1.616229×10⁻³⁵ m) is pushed on
-        the stack into the #{x} register.
+        the stack into the #⟪x⟫ register.
     """,
 )
 planckLength.addTest(stimulus="lP", result=1.616229e-35, units="m", text="16.162e-36m")
@@ -1169,11 +1169,11 @@ planckLength.addTest(stimulus="lP", result=1.616229e-35, units="m", text="16.162
 planckMass = Constant(
     "mP",
     (2.176470e-5, "g"),
-    description = "%(key)s: Planck mass",
-    synopsis = "... → #{mP}, ...",
+    description = "{key}: Planck mass",
+    synopsis = "... → #⟪mP⟫, ...",
     summary = """
         The Planck mass (√(hc/(2πG)) or 2.176470×10⁻⁵ g) is pushed on
-        the stack into the #{x} register.
+        the stack into the #⟪x⟫ register.
     """,
 )
 planckMass.addTest(stimulus="mP", result=2.176470e-5, units="g", text="21.765ug")
@@ -1182,11 +1182,11 @@ planckMass.addTest(stimulus="mP", result=2.176470e-5, units="g", text="21.765ug"
 planckTemperature = Constant(
     "TP",
     (1.416808e32, "K"),
-    description = "%(key)s: Planck temperature",
-    synopsis = "... → #{TP}, ...",
+    description = "{key}: Planck temperature",
+    synopsis = "... → #⟪TP⟫, ...",
     summary = """
         The Planck temperature (mP⋅c²/k or 1.416808×10³² K) is pushed
-        on the stack into the #{x} register.
+        on the stack into the #⟪x⟫ register.
     """,
 )
 planckTemperature.addTest(
@@ -1197,11 +1197,11 @@ planckTemperature.addTest(
 planckTime = Constant(
     "tP",
     (5.39116e-44, "s"),
-    description = "%(key)s: Planck time",
-    synopsis = "... → #{tP}, ...",
+    description = "{key}: Planck time",
+    synopsis = "... → #⟪tP⟫, ...",
     summary = """
         The Planck time (sqrt(hG/(2πc⁵)) or 5.39116×10⁻⁴⁴ s) is pushed on
-        the stack into the #{x} register.
+        the stack into the #⟪x⟫ register.
     """,
 )
 planckTime.addTest(stimulus="tP", result=5.39116e-44, units="s", text="53.911e-45s")
@@ -1210,11 +1210,11 @@ planckTime.addTest(stimulus="tP", result=5.39116e-44, units="s", text="53.911e-4
 boltzmann = Constant(
     "k",
     {"mks": (1.38064852e-23, "J/K"), "cgs": (1.38064852e-16, "erg/K")},
-    description = "%(key)s: Boltzmann constant",
-    synopsis = "... → #{k}, ...",
+    description = "{key}: Boltzmann constant",
+    synopsis = "... → #⟪k⟫, ...",
     summary = """
         The Boltzmann constant (R/NA or 1.38064852×10⁻²³ J/K [mks] or
-        1.38064852×10⁻¹⁶ erg/K [cgs]) is pushed on the stack into the #{x}
+        1.38064852×10⁻¹⁶ erg/K [cgs]) is pushed on the stack into the #⟪x⟫
         register.
     """,
 )
@@ -1229,12 +1229,12 @@ boltzmann.addTest(
 elementaryCharge = Constant(
     "q",
     {"mks": (1.6021766208e-19, "C"), "cgs": (4.80320425e-10, "statC")},
-    description = "%(key)s: elementary charge (the charge of an electron)",
-    synopsis = "... → #{q}, ...",
+    description = "{key}: elementary charge (the charge of an electron)",
+    synopsis = "... → #⟪q⟫, ...",
     summary = """
         The elementary charge (the charge of an electron or 1.6021766208×10⁻¹⁹ C
         [mks] or 4.80320425×10⁻¹⁰ statC [cgs]) is pushed on the stack into the
-        #{x} register.
+        #⟪x⟫ register.
     """,
 )
 elementaryCharge.addTest(
@@ -1248,11 +1248,11 @@ elementaryCharge.addTest(
 massOfElectron = Constant(
     "me",
     (9.10938356e-28, "g"),
-    description = "%(key)s: rest mass of an electron",
-    synopsis = "... → #{me}, ...",
+    description = "{key}: rest mass of an electron",
+    synopsis = "... → #⟪me⟫, ...",
     summary = """
         The rest mass of an electron (9.10938356×10⁻²⁸ g) is pushed on the stack
-        into the #{x} register.
+        into the #⟪x⟫ register.
     """,
 )
 massOfElectron.addTest(
@@ -1263,11 +1263,11 @@ massOfElectron.addTest(
 massOfProton = Constant(
     "mp",
     (1.672621898e-24, "g"),
-    description = "%(key)s: mass of a proton",
-    synopsis = "... → #{mp}, ...",
+    description = "{key}: mass of a proton",
+    synopsis = "... → #⟪mp⟫, ...",
     summary = """
         The mass of a proton (1.672621898×10⁻²⁴ g) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 massOfProton.addTest(
@@ -1278,11 +1278,11 @@ massOfProton.addTest(
 massOfNeutron = Constant(
     "mn",
     (1.674927471e-24, "g"),
-    description = "%(key)s: mass of a neutron",
-    synopsis = "... → #{mn}, ...",
+    description = "{key}: mass of a neutron",
+    synopsis = "... → #⟪mn⟫, ...",
     summary = """
         The mass of a neutron (1.674927471×10⁻²⁴ g) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 massOfNeutron.addTest(
@@ -1293,11 +1293,11 @@ massOfNeutron.addTest(
 massOfHydrogen = Constant(
     "mh",
     (1.00782503223 * 1.660539040e-24, "g"),
-    description = "%(key)s: mass of a hydrogen atom",
-    synopsis = "... → #{mh}, ...",
+    description = "{key}: mass of a hydrogen atom",
+    synopsis = "... → #⟪mh⟫, ...",
     summary = """
         The mass of a hydrogen atom (1.6735328115×10⁻²⁴ g) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 massOfHydrogen.addTest(
@@ -1311,11 +1311,11 @@ massOfHydrogen.addTest(
 atomicMassUnit = Constant(
     "amu",
     (1.660539040e-24, "g"),
-    description = "%(key)s: unified atomic mass unit",
-    synopsis = "... → #{amu}, ...",
+    description = "{key}: unified atomic mass unit",
+    synopsis = "... → #⟪amu⟫, ...",
     summary = """
         The unified atomic mass unit (1.660539040×10⁻²⁴ g) is pushed on the stack
-        into the #{x} register.
+        into the #⟪x⟫ register.
     """,
 )
 atomicMassUnit.addTest(
@@ -1326,11 +1326,11 @@ atomicMassUnit.addTest(
 speedOfLight = Constant(
     "c",
     (2.99792458e8, "m/s"),
-    description = "%(key)s: speed of light in a vacuum",
-    synopsis = "... → #{c}, ...",
+    description = "{key}: speed of light in a vacuum",
+    synopsis = "... → #⟪c⟫, ...",
     summary = """
         The speed of light in a vacuum (2.99792458×10⁸ m/s) is pushed on the stack
-        into the #{x} register.
+        into the #⟪x⟫ register.
     """,
 )
 speedOfLight.addTest(stimulus="c", result=2.99792458e8, units="m/s", text="299.79 Mm/s")
@@ -1339,11 +1339,11 @@ speedOfLight.addTest(stimulus="c", result=2.99792458e8, units="m/s", text="299.7
 gravitationalConstant = Constant(
     "G",
     (6.6746e-14, "m³/g-s²"),
-    description = "%(key)s: universal gravitational constant",
-    synopsis = "... → #{G}, ...",
+    description = "{key}: universal gravitational constant",
+    synopsis = "... → #⟪G⟫, ...",
     summary = """
         The universal gravitational constant (6.6746×10⁻¹⁴ m³/g-s²) is pushed
-        on the stack into the #{x} register.
+        on the stack into the #⟪x⟫ register.
     """,
 )
 gravitationalConstant.addTest(
@@ -1354,11 +1354,11 @@ gravitationalConstant.addTest(
 earthGravity = Constant(
     "g",
     (9.80665, "m/s²"),
-    description = "%(key)s: earth gravity",
-    synopsis = "... → #{g}, ...",
+    description = "{key}: earth gravity",
+    synopsis = "... → #⟪g⟫, ...",
     summary = """
         The standard acceleration at sea level due to gravity on earth (9.80665
-        m/s²)) is pushed on the stack into the #{x} register.
+        m/s²)) is pushed on the stack into the #⟪x⟫ register.
     """,
 )
 earthGravity.addTest(stimulus="g", result=9.80665, units="m/s²", text="9.8066 m/s²")
@@ -1367,11 +1367,11 @@ earthGravity.addTest(stimulus="g", result=9.80665, units="m/s²", text="9.8066 m
 rydbergConstant = Constant(
     "Rinf",
     (10973731.568508, "m⁻¹"),
-    description = "%(key)s: Rydberg constant",
-    synopsis = "... → #{Ry}, ...",
+    description = "{key}: Rydberg constant",
+    synopsis = "... → #⟪Ry⟫, ...",
     summary = """
         The Rydberg constant (10973731 m⁻¹) is pushed on the stack into the
-        #{x} register.
+        #⟪x⟫ register.
     """,
 )
 rydbergConstant.addTest(
@@ -1382,11 +1382,11 @@ rydbergConstant.addTest(
 stefanBoltsmannConstant = Constant(
     "sigma",
     (5.670367e-8, "W/m²K⁴"),
-    description = "%(key)s: Stefan-Boltzmann constant",
-    synopsis = "... → #{sigma}, ...",
+    description = "{key}: Stefan-Boltzmann constant",
+    synopsis = "... → #⟪sigma⟫, ...",
     summary = """
         The Stefan-Boltzmann constant (5.670367×10⁻⁸ W/m²K⁴) is pushed on
-        the stack into the #{x} register.
+        the stack into the #⟪x⟫ register.
     """,
 )
 stefanBoltsmannConstant.addTest(
@@ -1400,11 +1400,11 @@ stefanBoltsmannConstant.addTest(
 fineStructureConstant = Constant(
     "alpha",
     (7.2973525664e-3, ""),
-    description = "%(key)s: Fine structure constant",
-    synopsis = "... → #{alpha}, ...",
+    description = "{key}: Fine structure constant",
+    synopsis = "... → #⟪alpha⟫, ...",
     summary = """
         The fine structure  constant (7.2973525664e-3) is pushed on
-        the stack into the #{x} register.
+        the stack into the #⟪x⟫ register.
     """,
 )
 fineStructureConstant.addTest(
@@ -1415,11 +1415,11 @@ fineStructureConstant.addTest(
 avogadroConstant = Constant(
     "NA",
     (6.022140857e23, "mol⁻¹"),
-    description = "%(key)s: Avogadro Number",
-    synopsis = "... → #{NA}, ...",
+    description = "{key}: Avogadro Number",
+    synopsis = "... → #⟪NA⟫, ...",
     summary = """
         Avogadro constant (6.022140857×10²³ mol⁻¹) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 avogadroConstant.addTest(
@@ -1430,11 +1430,11 @@ avogadroConstant.addTest(
 molarGasConstant = Constant(
     "R",
     {"mks": (8.3144598, "J/mol-K"), "cgs": (8.3144598e7, "erg/deg-mol")},
-    description = "%(key)s: molar gas constant",
-    synopsis = "... → #{R}, ...",
+    description = "{key}: molar gas constant",
+    synopsis = "... → #⟪R⟫, ...",
     summary = """
         The molar gas constant (8.3144598 J/mol-K [mks] or 83.145 Merg/deg-mol
-        [cgs]) is pushed on the stack into the #{x} register.
+        [cgs]) is pushed on the stack into the #⟪x⟫ register.
     """,
 )
 molarGasConstant.addTest(
@@ -1445,11 +1445,11 @@ molarGasConstant.addTest(
 zeroCelsius = Constant(
     "0C",
     (273.15, "K"),
-    description = "%(key)s: 0 Celsius in Kelvin",
-    synopsis = "... → #{0C}, ...",
+    description = "{key}: 0 Celsius in Kelvin",
+    synopsis = "... → #⟪0C⟫, ...",
     summary = """
         Zero celsius in kelvin (273.15 K) is pushed on the stack into
-        the #{x} register.
+        the #⟪x⟫ register.
     """,
 )
 zeroCelsius.addTest(stimulus="0C", result=273.15, units="K", text="273.15 K")
@@ -1458,11 +1458,11 @@ zeroCelsius.addTest(stimulus="0C", result=273.15, units="K", text="273.15 K")
 freeSpacePermittivity = Constant(
     "eps0",
     {"mks": (8.854187817e-12, "F/m"), "cgs": (0.25 / math.pi, "")},
-    description = "%(key)s: permittivity of free space",
-    synopsis = "... → #{eps0}, ...",
+    description = "{key}: permittivity of free space",
+    synopsis = "... → #⟪eps0⟫, ...",
     summary = """
         The permittivity of free space (8.854187817×10⁻¹² F/m [mks] or 1/4π [cgs])
-        is pushed on the stack into the #{x} register.
+        is pushed on the stack into the #⟪x⟫ register.
     """,
 )
 freeSpacePermittivity.addTest(
@@ -1476,11 +1476,11 @@ freeSpacePermeability = Constant(
         "mks": (4e-7 * math.pi, "H/m"),
         "cgs": (4 * math.pi / (2.99792458e8 ** 2), "s²/m²"),
     },
-    description = "%(key)s: permeability of free space",
-    synopsis = "... → #{mu0}, ...",
+    description = "{key}: permeability of free space",
+    synopsis = "... → #⟪mu0⟫, ...",
     summary = """
         The permeability of free space (4π×10⁻⁷ H/m [mks] or 4π/c² s²/m²
-        [cgs]) is pushed on the stack into the #{x} register.
+        [cgs]) is pushed on the stack into the #⟪x⟫ register.
     """,
 )
 freeSpacePermeability.addTest(
@@ -1497,11 +1497,11 @@ freeSpacePermeability.addTest(
 freeSpaceCharacteristicImpedance = Constant(
     "Z0",
     {"mks": (119.9169832 * math.pi, "Ω")},
-    description = "%(key)s: Characteristic impedance of free space",
-    synopsis = "... → #{Z0}, ...",
+    description = "{key}: Characteristic impedance of free space",
+    synopsis = "... → #⟪Z0⟫, ...",
     summary = """
         The characteristic impedance of free space (376.730313461 Ω) is
-        pushed on the stack into the #{x} register.
+        pushed on the stack into the #⟪x⟫ register.
     """,
 )
 freeSpaceCharacteristicImpedance.addTest(
@@ -1512,7 +1512,7 @@ freeSpaceCharacteristicImpedance.addTest(
 setMksMode = Command(
     "mks",
     Calculator.useMKS,
-    description = "%(key)s: use MKS units for constants",
+    description = "{key}: use MKS units for constants",
     summary = """
         Switch the unit system for constants to MKS or SI.
     """,
@@ -1522,7 +1522,7 @@ setMksMode = Command(
 setCgsMode = Command(
     "cgs",
     Calculator.useCGS,
-    description = "%(key)s: use ESU CGS units for constants",
+    description = "{key}: use ESU CGS units for constants",
     summary = """
         Switch the unit system for constants to ESU CGS.
     """,
@@ -1531,7 +1531,7 @@ setCgsMode = Command(
 # Numbers {{{2
 numbers = Category("Numbers")
 
-# real number in engineering notation {{{3
+# real number in SI notation {{{3
 # accepts numbers both with and without SI scale factors. If an SI scale factor
 # is present, then attached trailing units can also be given. It is also
 # possible to include commas in the number anywhere a digit can be given. It is
@@ -1553,64 +1553,64 @@ def siNumber(matches):
     return num
 
 
-engineeringNumber = Number(
+SI_Number = Number(
     # pattern=r'\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)(([YZEPTGMKk_mµμunpfazy])([a-zA-Z_°ÅΩƱΩ℧]*))?)\Z'
     # above pattern does not allow one to skip the scale factor, pattern below does
-    pattern = r"\A([-+]?)(\$?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)([a-wyzA-Z_µμ°ÅΩƱΩ℧][a-zA-Z_µμ°ÅΩƱΩ℧]*)?)\Z",
+    pattern = r"\A([-+]?)([\$€¥£₩₺₽₹Ƀ₿șΞ]?)(j?)((([0-9],?)*)(\.?(,?[,0-9])+)([a-wyzA-Z_µμ°ÅΩƱΩ℧\$€¥£₩₺₽₹Ƀ₿șΞ][a-zA-Z_µμ°ÅΩƱΩ℧]*)?)\Z",
         # x is removed from the possible initial letters in the units to avoid
         # ambiguity with hex numbers.
     action = siNumber,
-    name = "engnum",
-    description = "«#{N}[.#{M}][#{S}][#{U}]»: a real number",
-    synopsis = "... → #{num}, ...",
+    name = "sinum",
+    description = "«#⟪N⟫[.#⟪M⟫][#⟪S⟫][#⟪U⟫]»: a real number",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is the
-        integer portion of the mantissa and #{M} is an optional fractional part.
-        #{S} is a letter that represents an SI scale factor. #{U} the optional
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is the
+        integer portion of the mantissa and #⟪M⟫ is an optional fractional part.
+        #⟪S⟫ is a letter that represents an SI scale factor. #⟪U⟫ the optional
         units (must not contain special characters).  For example, 10MHz
         represents 10⁷ Hz.
     """,
 )
-engineeringNumber.addTest(stimulus="1m", result=1e-3, units="", text="1m")
-engineeringNumber.addTest(stimulus="+10.1n", result=10.1e-9, units="", text="10.1n")
-engineeringNumber.addTest(
+SI_Number.addTest(stimulus="1m", result=1e-3, units="", text="1m")
+SI_Number.addTest(stimulus="+10.1n", result=10.1e-9, units="", text="10.1n")
+SI_Number.addTest(
     stimulus="-1.1GHz", result=-1.1e9, units="Hz", text="-1.1 GHz"
 )
-engineeringNumber.addTest(stimulus="$100k", result=1e5, units="$", text="$100k")
-engineeringNumber.addTest(stimulus="-$20M", result=-20e6, units="$", text="-$20M")
-engineeringNumber.addTest(
+SI_Number.addTest(stimulus="$100k", result=1e5, units="$", text="$100k")
+SI_Number.addTest(stimulus="-$20M", result=-20e6, units="$", text="-$20M")
+SI_Number.addTest(
     stimulus=".2MOhms", result=2e5, units="Ohms", text="200 kOhms"
 )
-engineeringNumber.addTest(stimulus="1000", result=1000.0, units="", text="1k")
-engineeringNumber.addTest(stimulus="$1,000,000", result=1e6, units="$", text="$1M")
-engineeringNumber.addTest(stimulus="$1,000K", result=1e6, units="$", text="$1M")
-engineeringNumber.addTest(stimulus="$1,000,000.00", result=1e6, units="$", text="$1M")
-engineeringNumber.addTest(stimulus="1,000.00K", result=1e6, units="", text="1M")
-engineeringNumber.addTest(stimulus="$1,000.00K", result=1e6, units="$", text="$1M")
-engineeringNumber.addTest(stimulus="$1,000.00", result=1e3, units="$", text="$1k")
-engineeringNumber.addTest(stimulus="$1,000", result=1e3, units="$", text="$1k")
-engineeringNumber.addTest(stimulus="$1000", result=1e3, units="$", text="$1k")
-engineeringNumber.addTest(stimulus="+$1000", result=1e3, units="$", text="$1k")
-engineeringNumber.addTest(stimulus="-$1000", result=-1e3, units="$", text="-$1k")
-engineeringNumber.addTest(stimulus="50Ω", result=50, units="Ω", text="50 Ω")
-engineeringNumber.addTest(stimulus="50kΩ", result=50000, units="Ω", text="50 kΩ")
-engineeringNumber.addTest(stimulus="50uΩ", result=50e-6, units="Ω", text="50 µΩ")
-engineeringNumber.addTest(stimulus="50µΩ", result=50e-6, units="Ω", text="50 µΩ")
-engineeringNumber.addTest(stimulus="50μΩ", result=50e-6, units="Ω", text="50 µΩ")
-engineeringNumber.addTest(
+SI_Number.addTest(stimulus="1000", result=1000.0, units="", text="1k")
+SI_Number.addTest(stimulus="$1,000,000", result=1e6, units="$", text="$1M")
+SI_Number.addTest(stimulus="$1,000K", result=1e6, units="$", text="$1M")
+SI_Number.addTest(stimulus="$1,000,000.00", result=1e6, units="$", text="$1M")
+SI_Number.addTest(stimulus="1,000.00K", result=1e6, units="", text="1M")
+SI_Number.addTest(stimulus="$1,000.00K", result=1e6, units="$", text="$1M")
+SI_Number.addTest(stimulus="$1,000.00", result=1e3, units="$", text="$1k")
+SI_Number.addTest(stimulus="$1,000", result=1e3, units="$", text="$1k")
+SI_Number.addTest(stimulus="$1000", result=1e3, units="$", text="$1k")
+SI_Number.addTest(stimulus="+$1000", result=1e3, units="$", text="$1k")
+SI_Number.addTest(stimulus="-$1000", result=-1e3, units="$", text="-$1k")
+SI_Number.addTest(stimulus="50Ω", result=50, units="Ω", text="50 Ω")
+SI_Number.addTest(stimulus="50kΩ", result=50000, units="Ω", text="50 kΩ")
+SI_Number.addTest(stimulus="50uΩ", result=50e-6, units="Ω", text="50 µΩ")
+SI_Number.addTest(stimulus="50µΩ", result=50e-6, units="Ω", text="50 µΩ")
+SI_Number.addTest(stimulus="50μΩ", result=50e-6, units="Ω", text="50 µΩ")
+SI_Number.addTest(
     stimulus="j1,000.00KOhms", result=1j * 1e6, units="Ohms", text="j1 MOhms"
 )
-engineeringNumber.addTest(stimulus="j1,000.00K", result=1j * 1e6, units="", text="j1M")
-engineeringNumber.addTest(stimulus="j1,000.00", result=1j * 1e3, units="", text="j1k")
-engineeringNumber.addTest(stimulus="j1,000", result=1j * 1e3, units="", text="j1k")
-engineeringNumber.addTest(stimulus="j1000", result=1j * 1e3, units="", text="j1k")
-engineeringNumber.addTest(stimulus="j1", result=1j, units="", text="j")
-engineeringNumber.addTest(stimulus="j1.5", result=1.5j, units="", text="j1.5")
-engineeringNumber.addTest(stimulus="+j1", result=1j, units="", text="j")
-engineeringNumber.addTest(stimulus="-j1", result=-1j, units="", text="-0 - j")
-engineeringNumber.addTest(stimulus="$j1", result=1j, units="$", text="j $")
-engineeringNumber.addTest(stimulus="+$j1", result=1j, units="$", text="j $")
-engineeringNumber.addTest(stimulus="-$j1", result=-1j, units="$", text="-$0 - j$")
+SI_Number.addTest(stimulus="j1,000.00K", result=1j * 1e6, units="", text="j1M")
+SI_Number.addTest(stimulus="j1,000.00", result=1j * 1e3, units="", text="j1k")
+SI_Number.addTest(stimulus="j1,000", result=1j * 1e3, units="", text="j1k")
+SI_Number.addTest(stimulus="j1000", result=1j * 1e3, units="", text="j1k")
+SI_Number.addTest(stimulus="j1", result=1j, units="", text="j")
+SI_Number.addTest(stimulus="j1.5", result=1.5j, units="", text="j1.5")
+SI_Number.addTest(stimulus="+j1", result=1j, units="", text="j")
+SI_Number.addTest(stimulus="-j1", result=-1j, units="", text="-0 - j")
+SI_Number.addTest(stimulus="$j1", result=1j, units="$", text="j $")
+SI_Number.addTest(stimulus="+$j1", result=1j, units="$", text="j $")
+SI_Number.addTest(stimulus="-$j1", result=-1j, units="$", text="-$0 - j$")
 
 
 def sciNumber(matches):
@@ -1635,12 +1635,12 @@ scientificNumber = Number(
     pattern = r"\A([-+]?)(\$?)(j?)([0-9]*\.?[0-9]+[eE][-+]?[0-9]+)([a-zA-Z_°ÅΩƱΩ℧]*)\Z",
     action = sciNumber,
     name = "scinum",
-    description = "«#{N}[.#{M}]»e«#{E}[#{U}]»: a real number in scientific notation",
-    synopsis = "... → #{num}, ...",
+    description = "«#⟪N⟫[.#⟪M⟫]»e«#⟪E⟫[#⟪U⟫]»: a real number in scientific notation",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is the
-        integer portion of the mantissa and #{M} is an optional fractional part.
-        #{E} is an integer exponent. #{U} the optional units (must not contain
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is the
+        integer portion of the mantissa and #⟪M⟫ is an optional fractional part.
+        #⟪E⟫ is an integer exponent. #⟪U⟫ the optional units (must not contain
         special characters).  For example, 2.2e-8F represents 22nF.
     """,
 )
@@ -1673,10 +1673,10 @@ hexadecimalNumber = Number(
     pattern = r"\A([-+]?)0[xX]([0-9a-fA-F]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=16), ""),
     name = "hexnum",
-    description = "0x«#{N}»: a hexadecimal number",
-    synopsis = "... → #{num}, ...",
+    description = "0x«#⟪N⟫»: a hexadecimal number",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
         example, 0xFF represents the hexadecimal number FF or the decimal number
         255.
@@ -1692,10 +1692,10 @@ octalNumber = Number(
     pattern = r"\A([-+]?)0[oO]([0-7]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=8), ""),
     name = "octnum",
-    description = "0o«#{N}»: a number in octal",
-    synopsis = "... → #{num}, ...",
+    description = "0o«#⟪N⟫»: a number in octal",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
         0o77 represents the octal number 77 or the decimal number 63.
     """,
@@ -1707,10 +1707,10 @@ binaryNumber = Number(
     pattern = r"\A([-+]?)0[bB]([01]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1], base=2), ""),
     name = "binnum",
-    description = "0b«#{N}»: a number in binary",
-    synopsis = "... → #{num}, ...",
+    description = "0b«#⟪N⟫»: a number in binary",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
         0b1111 represents the octal number 1111 or the decimal number 15.
     """,
@@ -1726,10 +1726,10 @@ verilogHexadecimalNumber = Number(
     pattern = r"\A([-+]?)'[hH]([0-9a-fA-F_]*[0-9a-fA-F])\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=16), ""),
     name = "vhexnum",
-    description = "'h«#{N}»: a number in Verilog hexadecimal notation",
-    synopsis = "... → #{num}, ...",
+    description = "'h«#⟪N⟫»: a number in Verilog hexadecimal notation",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 16 (use a-f to represent digits greater than 9).  For
         example, 'hFF represents the hexadecimal number FF or the decimal number
         255.
@@ -1744,10 +1744,10 @@ verilogDecimalNumber = Number(
     pattern = r"\A([-+]?)'[dD]([0-9_]*[0-9]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=10), ""),
     name = "vdecnum",
-    description = "'d«#{N}»: a number in Verilog decimal",
-    synopsis = "... → #{num}, ...",
+    description = "'d«#⟪N⟫»: a number in Verilog decimal",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 10.  For example, 'd99 represents the decimal number 99.
     """,
 )
@@ -1760,10 +1760,10 @@ verilogOctalNumber = Number(
     pattern = r"\A([-+]?)'[oO]([0-7_]*[0-7]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base=8), ""),
     name = "voctnum",
-    description = "'o«#{N}»: a number in Verilog octal",
-    synopsis = "... → #{num}, ...",
+    description = "'o«#⟪N⟫»: a number in Verilog octal",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 8 (it must not contain the digits 8 or 9).  For example,
         'o77 represents the octal number 77 or the decimal number 63.
     """,
@@ -1777,10 +1777,10 @@ verilogBinaryNumber = Number(
     pattern = r"\A([-+]?)'[bB]([01_]*[01]+)\Z",
     action = lambda matches: (int(matches[0] + matches[1].replace("_", ""), base = 2), ""),
     name = "vbinnum",
-    description = "'b«#{N}»: a number in Verilog binary",
-    synopsis = "... → #{num}, ...",
+    description = "'b«#⟪N⟫»: a number in Verilog binary",
+    synopsis = "... → #⟪num⟫, ...",
     summary = """
-        The number is pushed on the stack into the #{x} register.  #{N} is an
+        The number is pushed on the stack into the #⟪x⟫ register.  #⟪N⟫ is an
         integer in base 2 (it may contain only the digits 0 or 1).  For example,
         'b1111 represents the binary number 1111 or the decimal number 15.
     """,
@@ -1796,12 +1796,12 @@ setFixedFormat = SetFormat(
     action = lambda num, digits: "{0:,.{prec}f}".format(num, prec=digits),
     name = "fix",
     actionTakesUnits = False,
-    description = "%(name)s[«#{N}»]: use fixed notation",
+    description = "{name}[«#⟪N⟫»]: use fixed notation",
     summary = """
         Numbers are displayed with a fixed number of digits to the right of the
-        decimal point. If an optional whole number #{N} immediately follows
-        #{fix}, the number of digits to the right of the decimal point is set to
-        #{N}. 
+        decimal point. If an optional whole number #⟪N⟫ immediately follows
+        #⟪fix⟫, the number of digits to the right of the decimal point is set to
+        #⟪N⟫. 
     """,
 )
 setFixedFormat.addTest(stimulus="1e6 fix0", result=1e6, units="", text="1,000,000")
@@ -1819,12 +1819,12 @@ setSI_Format = SetFormat(
     action = lambda num, units, digits: Quantity(num, units=units).render(prec=digits),
     name = "si",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use SI notation",
+    description = "{name}[«#⟪N⟫»]: use SI notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         SI scale factors are used to convey the exponent when possible.  If an
-        optional whole number #{N} immediately follows #{si}, the precision is
-        set to #{N} digits.
+        optional whole number #⟪N⟫ immediately follows #⟪si⟫, the precision is
+        set to #⟪N⟫ digits.
     """,
 )
 setSI_Format.addTest(
@@ -1843,11 +1843,11 @@ setEngineeringFormat = SetFormat(
     action = lambda num, units, digits: EngQuantity(num, units=units).render(prec=digits),
     name = "eng",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use engineering notation",
+    description = "{name}[«#⟪N⟫»]: use engineering notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         exponent is given explicitly as an integer.  If an optional whole number
-        #{N} immediately follows #{sci}, the precision is set to #{N} digits.
+        #⟪N⟫ immediately follows #⟪sci⟫, the precision is set to #⟪N⟫ digits.
 
         Engineering notation differs from scientific notation in that it allows 
         1, 2 or 3 digits to precede the decimal point in the mantissa and the
@@ -1879,11 +1879,11 @@ setScientificFormat = SetFormat(
     action = lambda num, digits: "{0:.{prec}e}".format(num, prec=digits),
     name = "sci",
     actionTakesUnits = False,
-    description = "%(name)s[«#{N}»]: use scientific notation",
+    description = "{name}[«#⟪N⟫»]: use scientific notation",
     summary = """
         Numbers are displayed with a fixed number of digits of precision and the
         exponent is given explicitly as an integer.  If an optional whole number
-        #{N} immediately follows #{sci}, the precision is set to #{N} digits. 
+        #⟪N⟫ immediately follows #⟪sci⟫, the precision is set to #⟪N⟫ digits. 
 
         Scientific notation differs from engineering notation in that it allows 
         only 1 digit to precede the decimal point in the mantissa and the
@@ -1912,12 +1912,12 @@ setHexadecimalFormat = SetFormat(
     ),
     name = "hex",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use hexadecimal notation",
+    description = "{name}[«#⟪N⟫»]: use hexadecimal notation",
     summary = """
         Numbers are displayed in base 16 (a-f are used to represent digits
         greater than 9) with a fixed number of digits.  If an optional whole
-        number #{N} immediately follows #{hex}, the number of digits displayed
-        is set to #{N}. 
+        number #⟪N⟫ immediately follows #⟪hex⟫, the number of digits displayed
+        is set to #⟪N⟫. 
     """,
 )
 setHexadecimalFormat.addTest(stimulus="0xFF hex", result=0xFF, units="", text="0x00ff")
@@ -1936,11 +1936,11 @@ setOctalFormat = SetFormat(
     ),
     name = "oct",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use octal notation",
+    description = "{name}[«#⟪N⟫»]: use octal notation",
     summary = """
         Numbers are displayed in base 8 with a fixed number of digits.  If an
-        optional whole number #{N} immediately follows #{oct}, the number of
-        digits displayed is set to #{N}. 
+        optional whole number #⟪N⟫ immediately follows #⟪oct⟫, the number of
+        digits displayed is set to #⟪N⟫. 
     """,
 )
 setOctalFormat.addTest(stimulus="0o777 oct", result=0o777, units="", text="0o0777")
@@ -1957,11 +1957,11 @@ setBinaryFormat = SetFormat(
     ),
     name = "bin",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use binary notation",
+    description = "{name}[«#⟪N⟫»]: use binary notation",
     summary = """
         Numbers are displayed in base 2 with a fixed number of digits.  If an
-        optional whole number #{N} immediately follows #{bin}, the number of
-        digits displayed is set to #{N}. 
+        optional whole number #⟪N⟫ immediately follows #⟪bin⟫, the number of
+        digits displayed is set to #⟪N⟫. 
     """,
 )
 setBinaryFormat.addTest(stimulus="0b11 bin", result=0b11, units="", text="0b0011")
@@ -1978,12 +1978,12 @@ setVerilogHexadecimalFormat = SetFormat(
     ),
     name = "vhex",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use Verilog hexadecimal notation",
+    description = "{name}[«#⟪N⟫»]: use Verilog hexadecimal notation",
     summary = """
         Numbers are displayed in base 16 in Verilog format (a-f are used to
         represent digits greater than 9) with a fixed number of digits.  If an
-        optional whole number #{N} immediately follows #{vhex}, the number of
-        digits displayed is set to #{N}. 
+        optional whole number #⟪N⟫ immediately follows #⟪vhex⟫, the number of
+        digits displayed is set to #⟪N⟫. 
     """,
 )
 setVerilogHexadecimalFormat.addTest(
@@ -2004,11 +2004,11 @@ setVerilogDecimalFormat = SetFormat(
     ),
     name = "vdec",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use Verilog decimal notation",
+    description = "{name}[«#⟪N⟫»]: use Verilog decimal notation",
     summary = """
         Numbers are displayed in base 10 in Verilog format with a fixed number
-        of digits.  If an optional whole number #{N} immediately follows
-        #{vdec}, the number of digits displayed is set to #{N}. 
+        of digits.  If an optional whole number #⟪N⟫ immediately follows
+        #⟪vdec⟫, the number of digits displayed is set to #⟪N⟫. 
     """,
 )
 setVerilogDecimalFormat.addTest(
@@ -2027,11 +2027,11 @@ setVerilogOctalFormat = SetFormat(
     ),
     name = "voct",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use Verilog octal notation",
+    description = "{name}[«#⟪N⟫»]: use Verilog octal notation",
     summary = """
         Numbers are displayed in base 8 in Verilog format with a fixed number of
-        digits.  If an optional whole number #{N} immediately follows #{voct},
-        the number of digits displayed is set to #{N}. 
+        digits.  If an optional whole number #⟪N⟫ immediately follows #⟪voct⟫,
+        the number of digits displayed is set to #⟪N⟫. 
     """,
 )
 setVerilogOctalFormat.addTest(
@@ -2050,11 +2050,11 @@ setVerilogBinaryFormat = SetFormat(
     ),
     name = "vbin",
     actionTakesUnits = True,
-    description = "%(name)s[«#{N}»]: use Verilog binary notation",
+    description = "{name}[«#⟪N⟫»]: use Verilog binary notation",
     summary = """
         Numbers are displayed in base 2 in Verilog format with a fixed number of
-        digits.  If an optional whole number #{N} immediately follows #{vbin},
-        the number of digits displayed is set to #{N}. 
+        digits.  If an optional whole number #⟪N⟫ immediately follows #⟪vbin⟫,
+        the number of digits displayed is set to #⟪N⟫. 
     """,
 )
 setVerilogBinaryFormat.addTest(
@@ -2072,11 +2072,11 @@ variableCommands = Category("Variable Commands")
 
 # store to variable {{{3
 storeToVariable = Store(
-    "store",
-    description = "=«#{name}»: store value into a variable",
+    "=",
+    description = "=«#⟪name⟫»: store value into a variable",
     synopsis = "... → ...",
     summary = """
-        Store the value in the #{x} register into a variable with the given
+        Store the value in the #⟪x⟫ register into a variable with the given
         name.
     """,
 )
@@ -2093,11 +2093,11 @@ storeToVariable.addTest(
 
 # recall from variable {{{3
 recallFromVariable = Recall(
-    "recall",
-    description = "«#{name}»: recall value of a variable",
-    synopsis = "... → #{name}, ...",
+    "var",
+    description = "«#⟪name⟫»: recall value of a variable",
+    synopsis = "... → value of «#⟪name⟫», ...",
     summary = """
-        Place the value of the variable with the given name into the #{x}
+        Place the value of the variable with the given name into the #⟪x⟫
         register.
     """,
 )
@@ -2119,7 +2119,7 @@ recallFromVariable.addTest(
 listVariables = Command(
     "vars",
     lambda calc: calc.heap.display(),
-    description = "%(key)s: print variables",
+    description = "{key}: print variables",
     summary = """
         List all defined variables and their values.
     """,
@@ -2139,10 +2139,10 @@ stackCommands = Category("Stack Commands")
 swapXandY = Command(
     "swap",
     Calculator.swap,
-    description = "%(key)s: swap x and y",
-    synopsis = "#{x}, #{y}, ... → #{y}, #{x}, ...",
+    description = "{key}: swap x and y",
+    synopsis = "#⟪x⟫, #⟪y⟫, ... → #⟪y⟫, #⟪x⟫, ...",
     summary = """
-        The values in the #{x} and #{y} registers are swapped.
+        The values in the #⟪x⟫ and #⟪y⟫ registers are swapped.
     """,
 )
 swapXandY.addTest(stimulus="1MHz 10us swap", result=1e6, units="Hz", text="1 MHz")
@@ -2151,10 +2151,10 @@ swapXandY.addTest(stimulus="1MHz 10us swap", result=1e6, units="Hz", text="1 MHz
 duplicateX = Dup(
     "dup",
     None,
-    description = "%(key)s: duplicate #{x}",
-    synopsis = "#{x}, ... → #{x}, #{x}, ...",
+    description = "{key}: duplicate #⟪x⟫",
+    synopsis = "#⟪x⟫, ... → #⟪x⟫, #⟪x⟫, ...",
     summary = """
-        The value in the #{x} register is pushed onto the stack again.
+        The value in the #⟪x⟫ register is pushed onto the stack again.
     """,
     aliases = ["enter"],
 )
@@ -2165,10 +2165,10 @@ duplicateX.addTest(stimulus="1MHz 10us dup swap", result=10e-6, units="s", text=
 popX = Command(
     "pop",
     Calculator.pop,
-    description = "%(key)s: discard x",
-    synopsis = "#{x}, ... → ...",
+    description = "{key}: discard x",
+    synopsis = "#⟪x⟫, ... → ...",
     summary = """
-        The value in the #{x} register is pulled from the stack and discarded.
+        The value in the #⟪x⟫ register is pulled from the stack and discarded.
     """,
     aliases = ["clrx"],
 )
@@ -2179,16 +2179,16 @@ popX.addTest(stimulus="pi eps0 q pop pop pop pop", result=0, units="", text="0")
 lastX = Command(
     "lastx",
     lambda calc: calc.stack.push(calc.last_x),
-    description = "%(key)s: recall previous value of x",
-    synopsis = "... → #{lastx}, ...",
+    description = "{key}: recall previous value of x",
+    synopsis = "... → #⟪lastx⟫, ...",
     summary = """
-        The previous value of the #{x} register is pushed onto the stack.
+        The previous value of the #⟪x⟫ register is pushed onto the stack.
     """,
 )
 listStack = Command(
     "stack",
     lambda calc: calc.stack.display(),
-    description = "%(key)s: print stack",
+    description = "{key}: print stack",
     summary = """
         Print all the values stored on the stack.
     """,
@@ -2212,7 +2212,7 @@ lastX.addTest(
 listStack = Command(
     "stack",
     lambda calc: calc.stack.display(),
-    description = "%(key)s: print stack",
+    description = "{key}: print stack",
     summary = """
         Print all the values stored on the stack.
     """,
@@ -2229,7 +2229,7 @@ listStack.addTest(
 clearStack = Command(
     "clstack",
     lambda calc: calc.stack.clear(),
-    description = "%(key)s: clear stack",
+    description = "{key}: clear stack",
     synopsis = "... →",
     summary = """
         Remove all values from the stack.
@@ -2243,14 +2243,15 @@ miscellaneousCommands = Category("Miscellaneous Commands")
 # printText {{{3
 printText = Print(
     name = "print",
+    key = "`",
     description = "`«text»`: print text",
     summary = """
         Print "text" (the contents of the back-quotes) to the terminal.
         Generally used in scripts to report and annotate results.  Any instances
         of $N or ${N} are replaced by the value of register N, where 0
-        represents the #{x} register, 1 represents the #{y} register, etc.  Any
+        represents the #⟪x⟫ register, 1 represents the #⟪y⟫ register, etc.  Any
         instances of $Var or ${Var} are replaced by the value of the variable
-        #{Var}.
+        #⟪Var⟫.
     """,
 )
 printText.addTest(
@@ -2324,11 +2325,12 @@ printText.addTest(
 
 # setUnits {{{3
 setUnits = SetUnits(
-    name = "units",
+    name = 'units',
+    key = '"',
     description = '"«units»": set the units of the x register',
     synopsis = 'x, ... → x "units", ...',
     summary = """
-        The units given are applied to the value in the #{x} register.
+        The units given are applied to the value in the #⟪x⟫ register.
         The actual value is unchanged.
     """,
 )
@@ -2342,11 +2344,11 @@ setUnits.addTest(
 
 # convertUnits {{{3
 convertUnits = Convert(
-    "convert",
-    description = ">«#{units}»: convert value to given units",
-    synopsis = "#{x}, ... → convert(#{x}, units), ...",
+    ">",
+    description = ">«#⟪units⟫»: convert value to given units",
+    synopsis = "#⟪x⟫, ... → #⟪x⟫ converted to new desired units, ...",
     summary = """
-        The value in the #{x} is popped from the stack, converted to the desired
+        The value in the #⟪x⟫ is popped from the stack, converted to the desired
         units, and pushed back on to the stack.
     """,
 )
@@ -2358,20 +2360,31 @@ convertUnits.addTest(
     units = "Å",
     text = "100 Å",
 )
+convertUnits.addTest(stimulus='Ƀ1 >$ >Ƀ', result=1, units="Ƀ", text="Ƀ1")
+convertUnits.addTest(stimulus='₿1 >$ >₿', result=1, units="₿", text="₿1")
+convertUnits.addTest(stimulus='ș1 >$ >ș', result=1, units="ș", text="1 ș")
+convertUnits.addTest(stimulus='Ƀ1 >ș', result=1e8, units="ș", text="100 Mș")
+convertUnits.addTest(stimulus='ș1 >Ƀ', result=1e-8, units="Ƀ", text="Ƀ10n")
 
 # printAbout {{{3
 printAbout = Command(
     "about",
     Calculator.aboutMsg,
-    description = "%(key)s: print information about this calculator",
+    description = "{key}: print information about this calculator",
 )
 printAbout.addTest(stimulus="about", messages=True)
 
 # describeFunctions {{{3
 describeFunctions = Command(
-    "functions",
-    Calculator.describeFunctions,
-    description = "%(key)s: describes how to define and use functions.",
+    name = "functions",
+    key = "(",
+    action = Calculator.describeFunctions,
+    description = "(…)«name»: a user-defined function or macro.",
+    summary = """
+        A function is defined with the name «name» where … is a list of commands.
+        When «name» is entered as a command, it is replaced by the list of
+        commands.
+    """,
 )
 printAbout.addTest(stimulus="about", messages=True)
 
@@ -2379,7 +2392,7 @@ printAbout.addTest(stimulus="about", messages=True)
 terminate = Command(
     "quit",
     Calculator.quit,
-    description = "%(key)s: quit (:q or ^D also works)",
+    description = "{key}: quit (:q or ^D also works)",
     aliases = [":q"],
 )
 
@@ -2387,13 +2400,13 @@ terminate = Command(
 printHelp = Command(
     "help",
     Calculator.displayHelp,
-    description = "%(key)s: print a summary of the available features",
+    description = "{key}: print a summary of the available features",
 )
 printHelp.addTest(stimulus="help", messages=True)
 
 detailedHelp = Help(
-    name = "?",
-    description = "%(name)s[<topic>]: detailed help on a particular topic",
+    key = "?",
+    description = "{key}[«topic»]: detailed help on a particular topic",
     summary = """
         A topic, in the form of a symbol or name, may follow the question mark,
         in which case a detailed description will be printed for that topic.
@@ -2557,7 +2570,7 @@ constantActions = (
 # Numbers {{{2
 numberActions = [
     numbers,
-    engineeringNumber,
+    SI_Number,
     scientificNumber,
     hexadecimalNumber,
     octalNumber,
@@ -2569,7 +2582,7 @@ numberActions = [
 ]
 realNumberActions = [
     numbers,
-    engineeringNumber,
+    SI_Number,
     scientificNumber,
 ]
 
@@ -2707,12 +2720,18 @@ def get_btc_price():
 
 # use UnitConversion from QuantiPhy to perform the conversion
 # here we define the conversions, which then become available in calculator
-bitcoin_units = ['BTC', 'btc', 'Ƀ']
+bitcoin_units = ['BTC', 'btc', 'Ƀ', '₿']
 satoshi_units = ['sat', 'sats', 'ș']
 dollar_units = ['USD', 'usd', '$']
-UnitConversion(dollar_units, bitcoin_units, get_btc_price)
+UnitConversion(
+    dollar_units, bitcoin_units,
+    lambda b: b*get_btc_price(), lambda d: d/get_btc_price()
+)
 UnitConversion(satoshi_units, bitcoin_units, 1e8)
-UnitConversion(dollar_units, satoshi_units, lambda s: s*get_btc_price()/1e8)
+UnitConversion(
+    dollar_units, satoshi_units,
+    lambda s: s*get_btc_price()/1e8, lambda d: d/(get_btc_price()/1e8),
+)
 
 
 # Configure Calculator {{{1

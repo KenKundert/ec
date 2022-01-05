@@ -6,7 +6,7 @@
 
 # Imports {{{1
 from copy import copy
-from inform import display, warn, full_stop, Error
+from inform import Error, cull, display, full_stop, plural, warn
 from pydoc import pager
 from quantiphy import Quantity, UnitConversion, UnknownConversion
 from textwrap import wrap, fill, dedent
@@ -19,8 +19,8 @@ __version__ = "1.8.2"
 __released__ = "2022-01-04"
 
 # Utility functions {{{1
-italicsRegex = re.compile(r"#\{(\w+)\}")
-boldRegex = re.compile(r"@\{(\w+)\}")
+italicsRegex = re.compile(r"#⟪(\w+)⟫")
+boldRegex = re.compile(r"@⟪(\w+)⟫")
 
 
 # stripFormatting() {{{2
@@ -131,7 +131,7 @@ class Stack:
         length = len(self.stack)
         labels = ["x:", "y:"] + (length - 2) * ["  "]
         for label, value in reversed(list(zip(labels, self.stack))):
-            self.parent.printMessage("  %s %s" % (label, self.parent.format(value)))
+            self.parent.printMessage(f"  {label} {self.parent.format(value)}")
 
 
 # Heap {{{2
@@ -180,9 +180,9 @@ class Heap:
         for key in sorted(self.heap.keys()):
             kind, value = self.heap[key]
             if kind == "const":
-                self.parent.printMessage("  %s: %s" % (key, self.parent.format(value)))
+                self.parent.printMessage(f"  {key}: {self.parent.format(value)}")
             elif kind == "funct":
-                self.parent.printMessage("  %s: (%s)" % (key, " ".join(value)))
+                self.parent.printMessage(f"  {key}: ({' '.join(value)})")
             else:
                 raise NotImplementedError
 
@@ -193,7 +193,7 @@ class Heap:
         kind, value = pair
         if key in self.reserved:
             if self.removeAction:
-                self.parent.printWarning("%s: variable has overridden built-in." % key)
+                self.parent.printWarning(f"{key}: variable has overridden built-in.")
                 del self.reserved[self.reserved.index(key)]
                 self.removeAction(key)
             else:
@@ -240,12 +240,12 @@ class Display:
                     return real
                 if real == zero:
                     return "-j" + imag
-                return "%s - j%s" % (real, imag)
+                return f"{real} - j{imag}"
             else:
                 imag = imag if imag != one else units
                 if real == zero:
                     return "j" + imag
-                return "%s + j%s" % (real, imag)
+                return f"{real} + j{imag}"
 
         if self.formatterTakesUnits:
             return self.formatter(num, units, self.digits)
@@ -311,7 +311,7 @@ class Action:
         """
         Returns the description of the action.
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
         """
         try:
@@ -423,13 +423,13 @@ class Action:
 
         # assure that the action is contained within the stimulus (otherwise
         # this test is likely placed on the wrong action)
-        misplacedTest = "misplaced test: action=%s, stimulus=%s" % (
-            self.getName(),
-            stimulus,
-        )
+        misplacedTest = f"misplaced test: action={self.getName()}, stimulus={stimulus}"
         components = Calculator.split(stimulus)
         if hasattr(self, "key"):
             found = self.key in components
+            if not found and hasattr(self, "name"):
+                found = any(c.startswith(self.key) for c  in components)
+
             if not found and hasattr(self, "aliases"):
                 found = set(self.aliases).intersection(set(components))
         elif hasattr(self, "regex"):
@@ -449,17 +449,20 @@ class Command(Action):
 
     It takes the following arguments:
     key:
-        The symbol or word used to identify the operator (the user types this
-        in to execute the command).
+        The symbol used to identify the operator (the user types as the leading identifying
+        character for this command).
     action:
         A function that is called to perform the command. The function takes one
         argument, calc (the calculator object, used to gain access to calculator
         methods such as toRadians(), fromRadians(), angleUnits(), as well as
         stack, heap and formatter methods (using <calc>.stack, <calc>.heap and
         <calc>.formatter).
+    name (optional):
+        The word used to identify the command.  It is used by the user when
+        asking for help on the number.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
@@ -474,6 +477,7 @@ class Command(Action):
         self,
         key,
         action,
+        name = None,
         description = None,
         synopsis = None,
         summary = None,
@@ -481,6 +485,7 @@ class Command(Action):
     ):
         self.key = key
         self.action = action
+        self.name = name
         self.description = description
         self.synopsis = synopsis
         self.summary = summary
@@ -508,7 +513,7 @@ class Constant(Action):
         which case it is called with no arguments to get the actual value.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
@@ -544,7 +549,7 @@ class Constant(Action):
                 result, units = self.action[calc.unit_system]
             except KeyError:
                 raise CalculatorError(
-                    "%s: %s version unavailable." % (self.key, calc.unit_system)
+                    f"{self.key}: {calc.unit_system} version unavailable."
                 )
         elif type(self.action) is tuple:
             result, units = self.action
@@ -575,7 +580,7 @@ class UnaryOp(Action):
         <calc>.formatter).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     needCalc (optional):
         Boolean. If true, the calculator object will be passed in as an
@@ -646,7 +651,7 @@ class BinaryOp(Action):
         <calc>.heap and <calc>.formatter).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     needCalc (optional):
         Boolean. If true, the calculator object will be passed in as an
@@ -720,7 +725,7 @@ class BinaryIoOp(Action):
         <calc>.heap and <calc>.formatter).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     needCalc (optional):
         Boolean. If true, the calculator object will be passed in as an
@@ -808,7 +813,7 @@ class Dup(Action):
         <calc>.formatter).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is either 'key' or 'name'.
     needCalc (optional):
         Boolean. If true, the calculator object will be passed in as an
@@ -884,11 +889,11 @@ class Number(Action):
         methods (using <calc>.stack, <calc>.heap and <calc>.formatter).  The
         function returns two values in the form of a tuple (*value*, *units*).
     name:
-        The symbol or word used to identify the type of number. It is entered by
+        The word used to identify the type of number. It is entered by
         the user when getting more information (help) on the number.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     needCalc (optional):
         Boolean. If true, the calculator object will be passed in as an
@@ -967,7 +972,7 @@ class SetFormat(Action):
         responsibility.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
@@ -1007,22 +1012,23 @@ class Help(Action):
     printed.
 
     It takes the following arguments:
-    pattern:
-        A regular expression pattern that must match for *action* to be
-        activated.  It must contain a match group. The text in the match group
-        specifies a help topic, which is either an action key or name.
     name:
         The symbol or word used to identify the help action. It is entered by
         the user when getting more information (help) on the help action.
+    key:
+        The symbol used to identify the operator (the user types as the leading identifying
+        character for this command).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     summary (optional):
         The summary is a complete description of the action.
     """
 
-    def __init__(self, name=None, description=None, summary=None):
+    def __init__(self, key=None, name=None, description=None, summary=None):
+        assert key or name
+        self.key = key
         self.name = name
         self.description = description
         self.summary = summary
@@ -1040,16 +1046,11 @@ class Help(Action):
                     synopsis = stripFormatting(action.getSynopsis())
                     aliases = action.getAliases()
                     if aliases:
-                        if len(aliases) > 1:
-                            aliases = "aliases: %s" % ",".join(aliases)
-                        else:
-                            aliases = "alias: %s" % ",".join(aliases)
-                    else:
-                        aliases = ""
+                        aliases = f"{plural(aliases):alias/es}: {','.join(aliases)}"
                     if action.description:
                         calc.printMessage(
                             fill(
-                                stripFormatting(action.description % (action.__dict__)),
+                                stripFormatting(action.description.format(**action.__dict__)),
                                 subsequent_indent="    ",
                             )
                         )
@@ -1061,11 +1062,11 @@ class Help(Action):
                     if synopsis or aliases:
                         calc.printMessage()
                     if synopsis:
-                        calc.printMessage("stack: %s" % synopsis)
+                        calc.printMessage(f"stack: {synopsis}")
                     if aliases:
                         calc.printMessage(aliases)
                     return
-            calc.printWarning("%s: not found.\n" % topic)
+            calc.printWarning(f"{topic}: not found.\n")
 
         # present the user with the list of available help topics
         topics = [action.getName() for action in calc.actions if action.getName()]
@@ -1099,13 +1100,13 @@ class Help(Action):
         gatheredLines = []
         verbatim = False
         for line in lines:
-            if line.strip() == r"\verb{":
+            if line.strip() == r"\verb⟪":
                 # start of verbatim region
                 verbatim = True
                 # emit lines gathered so far as a paragraph
                 paragraphs += [fill(" ".join(gatheredLines))]
                 gatheredLines = []
-            elif line.strip() == "}":
+            elif line.strip() == "⟫":
                 # end of verbatim region
                 verbatim = False
             else:
@@ -1132,7 +1133,7 @@ class Store(Action):
     It takes the following arguments:
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     synopsis (optional):
         The synopsis is a brief one line description of how the stack is
@@ -1154,7 +1155,7 @@ class Store(Action):
             calc.heap[name] = "const", calc.stack.peek()
         except KeyError:
             raise CalculatorError(
-                "%s: reserved, cannot be used as variable name." % name
+                f"{name}: reserved, cannot be used as variable name."
             )
 
 
@@ -1178,7 +1179,7 @@ class Recall(Action):
         the user when getting more information (help) on the action.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     summary (optional):
         The summary is a complete description of the action.
@@ -1202,7 +1203,7 @@ class Recall(Action):
             else:
                 raise NotImplementedError
         else:
-            raise CalculatorError("%s: variable does not exist." % name)
+            raise CalculatorError(f"{name}: variable does not exist.")
 
 
 # SetUnits (pop 1, push 1, match regex) {{{2
@@ -1213,22 +1214,22 @@ class SetUnits(Action):
     register.
 
     It takes the following arguments:
-    pattern:
-        A regular expression pattern that must match for *action* to be activated.
-        It must contain a match group. The text in the match group specifies the
-        units to attach to the *x* register.
     name:
         The symbol or word used to identify the units action. It is entered by
         the user when getting more information (help) on the action.
+    key (optional):
+        The symbol used to identify the operator (the user types as the leading identifying
+        character for this command).
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     summary (optional):
         The summary is a complete description of the action.
     """
 
-    def __init__(self, name, description=None, synopsis=None, summary=None):
+    def __init__(self, name, key=None, description=None, synopsis=None, summary=None):
+        self.key = key
         self.name = name
         self.description = description
         self.synopsis = synopsis
@@ -1251,31 +1252,31 @@ class Convert(Action):
 
     The pattern contains a units identifier, which is like a normal identifier
     except that it allows the first character to be a number of special
-    characters, specifically $, °, Å, Ƀ, or ș.
+    characters, specifically $, °, Å, Ƀ, ₿, or ș.
     The value of the *x* register is converted to the specified units.
 
     It takes the following arguments:
-    pattern:
-        A regular expression pattern that must match for *action* to be activated.
-        It must contain a match group. The text in the match group specifies a
-        variable name.
+    key:
+        The symbol used to identify the units action. It is entered by
+        the user when getting more information (help) on the action.
     name:
         The symbol or word used to identify the convert action. It is entered by
         the user when getting more information (help) on the action.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     summary (optional):
         The summary is a complete description of the action.
     """
 
-    def __init__(self, name, description=None, synopsis=None, summary=None):
+    def __init__(self, key, name=None, description=None, synopsis=None, summary=None):
+        self.key = key
         self.name = name
         self.description = description
         self.synopsis = synopsis
         self.summary = summary
-        self.regex = re.compile(r'>([a-z$°ÅɃș]\w*)', re.I)
+        self.regex = re.compile(r'>([a-z$°ÅɃ₿ș]\w*)', re.I)
 
     def _execute(self, matchGroups, calc):
         to_units = de_quote(matchGroups[0])
@@ -1305,22 +1306,23 @@ class Print(Action):
     The pattern contains a string that is to be printed out for the user.
 
     It takes the following arguments:
-    pattern:
-        A regular expression pattern that must match for *action* to be activated.
-        It must contain a match group. The text in the match group specifies the
-        text to be printed.
+    key:
+        The symbol used to identify the units action. It is entered by
+        the user when getting more information (help) on the action.
     name:
         The symbol or word used to identify the units action. It is entered by
         the user when getting more information (help) on the action.
     description (optional):
         The description is a brief half line description of the action.
-        It may contain '%(attr)s' codes to access the values of attributes of
+        It may contain '{attr}' codes to access the values of attributes of
         the action. Typically *attr* is 'name'.
     summary (optional):
         The summary is a complete description of the action.
     """
 
-    def __init__(self, name, description=None, summary=None):
+    def __init__(self, key=None, name=None, description=None, summary=None):
+        assert key or name
+        self.key = key
         self.name = name
         self.description = description
         self.summary = summary
@@ -1353,7 +1355,7 @@ class Print(Action):
                             arg = value
                         elif kind == "funct":
                             raise CalculatorError(
-                                "%s: cannot print a function." % value
+                                f"{value}s: cannot print a function."
                             )
                         else:
                             raise NotImplementedError
@@ -1361,8 +1363,8 @@ class Print(Action):
                 except (KeyError, IndexError):
                     if arg != "$":
                         if calc.warningPrinter:
-                            calc.warningPrinter("$%s: unknown." % arg)
-                        arg = "$?%s?" % arg
+                            calc.warningPrinter(f"${arg}: unknown.")
+                        arg = f"$?{arg}?"
                 formattedArgs += [arg]
             components[1::2] = formattedArgs
             message = "".join(components)
@@ -1453,30 +1455,28 @@ class Calculator:
                 # earlier versions of the python math library (it is easier
                 # to set them to None that to edit them out of the list)
                 continue
-            elif hasattr(action, "key"):
-                if action.key not in alreadySeen:
-                    self.smplActions.update({action.key: action})
-                    prunedActions += [action]
-                    alreadySeen.add(action.key)
-                    assert action.key not in names, "%s: duplicate name" % (action.key)
-                    names.add(action.key)
-                    for alias in action.getAliases():
-                        assert alias not in names, "%s: duplicate name" % alias
-                        names.add(alias)
-                        self.smplActions.update({alias: action})
             elif hasattr(action, "regex"):
                 if action.regex not in alreadySeen:
                     self.regexActions += [action]
                     prunedActions += [action]
                     alreadySeen.add(action.regex)
                     assert action.name not in self.smplActions, (
-                        "%s: duplicate name" % action.name
+                        f"{action.name}: duplicate name"
                     )
                     names.add(action.name)
+            elif hasattr(action, "key"):
+                if action.key not in alreadySeen:
+                    self.smplActions.update({action.key: action})
+                    prunedActions += [action]
+                    alreadySeen.add(action.key)
+                    assert action.key not in names, f"{action.key}: duplicate name"
+                    names.add(action.key)
+                    for alias in action.getAliases():
+                        assert alias not in names, f"{alias}: duplicate name"
+                        names.add(alias)
+                        self.smplActions.update({alias: action})
             else:
-                assert hasattr(action, "category"), "expected category: %s" % (
-                    action.__dict__
-                )
+                assert hasattr(action, "category"), f"expected category: {action.__dict__}"
                 prunedActions += [action]
         self.actions = prunedActions
 
@@ -1708,22 +1708,24 @@ class Calculator:
         for action in calc.actions:
             if action.description:
                 if hasattr(action, "category"):
-                    lines += ["\n" + action.description % (action.__dict__)]
+                    lines += ["\n" + action.description.format(**action.__dict__)]
                 else:
-                    aliases = action.getAliases()
-                    if aliases:
-                        if len(aliases) > 1:
-                            aliases = " (aliases: %s)" % ",".join(aliases)
-                        else:
-                            aliases = " (alias: %s)" % ",".join(aliases)
-                    else:
-                        aliases = ""
+                    # print description
                     lines += wrap(
-                        stripFormatting(action.description % (action.__dict__))
-                        + aliases,
+                        stripFormatting(action.description.format(**action.__dict__)),
                         initial_indent = "    ",
                         subsequent_indent = "        ",
                     )
+
+                    # print aliases and help name if present
+                    aliases = action.getAliases()
+                    if aliases:
+                        aliases = f"{plural(aliases):alias/es}: {', '.join(aliases)}"
+                    help_name = getattr(action, 'name', None) or getattr(action, 'key', None)
+                    help_name = f"help: ?{help_name}" if help_name else ""
+                    addendum = "; ".join(cull([aliases, help_name]))
+                    if addendum:
+                        lines.append(f"        {addendum}")
         calc.printMessage("\n".join(lines) + "\n", style="page")
 
     def aboutMsg(calc):  # pylint: disable=no-self-argument

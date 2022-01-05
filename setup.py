@@ -17,8 +17,8 @@ setup(
     install_requires = '''
         docopt
         docutils
-        inform>=1.9
-        quantiphy>=2.16.0
+        inform>=1.26
+        quantiphy>=2.17
         requests
     '''.split(),
     python_requires = '>=3.6',

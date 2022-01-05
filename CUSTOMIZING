@@ -1,7 +1,11 @@
+CUSTOMIZING
+===========
+
 You can customize EC by adding, deleting, or modifying the various actions
 available. To do so, it is useful to know a little about how it is put together.
 
-EC is constructed from four files:
+EC is constructed from the following files:
+
     calculator.py:
         Foundation of the calculator, contains the class definitions used to
         construct the calculator.
@@ -14,6 +18,7 @@ EC is constructed from four files:
 
 calculator.py provides a collection of class definitions that are used implement
 the various types of available actions. Those classes include:
+
     Command (matches a key, pops 0, pushes 0)
     Constant (matches a key, pops 0, pushes 1)
     UnaryOp (matches a key, pops 1, pushes 1)
@@ -26,15 +31,21 @@ the various types of available actions. Those classes include:
     Store (matches a pattern, peeks 1, pushes 0)
     Recall (matches a pattern, pops 0, pushes 1)
     SetUnits (matches a pattern, pops 1, pushes 1)
+    Convert (matches a pattern, pops 1, pushes 1)
     Print (matches a pattern, pops 0, pushes 0)
     Category (not an action, merely a header in the help summary)
 
 To get more information about each of these classes, open a Python shell, import 
 calculator, and apply the help function on the class you are interested in. For 
 example to get more information on Command:
+
     $ python
     >>> from calculator import *
     >>> help(Command)
+
+
+Adding Actions
+--------------
 
 An action is created by instantiating one of these classes.  Generally the
 function that implements the desired action is passed into the constructor for
@@ -60,20 +71,20 @@ description of the effect on the stack of the action.
 
 In each of these strings (*description*, *summary*, and *synopsis*), you can use 
 simple inline macros to do the following:
-    #{text}: set text in italics
-    @{text}: set text in bold
-    \verb{
+    #⟪text⟫: set text in italics
+    @⟪text⟫: set text in bold
+    \verb⟪
         text
-    }: set text alone on a line or lines while maintaining line breaks
-So, "#{x} + #{y}" will be rendered as "x + y" with *x* and *y* in italics. The 
-beginning and end of a type face specifier (#{} or @{}) must fall on the same 
-line and the specifiers must not be nested.  For the no fill directive (\verb{}) 
+    ⟫: set text alone on a line or lines while maintaining line breaks
+So, "#⟪x⟫ + #⟪y⟫" will be rendered as "x + y" with *x* and *y* in italics. The 
+beginning and end of a type face specifier (#⟪…⟫ or @⟪…⟫) must fall on the same 
+line and the specifiers must not be nested.  For the no fill directive (\verb⟪⟫) 
 the beginning and end must be alone on their lines. For example, to illustrate 
 the computation of one half, you might use:
-\verb{
-    @{0}: 1 2/
-    @{500m}:
-}
+\verb⟪
+    @⟪0⟫: 1 2/
+    @⟪500m⟫:
+⟫
 
 Simply instantiating one of these classes does not add this action to the 
 calculator. To do that, you place the objects created by instantiating these 
@@ -87,6 +98,10 @@ calculator. The following lists are predefined:
     physicsActions
     chemistryActions
 To change the personality, simply assign the desired list to 'actionsToUse'.
+
+
+Changing Defaults
+-----------------
 
 Besides 'actionsToUse', three other variables are imported by ec.py and used
 when initializing the calculator:
@@ -110,3 +125,18 @@ man page:
     documentComplexNumbers: Set this to true if your list of actions includes
         the ability to create and operate on complex numbers. It adds the
         section on complex numbers to the man page.
+
+
+Adding Unit Conversions
+-----------------------
+
+In actions.py you will find a section of code labeled Unit Conversions.  It 
+contains a series of instantiations of the QuantiPhy UnitConversion class 
+(https://quantiphy.readthedocs.io/en/stable/api.html#quantiphy.UnitConversion).
+
+You can add your own unit converters simply by adding more instantiations of 
+UnitConversion.  It takes three to four argumentsarguments: the list of the 
+to-units, the list of the from-units, and the slope and the intercept.  The 
+intercept is optional and is used for affine conversion (like temperature 
+conversions).  
+
