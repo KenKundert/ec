@@ -35,7 +35,7 @@ Install with::
 Requires Python version 3.6 or later.
 
 Unusually, there is also a man page.  The Python install process no longer 
-supports man pages, however you can download it from `Github 
+supports man pages, however you can download it from `GitHub 
 <https://github.com/KenKundert/ec/blob/master/doc/ec.1>`_.  Place it in 
 ``~/.local/man/man1``.
 
@@ -54,15 +54,6 @@ Once cloned, you can get the latest updates using::
 
    $ cd ec
    $ git pull
-
-Alternatively, you can download a zip file from `github 
-<https://github.com/KenKundert/ec/archive/master.zip>`_.  If you go this route, 
-you will have to unzip the file using the unzip command. For example::
-
-   $ wget https://github.com/KenKundert/ec/archive/master.zip
-   $ unzip master.zip
-   $ mv ec-master ec
-   $ cd ec
 
 To run the regression tests::
 

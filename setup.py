@@ -2,13 +2,13 @@ from setuptools import setup
 
 setup(
     name = 'engineering-calculator',
-    version = '1.8.2',
+    version = '1.9.0',
     description = 'engineering calculator',
     long_description = open('README.rst').read(),
     long_description_content_type = 'text/x-rst',
     author = "Ken Kundert",
     author_email = 'ec@nurdletech.com',
-    url = 'http://nurdletech.com/linux-utilities/ec',
+    url = 'https://engineering-calculator.readthedocs.io/en/latest/',
     download_url = 'https://github.com/kenkundert/ec/tarball/master',
     packages = 'engineering_calculator'.split(),
     entry_points = {
