@@ -345,12 +345,12 @@ document = r"""{
 
     You can define functions in the following way::
 
-       ( … )«name»
+       ( ... )«name»
 
     Here '(' starts the function definition and ')«name»' ends it. «name»
     represents the desired name of the function. It must be a simple identifer
-    and must be immediately adjacent to the ).  The '…' represents a sequence of
-    calculator actions.
+    and must be immediately adjacent to the ).  The '...' represents a sequence 
+    of calculator actions.
 
     For example:
 

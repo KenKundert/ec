@@ -2346,7 +2346,7 @@ setUnits.addTest(
 convertUnits = Convert(
     ">",
     description = ">«#⟪units⟫»: convert value to given units",
-    synopsis = "#⟪x⟫, ... → #⟪x⟫ converted to new desired units, ...",
+    synopsis = "#⟪x⟫, ... → #⟪x⟫ converted to specified units, ...",
     summary = """
         The value in the #⟪x⟫ is popped from the stack, converted to the desired
         units, and pushed back on to the stack.
@@ -2379,9 +2379,9 @@ describeFunctions = Command(
     name = "functions",
     key = "(",
     action = Calculator.describeFunctions,
-    description = "(…)«name»: a user-defined function or macro.",
+    description = "(...)«name»: a user-defined function or macro.",
     summary = """
-        A function is defined with the name «name» where … is a list of commands.
+        A function is defined with the name «name» where ... is a list of commands.
         When «name» is entered as a command, it is replaced by the list of
         commands.
     """,

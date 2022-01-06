@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH EC 1 "2022-01-04" "1.8.2" ""
+.TH EC 1 "2022-01-04" "1.9.0" ""
 .SH NAME
 ec \- engineering calculator
 .
@@ -842,7 +842,7 @@ You can define functions in the following way:
 .sp
 .nf
 .ft C
-( … )«name»
+( ... )«name»
 .ft P
 .fi
 .UNINDENT
@@ -850,8 +850,8 @@ You can define functions in the following way:
 .sp
 Here \(aq(\(aq starts the function definition and \(aq)«name»\(aq ends it. «name»
 represents the desired name of the function. It must be a simple identifer
-and must be immediately adjacent to the ).  The \(aq…\(aq represents a sequence of
-calculator actions.
+and must be immediately adjacent to the ).  The \(aq...\(aq represents a sequence
+of calculator actions.
 .sp
 For example:
 .INDENT 0.0
@@ -3099,7 +3099,7 @@ units, and pushed back on to the stack.
 .sp
 .nf
 .ft C
-x, ... → x converted to new desired units, ...
+x, ... → x converted to specified units, ...
 .ft P
 .fi
 .UNINDENT
@@ -3107,10 +3107,10 @@ x, ... → x converted to new desired units, ...
 .UNINDENT
 .UNINDENT
 .sp
-\fB(…)«name»\fP: a user\-defined function or macro.
+\fB(...)«name»\fP: a user\-defined function or macro.
 .INDENT 0.0
 .INDENT 3.5
-A function is defined with the name «name» where … is a list of commands.
+A function is defined with the name «name» where ... is a list of commands.
 When «name» is entered as a command, it is replaced by the list of
 commands.
 .UNINDENT
