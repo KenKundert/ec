@@ -31,6 +31,7 @@ import math
 import cmath
 import random
 import requests
+import time
 
 
 # Globals {{{1
@@ -2710,11 +2711,20 @@ chemistryActions = (
 # get the current bitcoin price from coingecko.com
 url = 'https://api.coingecko.com/api/v3/simple/price'
 params = dict(ids='bitcoin', vs_currencies='usd')
+last_btc_update = None
+btc_price = None
+btc_price_ttl = 60
 def get_btc_price():
+    global last_btc_update, btc_price
+    current_time = time.monotonic()
     try:
-        resp = requests.get(url=url, params=params)
-        prices = resp.json()
-        return prices['bitcoin']['usd']
+        if last_btc_update is None or current_time - last_btc_update > btc_price_ttl:
+            # get the current price of BTC and cache it
+            resp = requests.get(url=url, params=params)
+            last_btc_update = current_time
+            prices = resp.json()
+            btc_price = prices['bitcoin']['usd']
+        return btc_price
     except Exception as e:
         raise Error('cannot connect to coingecko.com.')
 
