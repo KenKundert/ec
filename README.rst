@@ -28,16 +28,18 @@ Installing
     :target: https://pypi.python.org/pypi/engineering_calculator
 
 
+Requires Python version 3.6 or later.
+
 Install with::
 
     pip3 install --user engineering-calculator
 
-Requires Python version 3.6 or later.
+This installs *ec* into ~/.local/bin, which should be added to your path.
 
 Unusually, there is also a man page.  The Python install process no longer 
 supports man pages, however you can download it from `GitHub 
-<https://github.com/KenKundert/ec/blob/master/doc/ec.1>`_.  Place it in 
-``~/.local/man/man1``.
+<https://raw.githubusercontent.com/KenKundert/ec/master/doc/ec.1>`_.  Place it 
+in ``~/.local/man/man1``.
 
 More information on both *ec* can be found on `ReadTheDocs 
 <https://engineering-calculator.readthedocs.io>`_ .

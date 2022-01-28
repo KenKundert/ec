@@ -14,15 +14,17 @@ and uses a text-only user interface.
 Installing
 ----------
 
+Requires Python version 3.6 or later.
+
 Install with::
 
-    pip3 install engineering-calculator --user
+    pip install --user engineering-calculator
 
-Requires Python version 3.6 or later.
+This installs *ec* into ~/.local/bin, which should be added to your path.
 
 Unusually, there is also a man page.  The Python install process no longer 
 supports man pages, however you can download it from `Github 
-<https://github.com/KenKundert/ec/blob/master/doc/ec.1>`.  Place it in 
+<https://raw.githubusercontent.com/KenKundert/ec/master/doc/ec.1>`.  Place it in 
 ``~/.local/man/man1``.
 
 
