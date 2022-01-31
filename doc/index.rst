@@ -23,9 +23,9 @@ Install with::
 This installs *ec* into ~/.local/bin, which should be added to your path.
 
 Unusually, there is also a man page.  The Python install process no longer 
-supports man pages, however you can download it from `Github 
-<https://raw.githubusercontent.com/KenKundert/ec/master/doc/ec.1>`.  Place it in 
-``~/.local/man/man1``.
+supports man pages, however you can download it from `the Github repository
+<https://raw.githubusercontent.com/KenKundert/ec/master/doc/ec.1>`_.  Place it 
+in ``~/.local/man/man1``.
 
 
 Features
