@@ -1,8 +1,5 @@
 .\" Man page generated from reStructuredText.
 .
-.TH EC 1 "2022-01-04" "1.9.0" ""
-.SH NAME
-ec \- engineering calculator
 .
 .nr rst2man-indent-level 0
 .
@@ -30,6 +27,9 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
+.TH "EC" 1 "2022-01-04" "1.9.0" ""
+.SH NAME
+ec \- engineering calculator
 .\" :Copyright: public domain
 .
 .\" :Manual group: Utilities
@@ -40,7 +40,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .SH OPTIONS
 .INDENT 0.0
 .TP
-.B \-i\fP,\fB  \-\-interactive
+.B  \-i\fP,\fB  \-\-interactive
 Open an interactive session.
 .TP
 .BI \-s \ <file>\fR,\fB \ \-\-startup \ <file>
@@ -48,16 +48,16 @@ Run commands from file to initialize calculator before
 any script or interactive session is run, stack is
 cleared after it is run.
 .TP
-.B \-c\fP,\fB  \-\-nocolor
+.B  \-c\fP,\fB  \-\-nocolor
 Do not use colors in the output.
 .TP
-.B \-v\fP,\fB  \-\-verbose
+.B  \-v\fP,\fB  \-\-verbose
 Narrate the execution of any scripts.
 .TP
-.B \-V\fP,\fB  \-\-version
+.B  \-V\fP,\fB  \-\-version
 Print the ec version information.
 .TP
-.B \-h\fP,\fB  \-\-help
+.B  \-h\fP,\fB  \-\-help
 Print the usage and exit.
 .UNINDENT
 .SH DESCRIPTION
@@ -338,15 +338,15 @@ you intend the units without a scale factor, add the unit scale factor: \(aq_\(a
 Thus, use 300_K to enter 300 Kelvin.
 .sp
 In this case the units must be simple identifiers (must not contain special
-characters). For complex units, such as "rads/s", or for numbers that do not
+characters). For complex units, such as \(dqrads/s\(dq, or for numbers that do not
 have scale factors, it is possible to attach units to a number in the \fIx\fP
 register by entering a quoted string.
 .INDENT 0.0
 .INDENT 3.5
 .nf
 \fB0\fP: 6.626e\-34
-\fB662.6e\-36\fP: "J\-s"
-\fB662.6e\-36 J\-s\fP: 50k "V/V"
+\fB662.6e\-36\fP: \(dqJ\-s\(dq
+\fB662.6e\-36 J\-s\fP: 50k \(dqV/V\(dq
 \fB50 KV/V\fP:
 .fi
 .sp
@@ -760,7 +760,7 @@ thermal voltage, kT/q.
 .INDENT 0.0
 .INDENT 3.5
 .nf
-\fB0\fP: k 27 0C + * q/ "V"
+\fB0\fP: k 27 0C + * q/ \(dqV\(dq
 \fB25.865 mV\fP:
 .fi
 .sp
@@ -801,7 +801,7 @@ For example,
 .INDENT 3.5
 .nf
 \fB0\fP: 100MHz =freq
-\fB100 MHz\fP: 2pi* "rads/s" =omega
+\fB100 MHz\fP: 2pi* \(dqrads/s\(dq =omega
 \fB628.32 Mrads/s\fP: 1pF =cin
 \fB1 pF\fP: 1 omega cin* /
 \fB1.5915K\fP:
@@ -857,8 +857,8 @@ For example:
 .INDENT 0.0
 .INDENT 3.5
 .nf
-\fB0\fP: (2pi * "rads/s")to_omega
-\fB0\fP: (2pi / "Hz")to_freq
+\fB0\fP: (2pi * \(dqrads/s\(dq)to_omega
+\fB0\fP: (2pi / \(dqHz\(dq)to_freq
 \fB0\fP: 100MHz
 \fB100 MHz\fP: to_omega
 \fB628.32 Mrads/s\fP: to_freq
@@ -877,8 +877,8 @@ both the variable and the function definitions:
 .INDENT 3.5
 .nf
 \fIRref\fP: 50 Ohms
-\fIto_freq\fP: (2pi / "Hz")
-\fIto_omega\fP: (2pi * "rads/s")
+\fIto_freq\fP: (2pi / \(dqHz\(dq)
+\fIto_omega\fP: (2pi * \(dqrads/s\(dq)
 .fi
 .sp
 .UNINDENT
@@ -1096,8 +1096,8 @@ directly to the desired units:
 .sp
 In the following descriptions, optional values are given in brackets ([])
 and values given in angle brackets (<>) are not to be taken literally (you
-are expected to choose a suitable value). For example "fix[<\fIN\fP>]" can
-represent "fix" or "fix4", but not "fixN".
+are expected to choose a suitable value). For example \(dqfix[<\fIN\fP>]\(dq can
+represent \(dqfix\(dq or \(dqfix4\(dq, but not \(dqfixN\(dq.
 .sp
 For each action that changes the stack a synopsis of those changes is given
 in the form of two lists separated by \fB=>\fP\&. The list on the left
@@ -3062,7 +3062,7 @@ the stack into \fIx\fP register.
 \fB\(ga«text»\(ga\fP: print text
 .INDENT 0.0
 .INDENT 3.5
-Print "text" (the contents of the back\-quotes) to the terminal.
+Print \(dqtext\(dq (the contents of the back\-quotes) to the terminal.
 Generally used in scripts to report and annotate results.  Any instances
 of $N or ${N} are replaced by the value of register N, where 0
 represents the \fIx\fP register, 1 represents the \fIy\fP register, etc.  Any
@@ -3071,7 +3071,7 @@ instances of $Var or ${Var} are replaced by the value of the variable
 .UNINDENT
 .UNINDENT
 .sp
-\fB"«units»"\fP: set the units of the x register
+\fB\(dq«units»\(dq\fP: set the units of the x register
 .INDENT 0.0
 .INDENT 3.5
 The units given are applied to the value in the \fIx\fP register.
@@ -3081,7 +3081,7 @@ The actual value is unchanged.
 .sp
 .nf
 .ft C
-x, ... → x "units", ...
+x, ... → x \(dqunits\(dq, ...
 .ft P
 .fi
 .UNINDENT
@@ -3157,9 +3157,9 @@ astronomer with a desire for high precision results, you might use:
 .ft C
 # initialization file for ec (engineering calculator)
 eng6
-6.626070e\-27 "erg\-s" =h       # Planck\(aqs constant in CGS units
-1.054571800e\-27 "erg\-s" =hbar # Reduced Planck\(aqs constant in CGS units
-1.38064852e\-16 "erg/K" =k     # Boltzmann\(aqs constant in CGS units
+6.626070e\-27 \(dqerg\-s\(dq =h       # Planck\(aqs constant in CGS units
+1.054571800e\-27 \(dqerg\-s\(dq =hbar # Reduced Planck\(aqs constant in CGS units
+1.38064852e\-16 \(dqerg/K\(dq =k     # Boltzmann\(aqs constant in CGS units
 .ft P
 .fi
 .UNINDENT
@@ -3179,10 +3179,10 @@ A typical initialization script (~/.ecrc) for a circuit designer might be:
 .nf
 .ft C
 # Initialize Engineering Calculator
-27 "C" =T               # ambient temperature
-(k T 0C + * q/ "V")vt   # thermal voltage
-(2pi* "rads/s")tw       # to omega \- converts Hertz to rads/s
-(2pi/ "Hz")tf           # to freq \- converts rads/s to Hertz
+27 \(dqC\(dq =T               # ambient temperature
+(k T 0C + * q/ \(dqV\(dq)vt   # thermal voltage
+(2pi* \(dqrads/s\(dq)tw       # to omega \- converts Hertz to rads/s
+(2pi/ \(dqHz\(dq)tf           # to freq \- converts rads/s to Hertz
 .ft P
 .fi
 .UNINDENT
@@ -3223,7 +3223,7 @@ $ ec \(aq22k 1pF*\(aq
 Only the calculator commands would be quoted in this manner. If you included
 a file name on the command line to run a script, it would have to be given
 alone.  For example, assume that the file \(aqbw\(aq exists and contains \(aq* 2pi*
-recip "Hz"\(aq. This is a script that assumes that the value of R and C are
+recip \(dqHz\(dq\(aq. This is a script that assumes that the value of R and C are
 present in the \fIx\fP and \fIy\fP resisters, and then computes the 3dB bandwith of
 the corresponding RC filter. You could run the script with:
 .INDENT 0.0
@@ -3275,7 +3275,7 @@ print a newline or a tab, use \fI\en\fP and \fI\et\fP\&. For example,
 .INDENT 3.5
 .nf
 \fB0\fP: 100MHz =freq
-\fB100 MHz\fP: 2pi* "rads/s"
+\fB100 MHz\fP: 2pi* \(dqrads/s\(dq
 \fB628.32 Mrads/s\fP: \(ga$freq corresponds to $0.\(ga
 100 MHz corresponds to 628.32 Mrads/s.
 \fB628.32 Mrads/s\fP:
@@ -3294,12 +3294,12 @@ contains a calculation for the loop gain of a PLL:
 # computes and displays loop gain of a frequency synthesizer
 # x register is taken to be frequency
 =freq
-88.3u "V/per" =Kdet  # gain of phase detector
-9.07G "Hz/V" =Kvco   # gain of voltage controlled oscillator
+88.3u \(dqV/per\(dq =Kdet  # gain of phase detector
+9.07G \(dqHz/V\(dq =Kvco   # gain of voltage controlled oscillator
 2 =M                 # divide ratio of divider at output of VCO
 8 =N                 # divide ratio of main divider
 2 =F                 # divide ratio of prescalar
-freq 2pi* "rads/s" =omega
+freq 2pi* \(dqrads/s\(dq =omega
 Kdet Kvco* omega/ M/ =a
 N F* =f
 a f* =T
@@ -3360,8 +3360,8 @@ or \fI\-\-interactive\fP command line option. For example, replace the earlier
 .INDENT 0.0
 .INDENT 3.5
 .nf
-88.3u "V/per" =Kdet
-9.07G "Hz/V" =Kvco
+88.3u \(dqV/per\(dq =Kdet
+9.07G \(dqHz/V\(dq =Kvco
 2 =M
 8 =N
 2 =F
