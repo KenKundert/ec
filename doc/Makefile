@@ -23,7 +23,7 @@ help:
 	@echo "  html       to make standalone HTML files"
 
 clean:
-	-rm -rf $(BUILDDIR)/* user.rst reference.rst
+#	-rm -rf $(BUILDDIR)/* user.rst reference.rst
 
 html: user.rst reference.rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

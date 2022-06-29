@@ -1543,7 +1543,7 @@ class Calculator:
         def showLoc(given, index):
             cmds = " ".join(given)
             okay = " ".join(given[:index])
-            return "\n" + cmds + "\n " + " " * len(okay) + "↑"
+            return "\n" + cmds + "\n " + " " * len(okay) + "△"
 
         if self.backUpStack:
             self.prevStack = self.stack.clone()
@@ -1590,7 +1590,7 @@ class Calculator:
         except TypeError as e:
             if str(e).startswith("can't convert complex to float"):
                 raise CalculatorError(
-                    "Function does not support a complex argument."
+                    "must be real number, not complex."
                     + showLoc(given, index)
                 )
             else:
