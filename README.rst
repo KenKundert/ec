@@ -9,7 +9,7 @@ and uses a text-only user interface.
 Installing
 ----------
 
-| Version: 1.8.3
+| Version: 1.9.1
 | Released: 2022-06-29
 
 .. image:: https://pepy.tech/badge/ec/month

@@ -3,7 +3,7 @@ Engineering Calculator
 
 | Author: Ken Kundert <ec@nurdletech.com>
 | Date: 2022-06-29
-| Version: 1.8.3
+| Version: 1.9.1
 
 
 This calculator is noteworthy in that it employs a stack model of computation
