@@ -9,8 +9,8 @@ and uses a text-only user interface.
 Installing
 ----------
 
-| Version: 1.8.2
-| Released: 2022-01-04
+| Version: 1.8.3
+| Released: 2022-06-29
 
 .. image:: https://pepy.tech/badge/ec/month
     :target: https://pepy.tech/project/ec
