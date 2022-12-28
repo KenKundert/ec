@@ -79,7 +79,7 @@ def main():
         terminate()
 
     # Define utility functions {{{1
-    highlight = Color("magenta", colorscheme)
+    highlight = Color("magenta", scheme=colorscheme)
 
     def evaluateLine(calc, line, prompt):
         try:

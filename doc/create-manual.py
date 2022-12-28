@@ -250,7 +250,7 @@ user_manual = r"""
     {complexNumbers}
 
 
-    .. _constants:
+    .. _ec_constants:
 
     Constants
     =========
@@ -495,7 +495,7 @@ user_manual = r"""
         |   **$46,485.00**:
 
 
-    .. _comments:
+    .. _ec_comments:
 
     Comments
     ========

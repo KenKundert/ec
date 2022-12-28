@@ -11,7 +11,7 @@ rm -f ec.*.tgz* ec.spec ec.exe
 rm -rf ec.build release
 rm -f lg0.ec lg.ec compute-zo .ecrc
 rm -f tests/lg0.ec tests/lg.ec tests/compute-zo tests/.ecrc
-rm -rf .hypothesis .tox
+rm -rf .hypothesis .tox .mypy_cache
 for i in */clean
 do
     if [[ "$i" == '*/clean' ]]
@@ -21,12 +21,12 @@ do
     #echo $i
     ( cd ${i%/*}; ./clean )
 done
-for i in */Makefile
-do
-    if [[ "$i" == '*/Makefile' ]]
-    then
-        break
-    fi
-    #echo $i
-    ( cd ${i%/*}; make clean )
-done
+# for i in */Makefile
+# do
+#     if [[ "$i" == '*/Makefile' ]]
+#     then
+#         break
+#     fi
+#     #echo $i
+#     ( cd ${i%/*}; make clean )
+# done

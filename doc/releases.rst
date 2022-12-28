@@ -6,6 +6,11 @@ Latest development release
 | Version: 1.9.1
 | Released: 2022-06-29
 
+1.10 (2022-12-27)
+-----------------
+- add caching for bitcoin prices
+
+
 1.9 (2022-01-04)
 ----------------
 - add :ref:`unit conversions <unit conversions>`.

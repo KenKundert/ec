@@ -293,7 +293,7 @@ support complex numbers.
 
 
 
-.. _constants:
+.. _ec_constants:
 
 Constants
 =========
@@ -566,7 +566,7 @@ directly to the desired units:
     |   **$46,485.00**:
 
 
-.. _comments:
+.. _ec_comments:
 
 Comments
 ========
