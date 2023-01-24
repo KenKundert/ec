@@ -255,7 +255,7 @@ reciprocal = UnaryOp(
 )
 reciprocal.addTest(stimulus="4 recip", result=1 / 4, units="", text="250m")
 reciprocal.addTest(stimulus="1kOhm recip", result=1 / 1000, units="", text="1m")
-reciprocal.addTest(stimulus="0 recip", error="division by zero.\n0 recip\n  △")
+reciprocal.addTest(stimulus="0 recip", error="division by zero.\n0 recip\n  ▲")
 reciprocal.addTest(stimulus="j recip", result=-1j, units="", text="-j")
 
 # ceiling {{{3
@@ -276,7 +276,7 @@ ceiling.addTest(stimulus="-1.5 ceil", result=math.ceil(-1.5), units="", text="-1
 ceiling.addTest(stimulus="7.5_Hz ceil", result=math.ceil(7.5), units="Hz", text="8 Hz")
 ceiling.addTest(
     stimulus="j ceil",
-    error="must be real number, not complex.\nj ceil\n  △",
+    error="must be real number, not complex.\nj ceil\n  ▲",
 )
 
 # floor {{{3
@@ -297,7 +297,7 @@ floor.addTest(stimulus="-1.5 floor", result=math.floor(-1.5), units="", text="-2
 floor.addTest(stimulus="7.5_Hz floor", result=math.floor(7.5), units="Hz", text="7 Hz")
 floor.addTest(
     stimulus="j floor",
-    error="must be real number, not complex.\nj floor\n  △",
+    error="must be real number, not complex.\nj floor\n  ▲",
 )
 
 
@@ -566,7 +566,7 @@ arcSine.addTest(stimulus="1 asin", result=90, units="degs", text="90 degs")
 arcSine.addTest(stimulus="rads 1 sin asin", result=1, units="rads", text="1 rads")
 arcSine.addTest(stimulus="degs -1 asin", result=-90, units="degs", text="-90 degs")
 arcSine.addTest(
-    stimulus="degs 2 asin", error="math domain error.\ndegs 2 asin\n       △"
+    stimulus="degs 2 asin", error="math domain error.\ndegs 2 asin\n       ▲"
 )
 
 # arc cosine {{{3
@@ -585,7 +585,7 @@ arcCosine.addTest(stimulus="0 acos", result=90, units="degs", text="90 degs")
 arcCosine.addTest(stimulus="rads 1 acos", result=0, units="rads", text="0 rads")
 arcCosine.addTest(stimulus="degs 45 cos acos", result=45, units="degs", text="45 degs")
 arcCosine.addTest(
-    stimulus="degs 2 acos", error="math domain error.\ndegs 2 acos\n       △"
+    stimulus="degs 2 acos", error="math domain error.\ndegs 2 acos\n       ▲"
 )
 
 # arc tangent {{{3
@@ -1529,7 +1529,7 @@ setCgsMode = Command(
     """,
 )
 
-# Numbers {{{2
+# Number Recognizers {{{2
 numbers = Category("Numbers")
 
 # real number in SI notation {{{3
@@ -1608,10 +1608,10 @@ SI_Number.addTest(stimulus="j1000", result=1j * 1e3, units="", text="j1k")
 SI_Number.addTest(stimulus="j1", result=1j, units="", text="j")
 SI_Number.addTest(stimulus="j1.5", result=1.5j, units="", text="j1.5")
 SI_Number.addTest(stimulus="+j1", result=1j, units="", text="j")
-SI_Number.addTest(stimulus="-j1", result=-1j, units="", text="-0 - j")
+SI_Number.addTest(stimulus="-j1", result=-1j, units="", text="-j")
 SI_Number.addTest(stimulus="$j1", result=1j, units="$", text="j $")
 SI_Number.addTest(stimulus="+$j1", result=1j, units="$", text="j $")
-SI_Number.addTest(stimulus="-$j1", result=-1j, units="$", text="-$0 - j$")
+SI_Number.addTest(stimulus="-$j1", result=-1j, units="$", text="-j$")
 
 
 def sciNumber(matches):
@@ -1661,12 +1661,12 @@ scientificNumber.addTest(
     stimulus="+j1.5e-6Ohms", result=1.5e-6j, units="Ohms", text="j1.5 µOhms"
 )
 scientificNumber.addTest(
-    stimulus="-j1.5e-6", result=-1.5e-6j, units="", text="-0 - j1.5µ"
+    stimulus="-j1.5e-6", result=-1.5e-6j, units="", text="-j1.5µ"
 )
 scientificNumber.addTest(stimulus="$j1.5e-6", result=1.5e-6j, units="$", text="j$1.5µ")
 scientificNumber.addTest(stimulus="+$j1.5e-6", result=1.5e-6j, units="$", text="j$1.5µ")
 scientificNumber.addTest(
-    stimulus="-$j1.5e-6", result=-1.5e-6j, units="$", text="-$0 - j$1.5µ"
+    stimulus="-$j1.5e-6", result=-1.5e-6j, units="$", text="-j$1.5µ"
 )
 
 # hexadecimal number {{{3
@@ -1788,7 +1788,7 @@ verilogBinaryNumber = Number(
 )
 verilogBinaryNumber.addTest(stimulus="'b1111 'b0001 +", result=16, units="", text="16")
 
-# Number Formats {{{2
+# Number Formatters {{{2
 numberFormats = Category("Number Formats")
 
 # fixed format {{{3

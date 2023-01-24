@@ -69,7 +69,7 @@ def test_built_ins():
     # action here
     testCases += [dict(
         stimulus = "-failure",
-        error = "-failure: unrecognized.\n-failure\n △"
+        error = "-failure: unrecognized.\n-failure\n ▲"
     )]
 
     calc = Calculator(

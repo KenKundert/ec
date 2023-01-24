@@ -1543,7 +1543,7 @@ class Calculator:
         def showLoc(given, index):
             cmds = " ".join(given)
             okay = " ".join(given[:index])
-            return "\n" + cmds + "\n " + " " * len(okay) + "△"
+            return "\n" + cmds + "\n " + " " * len(okay) + "▲"
 
         if self.backUpStack:
             self.prevStack = self.stack.clone()
