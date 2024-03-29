@@ -18,8 +18,8 @@ Installing
 ..  image:: https://github.com/KenKundert/ec/actions/workflows/build.yaml/badge.svg
     :target: https://github.com/KenKundert/ec/actions/workflows/build.yaml
 
-.. image:: https://img.shields.io/readthedocs/engineering_calculator.svg
-   :target: https://engineering_calculator.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/readthedocs/engineering-calculator.svg
+   :target: https://engineering-calculator.readthedocs.io/en/latest/?badge=latest
 
 .. image:: https://img.shields.io/pypi/v/engineering_calculator.svg
     :target: https://pypi.python.org/pypi/engineering_calculator
