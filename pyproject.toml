@@ -1,6 +1,6 @@
 [project]
 name = 'engineering-calculator'
-version = "1.10"
+version = "1.11"
 description = "Engineering RPN calculator."
 readme = "README.rst"
 keywords = ["calculator", "RPN"]
