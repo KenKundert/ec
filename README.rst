@@ -32,7 +32,7 @@ Requires Python version 3.6 or later.
 
 Install with::
 
-    pip3 install --user engineering-calculator
+    pip3 install engineering-calculator
 
 This installs *ec* into ~/.local/bin, which should be added to your path.
 
@@ -63,7 +63,7 @@ To run the regression tests::
 
 To install::
 
-   $ python setup.py install --user
+   $ pip install .
 
 To run EC::
 

@@ -1,0 +1,40 @@
+[project]
+name = 'engineering-calculator'
+version = "1.10"
+description = "Engineering RPN calculator."
+readme = "README.rst"
+keywords = ["calculator", "RPN"]
+authors = [
+    {name = "Ken Kundert"},
+    {email = "ec@nurdletech.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "docopt",
+    "docutils",
+    "inform",
+    "quantiphy",
+    "requests",
+]
+
+[project.scripts]
+ec = "engineering_calculator.main:main"
+
+[project.urls]
+homepage = "https://engineering-calculator.readthedocs.io"
+documentation = "https://engineering-calculator.readthedocs.io"
+repository = "https://github.com/kenkundert/ec"
+changelog = "https://engineering-calculator.readthedocs.io/en/latest/releases.html"
+
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
