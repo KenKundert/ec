@@ -15,7 +15,7 @@ files:
         date: Released
     doc/conf.py:
         version: release
-    setup.py:
+    pyproject.toml:
         version: version
     README.rst:
         version: Version
