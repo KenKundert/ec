@@ -23,6 +23,7 @@ help:
 	@echo "  html       to make standalone HTML files"
 
 clean:
+	-rm -rf $(BUILDDIR)
 #	-rm -rf $(BUILDDIR)/* user.rst reference.rst
 
 html: user.rst reference.rst
