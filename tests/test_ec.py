@@ -96,7 +96,7 @@ def test_built_ins():
 
         try:
             result, units = calc.evaluate(calc.split(stimulus))
-            if expectedMessages == True:
+            if expectedMessages is True:
                 if messages:
                     messages = True
 

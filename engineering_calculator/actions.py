@@ -359,7 +359,7 @@ power.addTest(
 # exponential {{{3
 exponential = UnaryOp(
     "exp",
-    lambda x: cmath.exp(x) if type(x) == complex else math.exp(x),
+    lambda x: cmath.exp(x) if isinstance(x, complex) else math.exp(x),
     description = "{key}: natural exponential",
     synopsis = "#⟪x⟫, ... → exp(#⟪x⟫), ...",
     summary = """
@@ -375,7 +375,7 @@ exponential.addTest(stimulus="j pi * exp", result=-1, units="")
 # natural logarithm {{{3
 naturalLog = UnaryOp(
     "ln",
-    lambda x: cmath.log(x) if (type(x) == complex or x < 0) else math.log(x),
+    lambda x: cmath.log(x) if (isinstance(x, complex) or x < 0) else math.log(x),
     description = "{key}: natural logarithm",
     synopsis = "#⟪x⟫, ... → ln(#⟪x⟫), ...",
     summary = """
@@ -464,7 +464,7 @@ square.addTest(stimulus="j sqr", result=-1, units="", text="-1")
 # square root {{{3
 squareRoot = UnaryOp(
     "sqrt",
-    lambda x: cmath.sqrt(x) if (type(x) == complex or x < 0) else math.sqrt(x),
+    lambda x: cmath.sqrt(x) if (isinstance(x, complex) or x < 0) else math.sqrt(x),
     description = "{key}: square root",
     synopsis = "#⟪x⟫, ... → sqrt(#⟪x⟫), ...",
     summary = """
@@ -661,7 +661,7 @@ absoluteValue.addTest(
 argument = UnaryOp(
     "arg",
     lambda x, calc: (
-        calc.fromRadians(math.atan2(x.imag, x.real)) if type(x) == complex else 0
+        calc.fromRadians(math.atan2(x.imag, x.real)) if isinstance(x, complex) else 0
     ),
     description = "{key}: phase of complex number",
     needCalc = True,
@@ -2726,7 +2726,7 @@ def get_btc_price():
             btc_price = prices['bitcoin']['usd']
         return btc_price
     except Exception as e:
-        raise Error('cannot connect to coingecko.com.')
+        raise Error('cannot connect to coingecko.com.', codicil=e)
 
 # use UnitConversion from QuantiPhy to perform the conversion
 # here we define the conversions, which then become available in calculator

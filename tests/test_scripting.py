@@ -2,7 +2,6 @@
 
 # Test EC scripting
 # Imports {{{1
-import sys
 from subprocess import Popen, PIPE
 from textwrap import dedent
 import pytest

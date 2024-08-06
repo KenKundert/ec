@@ -62,8 +62,7 @@ from .actions import (
 from .calculator import Calculator, Display, CalculatorError, __version__, __released__
 from docopt import docopt
 from inform import Color, display, error, fatal, Inform, os_error, warn, terminate
-from os.path import expanduser
-import sys, os
+from os.path import expanduser, exists
 import readline
 
 # Read command line {{{1
@@ -82,16 +81,16 @@ def main():
     # Define utility functions {{{1
     highlight = Color("magenta", scheme=colorscheme)
 
-    def evaluateLine(calc, line, prompt):
+    def evaluateLine(calc, line, prompt, loc=None):
         try:
             result = calc.evaluate(calc.split(line))
             prompt = calc.format(result)
         except CalculatorError as e:
             if interactiveSession:
-                error(e.message)
+                error(e.message, culprit=loc)
                 prompt = calc.restoreStack()
             else:
-                fatal(e.message)
+                fatal(e.message, culprit=loc)
         return prompt
 
     # Create calculator {{{1
@@ -134,17 +133,16 @@ def main():
     for arg in args:
         try:
             cmdFile = expanduser(arg)
-            if os.path.exists(cmdFile):
+            if exists(cmdFile):
                 with open(cmdFile) as pFile:
                     for lineno, line in enumerate(pFile):
-                        loc = f"{cmdFile}s.{lineno + 1}: "
-                        prompt = evaluateLine(calc, line, prompt)
+                        loc = f"{cmdFile}s.{lineno + 1}"
+                        prompt = evaluateLine(calc, line, prompt, loc)
                         if verbose:
                             display(
                                 f"{cmdFile} {lineno}: {line.strip()} ==> {prompt}"
                             )
             else:
-                loc = ""
                 prompt = evaluateLine(calc, arg, prompt)
                 if verbose:
                     display(f"{arg} ==> {prompt}")

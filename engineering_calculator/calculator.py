@@ -75,7 +75,7 @@ class Stack:
         stack: a list of values used to initialize the stack (optional).
         """
         self.parent = parent
-        if stack == None:
+        if stack is None:
             stack = []
         self.stack = stack
 
@@ -158,7 +158,7 @@ class Heap:
             built-in command and function names.
         """
         self.parent = parent
-        self.initialState = initialState if initialState != None else {}
+        self.initialState = initialState if initialState is not None else {}
         self.reserved = list(reserved)
         self.heap = copy(self.initialState)
         self.removeAction = removeAction
@@ -224,7 +224,7 @@ class Display:
 
     def format(self, val):
         num, units = val
-        if type(num) == complex:
+        if isinstance(num, complex):
             real = self.format((num.real, units))
             imag = self.format((num.imag, units))
             zero = self.format((0, units))
@@ -403,18 +403,18 @@ class Action:
         """
 
         test = {"stimulus": stimulus}
-        if result != None:
+        if result is not None:
             test["result"] = result
-        if units != None:
+        if units is not None:
             test["units"] = units
-        if text != None:
+        if text is not None:
             test["text"] = text
-        if error != None:
+        if error is not None:
             test["error"] = error
-        if messages != None:
-            test["messages"] = [messages] if type(messages) == str else messages
-        if warnings != None:
-            test["warnings"] = warnings if type(warnings) == list else [warnings]
+        if messages is not None:
+            test["messages"] = [messages] if isinstance(messages, str) else messages
+        if warnings is not None:
+            test["warnings"] = warnings if isinstance(warnings, list) else [warnings]
 
         if hasattr(self, "tests"):
             self.tests += [test]
@@ -544,7 +544,7 @@ class Constant(Action):
 
     def _execute(self, calc):
         stack = calc.stack
-        if type(self.action) is dict:
+        if isinstance(self.action, dict):
             try:
                 result, units = self.action[calc.unit_system]
             except KeyError:
@@ -1000,7 +1000,7 @@ class SetFormat(Action):
 
     def _execute(self, matchGroups, calc):
         calc.formatter.setFormatter(self)
-        if matchGroups and matchGroups[0] != None:
+        if matchGroups and matchGroups[0] is not None:
             calc.formatter.setDigits(int(matchGroups[0]))
 
 
@@ -1342,7 +1342,6 @@ class Print(Action):
             text = text.replace(r"\n", "\n")
             text = text.replace(r"\t", "\t")
             components = self.argsRegex.split(text)
-            textFrags = components[0::2]
             args = components[1::2]
             formattedArgs = []
             for arg in args:
@@ -1595,7 +1594,7 @@ class Calculator:
                 )
             else:
                 raise CalculatorError(full_stop(e) + showLoc(given, index))
-        except ZeroDivisionError as e:
+        except ZeroDivisionError:
             raise CalculatorError("division by zero." + showLoc(given, index))
         except (ValueError, OverflowError, Error) as e:
             raise CalculatorError(full_stop(e) + showLoc(given, index))

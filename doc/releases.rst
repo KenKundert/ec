@@ -6,6 +6,12 @@ Latest development release
 | Version: 1.10
 | Released: 2022-12-27
 
+
+1.11 (2024-08-06)
+-----------------
+- add readline support (thanks to Jason Wang [wang-borong])
+
+
 1.10 (2022-12-27)
 -----------------
 - add caching for bitcoin prices
