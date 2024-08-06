@@ -64,6 +64,7 @@ from docopt import docopt
 from inform import Color, display, error, fatal, Inform, os_error, warn, terminate
 from os.path import expanduser
 import sys, os
+import readline
 
 # Read command line {{{1
 def main():
