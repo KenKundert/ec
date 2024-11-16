@@ -18,7 +18,7 @@ Requires Python version 3.6 or later.
 
 Install with::
 
-    pip install --user engineering-calculator
+    pip install engineering-calculator
 
 This installs *ec* into ~/.local/bin, which should be added to your path.
 
