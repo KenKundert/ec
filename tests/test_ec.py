@@ -11,7 +11,6 @@ from engineering_calculator.actions import (
     defaultDigits,
     detailedHelp,
 )
-import pytest
 
 # Utility functions {{{1
 messages = []

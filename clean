@@ -6,7 +6,7 @@ rm -rf generated_settings
 # the rest is common to all python directories
 rm -f *.pyc *.pyo .test*.sum expected result install.out
 rm -rf build *.egg-info dist __pycache__ **/__pycache__ .pytest_cache
-rm -rf .coverage .coverage-html htmlcov .eggs
+rm -rf .coverage .coverage-html htmlcov .eggs .tox
 rm -f ec.*.tgz* ec.spec ec.exe
 rm -rf ec.build release
 rm -f lg0.ec lg.ec compute-zo .ecrc

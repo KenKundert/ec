@@ -4,7 +4,6 @@
 # Imports {{{1
 from subprocess import Popen, PIPE
 from textwrap import dedent
-import pytest
 
 
 # Test cases {{{1

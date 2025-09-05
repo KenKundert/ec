@@ -1,3 +1,4 @@
+'\" t
 .\" Man page generated from reStructuredText.
 .
 .
@@ -27,7 +28,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "EC" 1 "2024-08-06" "1.11"
+.TH "EC" "1" "2024-08-06" "1.11"
 .SH NAME
 ec \- engineering calculator
 .\" :Copyright: public domain
@@ -206,9 +207,8 @@ either large or small numbers without using scientific notation.
 .INDENT 0.0
 .INDENT 3.5
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 Y
 T}	T{
@@ -310,7 +310,6 @@ y
 T}	T{
 1e\-24 (yocto)
 T}
-_
 .TE
 .UNINDENT
 .UNINDENT
@@ -430,9 +429,8 @@ octal (base 8), or binary (base 2). You can use either programmers notation
 .INDENT 0.0
 .INDENT 3.5
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 0xFF
 T}	T{
@@ -480,7 +478,6 @@ T{
 T}	T{
 Verilog binary
 T}
-_
 .TE
 .UNINDENT
 .UNINDENT
@@ -586,9 +583,8 @@ The 2014 NIST values are used.  The available constants include:
 .INDENT 0.0
 .INDENT 3.5
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 pi
 T}	T{
@@ -750,7 +746,6 @@ rand
 T}	T{
 random number between 0 and 1
 T}
-_
 .TE
 .UNINDENT
 .UNINDENT
@@ -773,11 +768,9 @@ equal sign followed immediately by the name of the variable:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 =«name»
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -788,11 +781,9 @@ To recall it, simply use the name:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 «name»
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -840,11 +831,9 @@ You can define functions in the following way:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 ( ... )«name»
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -934,9 +923,8 @@ Converters are provides for the following units:
 .sp
 Temperature:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 K:
 T}	T{
@@ -948,67 +936,57 @@ C °C:
 T}	T{
 K, C °C, F °F, R °R
 T}
-_
 .TE
 .sp
 Distance:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 m:
 T}	T{
 km, m, cm, mm, um μm micron, nm, Å angstrom,
 mi mile miles, in inch inches
 T}
-_
 .TE
 .sp
 Mass/Weight:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 g:
 T}	T{
 oz, lb lbs
 T}
-_
 .TE
 .sp
 Time:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 s:
 T}	T{
 sec second seconds, min minute minutes, hour hours hr, day days
 T}
-_
 .TE
 .sp
 Bits/Bytes:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 b:
 T}	T{
 B
 T}
-_
 .TE
 .sp
 Bitcoin:
 .TS
-center;
-|l|l|.
-_
+box center;
+l|l.
 T{
 BTC btc Ƀ:
 T}	T{
@@ -1020,7 +998,6 @@ sats sat ș:
 T}	T{
 USD usd $, BTC btc Ƀ
 T}
-_
 .TE
 .sp
 The conversions can occur between a pair of units, one from the first column
@@ -1054,8 +1031,7 @@ and temperatures that you can put in your ~/.ecrc file:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 # bitcoin
 (>Ƀ    )tb    # convert unitless number to bitcoin
 (>Ƀ  >$)btd   # convert bitcoin to dollars
@@ -1076,8 +1052,7 @@ and temperatures that you can put in your ~/.ecrc file:
 (>°F >°C)ftc  # convert Fahrenheit to Celsius
 (>K  >°C)ktc  # convert Kelvin to Celsius
 (>K  >°F)ktf  # convert Kelvin to Fahrenheit
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1113,11 +1088,9 @@ they may have moved. For example:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... => x+y, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1135,11 +1108,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → x+y, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1154,11 +1125,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → x\-y, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1173,11 +1142,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → x*y, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1201,11 +1168,9 @@ values are treated as real numbers and the result is a real number. So
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → y/x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1231,11 +1196,9 @@ the \fIx\fP register.  So
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → y//x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1262,11 +1225,9 @@ times, which leaves a remainder of 2.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → y%x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1279,11 +1240,9 @@ The value in the \fIx\fP register is replaced with its negative.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → −x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1296,11 +1255,9 @@ The value in the \fIx\fP register is replaced with its reciprocal.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 1/x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1315,11 +1272,9 @@ value).
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → ceil(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1334,11 +1289,9 @@ than its value).
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → floor(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1352,11 +1305,9 @@ value rounded to the nearest integer.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → x!, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1371,11 +1322,9 @@ back into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → 100*(x\-y)/y, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1394,11 +1343,9 @@ conductance, capacitance or susceptance of the two in series.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → 1/(1/x+1/y), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1414,11 +1361,9 @@ stack and replaced with the value of \fIy\fP raised to the power of
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → y**x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1434,11 +1379,9 @@ Supports a complex argument.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → exp(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1454,11 +1397,9 @@ Supports a complex argument.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → ln(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1473,11 +1414,9 @@ The value in the \fIx\fP register is replaced with 10 raised to \fIx\fP\&.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 10**x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1492,11 +1431,9 @@ The value in the \fIx\fP register is replaced with its common logarithm.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → log(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1511,11 +1448,9 @@ The value in the \fIx\fP register is replaced with 2 raised to \fIx\fP\&.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 2**x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1530,11 +1465,9 @@ The value in the \fIx\fP register is replaced with its base 2 logarithm.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → log2(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1549,11 +1482,9 @@ The value in the \fIx\fP register is replaced with its square.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → x**2, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1566,11 +1497,9 @@ The value in the \fIx\fP register is replaced with its square root.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → sqrt(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1585,11 +1514,9 @@ The value in the \fIx\fP register is replaced with its cube root.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → cbrt(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1603,11 +1530,9 @@ The value in the \fIx\fP register is replaced with its sine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → sin(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1620,11 +1545,9 @@ The value in the \fIx\fP register is replaced with its cosine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → cos(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1637,11 +1560,9 @@ The value in the \fIx\fP register is replaced with its tangent.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → tan(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1654,11 +1575,9 @@ The value in the \fIx\fP register is replaced with its arc sine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → asin(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1671,11 +1590,9 @@ The value in the \fIx\fP register is replaced with its arc cosine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → acos(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1688,11 +1605,9 @@ The value in the \fIx\fP register is replaced with its arc tangent.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → atan(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1728,11 +1643,9 @@ onto the stack.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → abs(x), x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1749,11 +1662,9 @@ onto the stack.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → arg(x), x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1770,11 +1681,9 @@ replaced with the length of the vector from the origin to the point
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → sqrt(x**2+y**2), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1790,11 +1699,9 @@ replaced with the angle of the vector from the origin to the point.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → atan2(y,x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1812,11 +1719,9 @@ point (\fIx\fP, \fIy\fP).
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → sqrt(x**2+y**2), atan2(y,x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1831,11 +1736,9 @@ the coordinates of the end\-point of that vector.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → x*cos(y), x*sin(y), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1849,11 +1752,9 @@ The value in the \fIx\fP register is replaced with its hyperbolic sine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → sinh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1866,11 +1767,9 @@ The value in the \fIx\fP register is replaced with its hyperbolic cosine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → cosh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1883,11 +1782,9 @@ The value in the \fIx\fP register is replaced with its hyperbolic tangent.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → tanh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1900,11 +1797,9 @@ The value in the \fIx\fP register is replaced with its hyperbolic arc sine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → asinh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1918,11 +1813,9 @@ cosine.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → acosh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1936,11 +1829,9 @@ tangent.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → atanh(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1956,11 +1847,9 @@ converting voltage or current to decibels.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 20*log(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1977,11 +1866,9 @@ form when converting decibels to voltage or current.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 10**(x/20), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -1998,11 +1885,9 @@ apply this form when converting power to decibels.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 10*log(x), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2019,11 +1904,9 @@ form when converting decibels to voltage or current.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 10**(x/10), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2041,11 +1924,9 @@ decibels relative to 1 milliwatt.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 30+10*log10((x**2)/(2*Rref)), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2063,11 +1944,9 @@ resistor equal to \fIRref\fP (a predefined variable).
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → sqrt(2*10**(x \- 30)/10)*Rref), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2085,11 +1964,9 @@ decibels relative to 1 milliwatt.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → 30+10*log10(((x**2)*Rref/2), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2107,11 +1984,9 @@ resistor equal to \fIRref\fP (a predefined variable).
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → sqrt(2*10**(x \- 30)/10)/Rref), ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2128,11 +2003,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → π, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2147,11 +2020,9 @@ alias: π
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → 2π, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2166,11 +2037,9 @@ aliases: tau,τ,2π
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → √2, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2184,11 +2053,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → 0C, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2202,11 +2069,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → j, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2220,11 +2085,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → j*2*pi, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2241,11 +2104,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → k, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2259,11 +2120,9 @@ is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → h, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2278,11 +2137,9 @@ The elementary charge (the charge of an electron or 1.6021766208×10⁻¹⁹ C
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → q, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2296,11 +2153,9 @@ into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → c, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2314,11 +2169,9 @@ is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → eps0, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2332,11 +2185,9 @@ The permeability of free space (4π×10⁻⁷ H/m [mks] or 4π/c² s²/m²
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → mu0, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2350,11 +2201,9 @@ pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → Z0, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2369,11 +2218,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → ħ, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2389,11 +2236,9 @@ into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → me, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2407,11 +2252,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → mp, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2425,11 +2268,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → mn, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2443,11 +2284,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → mh, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2461,11 +2300,9 @@ into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → amu, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2479,11 +2316,9 @@ on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → G, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2497,11 +2332,9 @@ m/s²)) is pushed on the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → g, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2515,11 +2348,9 @@ The Rydberg constant (10973731 m⁻¹) is pushed on the stack into the
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → Ry, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2533,11 +2364,9 @@ the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → sigma, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2551,11 +2380,9 @@ the stack into the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → alpha, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2569,11 +2396,9 @@ The molar gas constant (8.3144598 J/mol\-K [mks] or 83.145 Merg/deg\-mol
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → R, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2587,11 +2412,9 @@ the \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → NA, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2623,11 +2446,9 @@ represents 10⁷ Hz.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2643,11 +2464,9 @@ special characters).  For example, 2.2e\-8F represents 22nF.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2663,11 +2482,9 @@ example, 0xFF represents the hexadecimal number FF or the decimal number
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2682,11 +2499,9 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2701,11 +2516,9 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2721,11 +2534,9 @@ example, \(aqhFF represents the hexadecimal number FF or the decimal number
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2739,11 +2550,9 @@ integer in base 10.  For example, \(aqd99 represents the decimal number 99.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2758,11 +2567,9 @@ integer in base 8 (it must not contain the digits 8 or 9).  For example,
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2777,11 +2584,9 @@ integer in base 2 (it may contain only the digits 0 or 1).  For example,
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → num, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2908,11 +2713,9 @@ name.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2926,11 +2729,9 @@ register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → value of «name», ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2951,11 +2752,9 @@ The values in the \fIx\fP and \fIy\fP registers are swapped.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, y, ... → y, x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2968,11 +2767,9 @@ The value in the \fIx\fP register is pushed onto the stack again.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → x, x, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -2987,11 +2784,9 @@ The value in the \fIx\fP register is pulled from the stack and discarded.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -3006,11 +2801,9 @@ The previous value of the \fIx\fP register is pushed onto the stack.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → lastx, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -3030,11 +2823,9 @@ Remove all values from the stack.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... →
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -3049,11 +2840,9 @@ the stack into \fIx\fP register.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 \&... → rand, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -3079,11 +2868,9 @@ The actual value is unchanged.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → x \(dqunits\(dq, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -3097,11 +2884,9 @@ units, and pushed back on to the stack.
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 x, ... → x converted to specified units, ...
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -3153,15 +2938,13 @@ astronomer with a desire for high precision results, you might use:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 # initialization file for ec (engineering calculator)
 eng6
 6.626070e\-27 \(dqerg\-s\(dq =h       # Planck\(aqs constant in CGS units
 1.054571800e\-27 \(dqerg\-s\(dq =hbar # Reduced Planck\(aqs constant in CGS units
 1.38064852e\-16 \(dqerg/K\(dq =k     # Boltzmann\(aqs constant in CGS units
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
@@ -3176,15 +2959,13 @@ A typical initialization script (~/.ecrc) for a circuit designer might be:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 # Initialize Engineering Calculator
 27 \(dqC\(dq =T               # ambient temperature
 (k T 0C + * q/ \(dqV\(dq)vt   # thermal voltage
 (2pi* \(dqrads/s\(dq)tw       # to omega \- converts Hertz to rads/s
 (2pi/ \(dqHz\(dq)tf           # to freq \- converts rads/s to Hertz
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .SH SCRIPTING
@@ -3289,8 +3070,7 @@ contains a calculation for the loop gain of a PLL:
 .INDENT 0.0
 .INDENT 3.5
 .sp
-.nf
-.ft C
+.EX
 # computes and displays loop gain of a frequency synthesizer
 # x register is taken to be frequency
 =freq
@@ -3305,8 +3085,7 @@ N F* =f
 a f* =T
 \e\(gaOpen loop gain = $a\e\enFeedback factor = $f\e\enLoop gain = $T\e\(ga
 quit
-.ft P
-.fi
+.EE
 .UNINDENT
 .UNINDENT
 .sp
