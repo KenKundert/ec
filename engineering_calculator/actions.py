@@ -25,12 +25,12 @@ from .calculator import (
     UnaryOp,
     UnitConversion,
 )
-from inform import warn, Error
+from .fetch_url import fetch_url
+from inform import warn
 import operator
 import math
 import cmath
 import random
-import requests
 import time
 
 
@@ -566,7 +566,7 @@ arcSine.addTest(stimulus="1 asin", result=90, units="degs", text="90 degs")
 arcSine.addTest(stimulus="rads 1 sin asin", result=1, units="rads", text="1 rads")
 arcSine.addTest(stimulus="degs -1 asin", result=-90, units="degs", text="-90 degs")
 arcSine.addTest(
-    stimulus="degs 2 asin", error="math domain error.\ndegs 2 asin\n       ▲"
+    stimulus="degs 2 asin", error="expected a number in range from -1 up to 1, got 2.0.\ndegs 2 asin\n       ▲"
 )
 
 # arc cosine {{{3
@@ -585,7 +585,7 @@ arcCosine.addTest(stimulus="0 acos", result=90, units="degs", text="90 degs")
 arcCosine.addTest(stimulus="rads 1 acos", result=0, units="rads", text="0 rads")
 arcCosine.addTest(stimulus="degs 45 cos acos", result=45, units="degs", text="45 degs")
 arcCosine.addTest(
-    stimulus="degs 2 acos", error="math domain error.\ndegs 2 acos\n       ▲"
+    stimulus="degs 2 acos", error="expected a number in range from -1 up to 1, got 2.0.\ndegs 2 acos\n       ▲"
 )
 
 # arc tangent {{{3
@@ -2717,16 +2717,13 @@ btc_price_ttl = 60
 def get_btc_price():
     global last_btc_update, btc_price
     current_time = time.monotonic()
-    try:
-        if last_btc_update is None or current_time - last_btc_update > btc_price_ttl:
-            # get the current price of BTC and cache it
-            resp = requests.get(url=url, params=params)
-            last_btc_update = current_time
-            prices = resp.json()
-            btc_price = prices['bitcoin']['usd']
-        return btc_price
-    except Exception as e:
-        raise Error('cannot connect to coingecko.com.', codicil=e)
+    if last_btc_update is None or current_time - last_btc_update > btc_price_ttl:
+        # get the current price of BTC and cache it
+        resp = fetch_url(url=url, method='get', params=params)
+        last_btc_update = current_time
+        prices = resp.json()
+        btc_price = prices['bitcoin']['usd']
+    return btc_price
 
 # use UnitConversion from QuantiPhy to perform the conversion
 # here we define the conversions, which then become available in calculator

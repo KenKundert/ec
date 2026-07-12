@@ -63,6 +63,7 @@ from .calculator import Calculator, Display, CalculatorError, __version__, __rel
 from docopt import docopt
 from inform import Color, display, error, fatal, Inform, os_error, warn, terminate
 from os.path import expanduser, exists
+import readline
 
 # Read command line {{{1
 def main():

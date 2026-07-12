@@ -36,7 +36,7 @@ repository = "https://github.com/kenkundert/ec"
 changelog = "https://engineering-calculator.readthedocs.io/en/latest/releases.html"
 
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=2"]
 build-backend = "flit_core.buildapi"
 
 [tool.pytest.ini_options]
@@ -52,3 +52,4 @@ ignore = []
 [tool.ruff.lint.per-file-ignores]
 "engineering_calculator/__init__.py" = ["F401"]
 "engineering_calculator/calculator.py" = ["F401"]
+"engineering_calculator/main.py" = ["F401"]
